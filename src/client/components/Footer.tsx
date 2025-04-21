@@ -1,6 +1,6 @@
- 
 import { Link } from "react-router-dom";
 import { useAuth } from "@/admin/components/AuthProvider";
+import logo from "../../../public/assets/images/logo2.svg";
 
 const darkenColor = (hexColor: string, amount: number): string => {
   let color = hexColor.replace("#", "");
@@ -21,83 +21,85 @@ const darkenColor = (hexColor: string, amount: number): string => {
   g = Math.max(0, g);
   b = Math.max(0, b);
 
-  return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, "0")}`;
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
 };
-
 
 const Footer = () => {
   const { settingValue } = useAuth();
   const footerColor = settingValue?.footerColor || "#0056D2";
   const darkerColor = darkenColor(footerColor, 15);
   return (
-    <footer className="footer">
-      <div className="footer-top py-[24px]" style={{background: footerColor || '#0056D2'}}>
-        <div className="container m-auto">
-          <div className="grid lg:grid-cols-2 text-white md:gap-[50px]">
-            <div className="md:grid grid-cols-[116px_1fr] gap-[24px]">
-              <img
-                src={settingValue?.footerFile?.fileKey ? 
-                  `${ import.meta.env.VITE_API_BASE_URL }/file/download-file-all-type?fileKey=${settingValue?.footerFile?.fileKey}` 
-                  : "/assets/images/logo.svg"
-                }
-                alt="Huy hiệu đoàn logo"
-                className="md:w-full w-[50%] mb-6 md:mb-0"
-              />
-              <div className="">
-                <div
-                  className={`text-[16px] text-white font-[700] mb-[12px]`}
-                  dangerouslySetInnerHTML={{
-                    __html: settingValue?.footerName
-                  }}
-                />
-                {/* <div className="text-[16px] text-white font-[700] mb-[12px]">
-                  ĐOÀN THANH NIÊN <br />
-                  CỘNG SẢN HỒ CHÍ MINH
-                </div> */}
-                <div
-                  className={`text-[14px] text-white`}
-                  dangerouslySetInnerHTML={{
-                    __html: settingValue?.footerInformation
-                  }}
-                />
-              </div>
-            </div>
-            <div className="mt-[15px] lg:mt-[0]">
-              <div className="grid md:grid-cols-2 gap-[20px] mb-[12px]">
-              <div className="mt-[15px] lg:mt-[0]">
-                <Link to="/"><div className="text-[14px] font-[600]">Trang chủ</div></Link>
-                <Link to="/cuoc-thi"><div className="text-[14px] font-[600] mt-[15px]">Cuộc thi</div></Link>
-                <Link to="/gioi-thieu-to-chuc-doan"><div className="text-[14px] font-[600] mt-[15px]">Tổ chức đoàn</div></Link>
-              </div>
-              <div>
-                <div className="text-[14px] font-[600] mb-[12px] mt-4 md:mt-0">Mạng xã hội</div>
-                <div className="flex md:block items-center gap-[15px] mt-2">
-                  <Link to={settingValue?.facebook || ""} target="_blank">
-                    <div className="flex items-center">
-                      <div className="ms-[10px] text-[14px]">Facebook</div>
-                    </div>
-                  </Link>
-                  <Link to={settingValue?.zalo || ""} target="_blank">
-                    <div className="flex md:mt-[14px]">
-                      <div className="ms-[10px] text-[14px]">Zalo</div>
-                    </div>
-                  </Link>
-                  <Link to={settingValue?.youtube || ""} target="_blank">
-                    <div className="flex md:mt-[14px]">
-                      <div className="ms-[10px] text-[14px]">Youtube</div>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-              
-            </div>
-              </div>
+    <footer className="bg-gradient-to-br from-[#a61414] to-[#c72727] text-white py-10 px-6">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-7 gap-8">
+        {/* Logo + Slogan */}
+        <div className="flex items-start space-x-4 col-span-3">
+          <div className="shrink-0">
+            <img src={logo} alt="header" className="" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-white">HanVina Travel</h2>
+            <p className="text-sm text-gray-100 mt-2 leading-relaxed">
+              Nơi mà chuyến du lịch của bạn trở nên đáng nhớ và tuyệt vời. Với
+              cam kết về uy tín, chất lượng dịch vụ và đội ngũ chuyên viên tư
+              vấn giàu kinh nghiệm, chúng tôi tự hào là đối tác tin cậy của bạn
+              trên hành trình khám phá thế giới.
+            </p>
           </div>
         </div>
-      </div>
-      <div className="footer-bottom text-center text-[14px] text-white p-[10px]"
-        style={{background: darkerColor || '#003177'}}>
-        Bản quyền thuộc về Đoàn thanh niên Cộng sản Hồ Chí Minh
+
+        {/* Danh mục */}
+        <div className=" flex flex-col items-center  col-span-2">
+          <ul className="space-y-2 text-sm">
+            <h3 className="text-[#FFC909] font-bold mb-3 text-base">
+              Danh mục
+            </h3>
+
+            <li>
+              <a href="#" className="hover:underline">
+                Khám phá tour
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Về chúng tôi
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Tin tức
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Liên hệ
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Thông tin liên hệ */}
+        <div className="flex flex-col  col-span-2">
+          <h3 className="text-[#FFC909] font-bold mb-3">Thông tin liên hệ</h3>
+          <ul className="text-sm flex items-center gap-x-[20px] ">
+            <li className="flex items-center space-x-2">
+              {/* <FaFacebookF className="text-white" /> */}
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg"
+                alt="Zalo"
+                className="w-4 h-4"
+              />
+              <span>Facebook</span>
+            </li>
+            <li className="flex items-center space-x-2">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg"
+                alt="Zalo"
+                className="w-4 h-4"
+              />
+              <span>Zalo</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </footer>
   );
