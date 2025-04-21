@@ -4,13 +4,17 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { PATH } from "@/libs/constants/path";
 import "./Header.css";
 import { useAuth } from "@/admin/components/AuthProvider";
-
+import logo from "../../../public/assets/images/logo2.svg";
+import cart from "../../../public/assets/images/cart.svg";
+import noti from "../../../public/assets/images/noti.svg";
+import message from "../../../public/assets/images/message.svg";
+import ava from "../../../public/assets/images/ava.png";
+import iconDown from "../../../public/assets/images/arrow-down.svg";
 interface IMenu {
   icon: ReactNode;
   link: string;
   title: string;
 }
-
 
 const Header = () => {
   const { settingValue } = useAuth();
@@ -21,24 +25,28 @@ const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const source = location.state?.source;
-  
 
   const menu: IMenu[] = [
     {
       link: PATH.HOME,
-      title: "Trang chủ",
+      title: "Danh sách tour",
       icon: undefined,
     },
     {
       link: PATH.CUOC_THI,
-      title: "Cuộc thi",
+      title: "Báo cáo",
       icon: undefined,
     },
     {
       link: PATH.TO_CHUC_DOAN,
-      title: "Giới thiệu tổ chức đoàn",
+      title: "Tin tức",
       icon: undefined,
-    }
+    },
+    {
+      link: PATH.TO_CHUC_DOAN,
+      title: "Liên hệ",
+      icon: undefined,
+    },
   ];
 
   const toggleMenu = () => {
@@ -48,7 +56,7 @@ const Header = () => {
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && searchTerm.trim()) {
       navigate(`/tim-kiem?searchTerm=${encodeURIComponent(searchTerm)}`);
-      setSearchTerm("")
+      setSearchTerm("");
     }
   };
 
@@ -70,65 +78,45 @@ const Header = () => {
   };
 
   return (
-    <header className="header" style={{background: settingValue?.headerColor || '#0056D2'}}>
-      <div className="navbar container  m-auto">
-        <div className="navbar-link">
-          {/* <Logo /> */}
-          <div
-            className="flex gap-3 items-start cursor-pointer"
-            onClick={handleNavigate}
-          >
-            <img
-              src={settingValue?.logoFile?.fileKey ? 
-                `${ import.meta.env.VITE_API_BASE_URL }/file/download-file-all-type?fileKey=${settingValue?.logoFile?.fileKey}` 
-                : "/assets/images/logo.svg"
+    <div className=" mx-auto max-w-[1280px] h-[116px] ">
+      <div className="flex justify-between w-full h-[96px]  bg-white shadow rounded-[30px] ">
+        <div className="w-[300px] h-[116px] borderRadiusCustom bg-[#BB2C26]  flex justify-center items-center">
+          <img src={logo} alt="header" className="" />
+        </div>
+        <div className="flex h-full gap-x-10 items-center">
+          {menu.map((item, index) => (
+            <NavLink
+              key={index}
+              to={item.link}
+              onClick={() => setIsMenuOpen(false)}
+              className={({ isActive }) =>
+                `group inline-flex items-centerrounded-md text-base font-medium text-center ${
+                  isActive || item.link == source ? "active" : ""
+                }`
               }
-              alt="Huy hiệu đoàn logo"
-              className={`h-9`}
-            />
-            <div
-              className={`font-bold text-white text-[14px] text-start`}
-              dangerouslySetInnerHTML={{
-                __html: settingValue?.logoName
-              }}
-            />
+            >
+              <span
+                className="navbar-text text-[#141415] text-base font-semibold"
+                dangerouslySetInnerHTML={{ __html: item.title }}
+              ></span>
+            </NavLink>
+          ))}
+          <div className="flex gap-x-3">
+            <img src={cart} alt="Cart Icon" className="size-12" />
+            <img src={message} alt="Cart Icon" className="size-12" />
+            <img src={noti} alt="Cart Icon" className="size-12" />
           </div>
-          {/* Nút mở menu */}
-          <button
-            className="menu-toggle-btn lg:hidden md:text-[#fff]"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            ☰
-          </button>
-          {/* Menu chính */}
-          <div
-            className={`menu flex gap-[24px] lg:items-center ${
-              isMenuOpen ? "block pb-4" : "hidden"
-            } lg:flex`}
-            style={{background: settingValue?.headerColor || '#0056D2'}}
-          >
-            {menu.map((item, index) => (
-              <NavLink
-                key={index}
-                to={item.link}
-                onClick={() => setIsMenuOpen(false)}
-                className={({ isActive }) =>
-                  `group inline-flex items-center p-[10px] rounded-md text-base font-medium text-center ${
-                    isActive || item.link == source ? "active" : ""
-                  }`
-                }
-              >
-                <span
-                  className="navbar-text"
-                  dangerouslySetInnerHTML={{ __html: item.title }}
-                ></span>
-              </NavLink>
-            ))}
+          <div className="w-[95px] h-[56px] border border-[#D6D9DC] rounded-[20px] bg-[#F4F5F6] flex  gap-x-[15px] items-center p-2 mr-[30px]">
+            <img
+              src={ava}
+              alt="avatar"
+              className="size-10 rounded-full border border-[#BB2C26]"
+            />
+            <img src={iconDown} alt="avatar" className="size-6" />
           </div>
         </div>
       </div>
-    </header>
+    </div>
   );
 };
 

@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Logo from "./components/Logo";
-import Banner1 from "/assets/images/text-1.svg";
-import Banner2 from "/assets/images/text-2.svg";
+// import Banner1 from "/assets/images/text-1.svg";
+// import Banner2 from "/assets/images/text-2.svg";
 import BgAuth from "/assets/images/bg-auth.png";
 const Register = () => {
   return (
@@ -13,8 +13,8 @@ const Register = () => {
       >
         <div className="pt-[65px] flex items-center flex-col">
           <div className="relative">
-            <img src={Banner1} alt="" />
-            <img src={Banner2} alt="" className="absolute bottom-[15px]" />
+            {/* <img src={Banner1} alt="" />
+            <img src={Banner2} alt="" className="absolute bottom-[15px]" /> */}
           </div>
         </div>
       </div>
