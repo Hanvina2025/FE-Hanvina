@@ -17,7 +17,7 @@ const Layout: React.FC = () => {
       <div className="pt-[30px]">
         <Header />
       </div>
-      <div className="relative pt-[80px] min-h-[calc(100vh-100px)]">
+      <div className="relative pt-[72px] min-h-[calc(100vh-100px)]">
         <main>{<Outlet />}</main>
       </div>
 
