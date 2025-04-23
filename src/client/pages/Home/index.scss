@@ -1,83 +1,217 @@
 .ant-tabs-nav-wrap {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 .ant-tabs-nav-list {
-    flex: 1;
-    text-align: center;
+  flex: 1;
+  text-align: center;
 }
 .ant-tabs-tab {
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    width: 50%; 
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 50%;
 }
 .svg-button {
-    -webkit-mask-image: url('../../../public/assets/images/Union.svg');
-    mask-image: url('../../../public/assets/images/Union.svg');
-    background-color: red;  /* Đặt màu đỏ cho phần trong suốt của tam giác */
-    mask-size: cover;
+  -webkit-mask-image: url("../../../public/assets/images/Union.svg");
+  mask-image: url("../../../public/assets/images/Union.svg");
+  background-color: red; /* Đặt màu đỏ cho phần trong suốt của tam giác */
+  mask-size: cover;
 }
 .banner {
-    background: linear-gradient(180deg, #E0ECFF 25.5%, #FFF 100%);
-    width: 100%;
-    position: relative;
-    // height: 757px;
-    .banner-left {
-        width: 627px;
-        height: 757px;
-        display: flex;
-        align-items: center;
-    }
-    .banner-right {
-        top: 0;
-        right: 0;
-        position: absolute;
-    }
+  background: linear-gradient(180deg, #e0ecff 25.5%, #fff 100%);
+  width: 100%;
+  position: relative;
+  // height: 757px;
+  .banner-left {
+    width: 627px;
+    height: 757px;
+    display: flex;
+    align-items: center;
+  }
+  .banner-right {
+    top: 0;
+    right: 0;
+    position: absolute;
+  }
 }
 
 .viewmore {
-    border-radius: 12px;
-    border: 1.5px solid;
-    // color: #0056D2;
-    font-weight: 600;
-    font-size: 17px;
-    padding: 11px 14px;
-    display: inline-block;
+  border-radius: 12px;
+  border: 1.5px solid;
+  // color: #0056D2;
+  font-weight: 600;
+  font-size: 17px;
+  padding: 11px 14px;
+  display: inline-block;
 }
 
 @media screen and (max-width: 991px) {
-    .banner {
-        background: linear-gradient(180deg, #E0ECFF 25.5%, #FFF 100%);
-        width: 100%;
-        position: relative;
-        height: auto;
-    }
+  .banner {
+    background: linear-gradient(180deg, #e0ecff 25.5%, #fff 100%);
+    width: 100%;
+    position: relative;
+    height: auto;
+  }
 }
 
 @media screen and (max-width: 767px) {
-    .tab-title {
-        word-wrap: break-word; 
-        overflow-wrap: break-word;
-        white-space: normal; 
-        text-align: center; 
-      }
+  .tab-title {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    text-align: center;
+  }
 
-      .banner {
-        background: linear-gradient(180deg, #E0ECFF 25.5%, #FFF 100%);
-        width: 100%;
-        position: relative;
-        height: auto;
-        .banner-left {
-            width: 100%;
-            height: auto;
-            display: flex;
-            align-items: center;
-            position: relative;
-            z-index: 10;
-        }
-        .banner-right {
-            opacity: .5;
-        }
+  .banner {
+    background: linear-gradient(180deg, #e0ecff 25.5%, #fff 100%);
+    width: 100%;
+    position: relative;
+    height: auto;
+    .banner-left {
+      width: 100%;
+      height: auto;
+      display: flex;
+      align-items: center;
+      position: relative;
+      z-index: 10;
     }
+    .banner-right {
+      opacity: 0.5;
+    }
+  }
+}
+.date-picker-container {
+  width: 300px;
+  font-family: Arial, sans-serif;
+}
+
+.date-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.date-picker-header h3 {
+  margin: 0;
+  cursor: pointer;
+}
+
+.date-picker-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.date-picker-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.date-picker-day {
+  padding: 8px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.date-picker-day:hover {
+  background: #f0f0f0;
+}
+
+.date-picker-day.selected {
+  background: #bb2c26;
+  color: white;
+}
+
+.date-picker-day.other-month {
+  color: #ccc;
+}
+
+.date-picker-months-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.date-picker-month {
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.date-picker-month:hover {
+  background: #f0f0f0;
+}
+
+.date-picker-month.selected-month {
+  background: #bb2c26;
+  color: white;
+}
+
+.date-picker-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.date-picker-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #f5f5f5;
+}
+
+.confirm-btn {
+  background: #bb2c26;
+  color: white;
+}
+
+.confirm-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+.custom-radio {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #b0b4b9; /* màu gray */
+  background-color: white;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.custom-radio:checked {
+  background-color: #a6191c;
+  border-color: #a6191c;
+}
+
+.custom-radio:checked::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background-color: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
 }
