@@ -16,6 +16,7 @@ import { AuthProvider } from "./admin/components/AuthProvider";
 import AdminLayout from "./admin/components/Layout";
 import Dashboard from "./admin/Dashboard";
 import ProtectedAdminRoute from "./admin/components/ProtectedRoute";
+import { ListTour } from "./client/pages/ListTour";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
                 </ProtectedRoute>
               }
             >
+              <Route path={PATH.LIST_TOUR} element={<ListTour />} />
               <Route path={PATH.HOME} element={<Home />} />
             </Route>
 

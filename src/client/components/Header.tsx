@@ -28,7 +28,7 @@ const Header = () => {
 
   const menu: IMenu[] = [
     {
-      link: PATH.HOME,
+      link: PATH.LIST_TOUR,
       title: "Danh sách tour",
       icon: undefined,
     },
@@ -78,10 +78,10 @@ const Header = () => {
   };
 
   return (
-    <div className=" mx-auto max-w-[1280px] h-[116px] ">
+    <div className=" mx-auto w-[1280px] h-[116px]  ">
       <div className="flex justify-between w-full h-[96px]  bg-white shadow rounded-[30px] ">
         <div className="w-[300px] h-[116px] borderRadiusCustom bg-[#BB2C26]  flex justify-center items-center">
-          <img src={logo} alt="header" className="" />
+          <img src={logo} alt="header" className="" onClick={handleNavigate}/>
         </div>
         <div className="flex h-full gap-x-10 items-center">
           {menu.map((item, index) => (

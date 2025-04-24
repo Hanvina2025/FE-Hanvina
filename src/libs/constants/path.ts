@@ -7,6 +7,9 @@ export const PATH = {
   THI_TRAC_NGHIEM: "/thi-trac-nghiem/:id",
   KET_QUA_THI: "/ket-qua-thi",
   TIM_KIEM: "/tim-kiem",
+  LIST_TOUR: "/list-tour",
+ 
+
 };
 
 export const ADMIN_PATHS = {

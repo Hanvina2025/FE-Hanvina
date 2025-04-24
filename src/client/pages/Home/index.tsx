@@ -70,7 +70,7 @@ const Home = () => {
                 </div>
 
                 {isDepartureOpen && (
-                  <div className="absolute top-full left-0 mt-2 z-50">
+                  <div className="absolute top-full left-0 mt-2 z-100">
                     <Dropdown
                       locations={locationsDeparture}
                       selected={departure}
@@ -136,20 +136,21 @@ const Home = () => {
                     </div>
                     <div className="text-[#767A7F] text-sm whitespace-nowrap">
                       {selectedDate
-                        ? selectedDate.toLocaleDateString("vi-VN")
+                        ? selectedDate
                         : "Trong khoảng thời gian"}
                     </div>
                   </div>
                 </div>
 
                 {showDatePicker && (
-                  <div className="absolute top-full left-0 mt-2 z-50 bg-white shadow-lg rounded-lg p-4">
-                    <DateRangePicker
-                      onConfirm={(date) => {
-                        setSelectedDate(date);
-                        setShowDatePicker(false);
-                      }}
-                    />
+                  <div className="absolute top-full left-0 mt-2 z-50 bg-white  ">
+                <DateRangePicker
+      onConfirm={(date) => {
+        console.log("🚀 ~ Home ~ date:", date)
+        setSelectedDate(date);
+        setShowDatePicker(false);
+      }}
+    />
                   </div>
                 )}
               </div>
@@ -163,7 +164,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="col-span-3 z-50 hidden lg:block">
+        <div className="col-span-3 z-20 hidden lg:block">
           <div className="relative rounded-[230px]">
             <embed src={bannerHome} className="" />
           </div>

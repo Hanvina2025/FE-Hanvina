@@ -14,10 +14,10 @@ const Layout: React.FC = () => {
         backgroundPosition: "top",
       }}
     >
-      <div className="pt-[30px]">
+      <div className="pt-[30px] fixed z-[100] w-full flex justify-center ">
         <Header />
       </div>
-      <div className="relative pt-[72px] min-h-[calc(100vh-100px)]">
+      <div className="relative  min-h-[calc(100vh-100px)] pt-52">
         <main>{<Outlet />}</main>
       </div>
 
