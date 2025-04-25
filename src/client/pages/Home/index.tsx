@@ -1,7 +1,7 @@
 import "./index.scss";
 import bannerHome from "/assets/images/banner-home.svg";
 import location from "/assets/images/location.svg";
-import destination from "/assets/images/destination.svg";
+import destinationIcon from "/assets/images/destination.svg";
 import dateTime from "/assets/images/dateTime.svg";
 import placePdf from "/assets/images/placePdf.svg";
 import ButtonLong from "/assets/images/button-long.svg";
@@ -92,7 +92,7 @@ const Home = () => {
                     setIsDestinationOpen(!isDestinationOpen);
                   }}
                 >
-                  <img src={dateTime} alt="" />
+                  <img src={destinationIcon} alt="" />
                   <div>
                     <div className="font-semibold text-[#333] flex gap-x-2 items-center">
                       <span>Điểm đến</span>
@@ -135,22 +135,20 @@ const Home = () => {
                       </div>
                     </div>
                     <div className="text-[#767A7F] text-sm whitespace-nowrap">
-                      {selectedDate
-                        ? selectedDate
-                        : "Trong khoảng thời gian"}
+                      {selectedDate ? selectedDate : "Trong khoảng thời gian"}
                     </div>
                   </div>
                 </div>
 
                 {showDatePicker && (
                   <div className="absolute top-full left-0 mt-2 z-50 bg-white  ">
-                <DateRangePicker
-      onConfirm={(date) => {
-        console.log("🚀 ~ Home ~ date:", date)
-        setSelectedDate(date);
-        setShowDatePicker(false);
-      }}
-    />
+                    <DateRangePicker
+                      onConfirm={(date) => {
+                        console.log("🚀 ~ Home ~ date:", date);
+                        setSelectedDate(date);
+                        setShowDatePicker(false);
+                      }}
+                    />
                   </div>
                 )}
               </div>

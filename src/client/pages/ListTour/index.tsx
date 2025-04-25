@@ -9,8 +9,14 @@ import timeIcon from "/assets/images/time.svg";
 import arrow_drop_down from "/assets/images/arrow_drop_down.svg";
 import listTourImage from "/assets/images/listTourImage.svg";
 import patternListTour from "/assets/images/patternListTour.svg";
+import destinationIcon from "/assets/images/destination.svg";
+import searchIcon from "/assets/images/search.svg";
+import filterIcon from "/assets/images/filter.svg";
 import { Range } from "react-range";
+import placePdf from "/assets/images/placePdf.svg";
 import "./index.scss";
+import TourCard from "@/client/components/TourCard";
+import Pagination from "@/client/components/Pagination";
 export const ListTour = () => {
   const [isDepartureOpen, setIsDepartureOpen] = useState(false);
   const [isDestinationOpen, setIsDestinationOpen] = useState(false);
@@ -26,6 +32,8 @@ export const ListTour = () => {
   const [dateNumber, setDateNumber] = useState("");
   const [priceRange, setPriceRange] = useState([50000000, 120000000]);
   const [selected, setSelected] = useState("Nội địa");
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 10;
   const options = [
     { label: "Nội địa", count: 2 },
     { label: "Quốc tế", count: 4 },
@@ -69,7 +77,7 @@ export const ListTour = () => {
           className="w-full absolute top-0 object-cover max-h-[588px]"
         />
       </div>
-      <div className="absolute left-1/2 transform -translate-x-1/2 top-96 ">
+      <div className="absolute left-1/2 transform -translate-x-1/2 top-96 z-10 ">
         <div className="bg-white shadow-[0px_10px_24px_rgba(20,20,21,0.09)] rounded-[20px] p-8 w-[1280px] mx-auto ">
           <div>
             <h1 className="text-xl font-bold text-[#141415] ">
@@ -130,7 +138,7 @@ export const ListTour = () => {
                     setIsDestinationOpen(!isDestinationOpen);
                   }}
                 >
-                  <img src={dateTime} alt="" />
+                  <img src={destinationIcon} alt="" />
                   <div>
                     <div className="font-semibold text-[#333] flex gap-x-2 items-center">
                       <span>Điểm đến</span>
@@ -402,24 +410,60 @@ export const ListTour = () => {
             </div>
           </div>
         </div>
-        <div className="mt-8">
+      </div>
+      <div className="mt-[600px]  z-10">
+        <div className="mt-8 w-full flex justify-center">
           <div className="relative">
             <img src={listTourImage} alt="" />
             <img src={patternListTour} alt="" className="absolute top-0" />
             <div className="absolute top-1/2 right-5 transform -translate-y-1/2 flex gap-x-3">
-              <input
-                type="search"
-                name=""
-                id=""
-                placeholder="Tìm kiếm"
-                className="rounded-2xl border border-[#D6D9DC] h-12 p-3 w-[315px]"
-              />
-              <div className="rounded-2xl border border-[#D6D9DC] h-12 p-3  bg-white">
+              <div className="relative">
+                <img
+                  src={searchIcon}
+                  alt=""
+                  className="absolute  top-1/2 -translate-y-1/2 left-3 size-6"
+                />
+                <input
+                  type="search"
+                  name=""
+                  id=""
+                  placeholder="Tìm kiếm"
+                  className="rounded-2xl border border-[#D6D9DC] h-12 p-3 w-[315px] pl-11"
+                />
+              </div>
+              <div className="rounded-2xl border border-[#D6D9DC] h-12 p-3  bg-white relative w-[150px] text-end cursor-pointer">
+                <img
+                  src={filterIcon}
+                  alt=""
+                  className="absolute  top-1/2 -translate-y-1/2 left-3 size-6"
+                />
                 Sắp xếp theo
               </div>
             </div>
           </div>
         </div>
+        <div className="mt-8 z-20">
+          <TourCard />
+        </div>
+        <div className="mt-8 z-20">
+          <TourCard />
+        </div>
+        <div className="mt-8 z-20">
+          <TourCard />
+        </div>
+        <div className="mt-8 z-20">
+          <TourCard />
+        </div>
+      </div>
+      <div className="flex items-center justify-center  mt-10">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+      </div>
+      <div className="w-full  bottom-[-20px]">
+        <img src={placePdf} alt="" className="w-full" />
       </div>
     </div>
   );
