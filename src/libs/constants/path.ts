@@ -8,8 +8,7 @@ export const PATH = {
   KET_QUA_THI: "/ket-qua-thi",
   TIM_KIEM: "/tim-kiem",
   LIST_TOUR: "/list-tour",
- 
-
+  RESERVE: "/list-tour/reserve",
 };
 
 export const ADMIN_PATHS = {

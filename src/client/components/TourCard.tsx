@@ -1,19 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import iconDownload from "/assets/images/iconDownLoad.svg";
 import location from "/assets/images/location.svg";
 import destinationIcon from "/assets/images/destination.svg";
 import airPlane from "/assets/images/airplane.svg";
 import clock from "/assets/images/clock.svg";
 import calender from "/assets/images/calender.svg";
-import btnReserve from "/assets/images/btnReserve.svg";
+// import btnReserve from "/assets/images/btnReserve.svg";
 import down from "/assets/images/arrow-down.svg";
 // import down from "/assets/images/arrow-down.svg";
 import pen from "/assets/images/pen.svg";
 import ButtonShort from "/assets/images/button-short.svg";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import DropDownSelectDepartureDate from "./DropDownSelectDepartureDate";
+import { PATH } from "@/libs/constants/path";
 
 const TourCard = () => {
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [departure, setDeparture] = useState(null);
+  const navigate = useNavigate();
+  const locationsDeparture = [
+    {
+      date: "T2, 31/03/2025",
+      price: "29,890,000 đ",
+      seatsLeft: "Còn 32 chỗ",
+    },
+    {
+      date: "CN, 06/04/2025",
+      price: "30,980,000 đ",
+      seatsLeft: "Còn 9 chỗ",
+    },
+    {
+      date: "T5, 10/04/2025",
+      price: "30,980,000 đ",
+      seatsLeft: "Còn 16 chỗ",
+    },
+  ];
+  const handleNavigate = () => {
+    navigate(PATH.RESERVE);
+  };
+
   return (
     <div className="max-w-7xl bg-white mx-auto p-8 py-[20px] rounded-[20px] shadow-md">
       <div className="flex justify-between items-center">
@@ -49,8 +75,8 @@ const TourCard = () => {
               <path
                 d="M0.0585938 1L106.059 1"
                 stroke="url(#paint0_linear_388_7038)"
-                stroke-width="1.72059"
-                stroke-dasharray="3.44 3.44"
+                strokeWidth="1.72059"
+                strokeDasharray="3.44 3.44"
               />
               <defs>
                 <linearGradient
@@ -61,8 +87,8 @@ const TourCard = () => {
                   y2="2.65269"
                   gradientUnits="userSpaceOnUse"
                 >
-                  <stop stop-color="#F68E1E" />
-                  <stop offset="1" stop-color="#FFC909" />
+                  <stop stopColor="#F68E1E" />
+                  <stop offset="1" stopColor="#FFC909" />
                 </linearGradient>
               </defs>
             </svg>
@@ -114,11 +140,27 @@ const TourCard = () => {
                 <p className="text-[#141415] font-medium text-base pr-1">
                   Ngày khởi hành:
                 </p>
-                <div className=" rounded-lg border border-[#B9BDC1] h-8 flex items-center justify-between ">
+                <div
+                  className="relative rounded-lg border cursor-pointer border-[#B9BDC1] h-8 flex items-center justify-between "
+                  onClick={() => setShowDatePicker(!showDatePicker)}
+                >
                   <span className="px-2 text-base font-medium opacity-80">
-                    31/03/2025
+                    {departure?.date?.split(", ")[1] || "31/03/2025"}
                   </span>
                   <img src={down} alt="" className="size-[16px] mr-2" />
+
+                  {showDatePicker && (
+                    <div className="absolute top-full left-0 mt-2 z-100">
+                      <DropDownSelectDepartureDate
+                        locations={locationsDeparture}
+                        selected={departure}
+                        onSelect={(value) => {
+                          setDeparture(value);
+                          setShowDatePicker(false);
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -198,7 +240,10 @@ const TourCard = () => {
               </div>
             </div>
 
-            <div className="mt-[28px] relative h-[48px] cursor-pointer">
+            <div
+              className="mt-[28px] relative h-[48px] cursor-pointer"
+              onClick={handleNavigate}
+            >
               <img src={ButtonShort} className="w-full h-[48px] mx-auto" />
               <div className="absolute w-full top-[12px] text-center font-[500] text-[16px] text-white">
                 Giữ chỗ
