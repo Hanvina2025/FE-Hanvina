@@ -10,6 +10,76 @@ import TourCardListActive from "@/client/components/TourCardListActive";
 const ActivityList = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const mockTourData = [
+    {
+      title: "[TOUR NOSHOPP] THƯỢNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU",
+      location: "Hà Nội",
+      departure: "Thứ 2, 31/3/2025",
+      bookingDate: "28/2/2025 15:20",
+      groupLeader: "Nguyễn Bảo An",
+      members: "12 người lớn, 2 trẻ em, 0 em bé",
+      deadline: "23:25",
+      price: "20.000.000",
+      status: "unpaid",
+    },
+    {
+      title: "[TOUR NOSHOPP] THƯỢNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU",
+      location: "Hà Nội",
+      departure: "Thứ 2, 31/3/2025",
+      bookingDate: "28/2/2025 15:20",
+      groupLeader: "Nguyễn Bảo An",
+      members: "12 người lớn, 2 trẻ em, 0 em bé",
+      deadline: "23:25",
+      price: "20.000.000",
+      status: "pending",
+    },
+    {
+      title: "[TOUR NOSHOPP] THƯỢNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU",
+      location: "Hồ Chí Minh",
+      departure: "Thứ 2, 31/3/2025",
+      bookingDate: "28/2/2025 15:20",
+      groupLeader: "Nguyễn Bảo An",
+      members: "12 người lớn, 2 trẻ em, 0 em bé",
+      deadline: "24/03/2005",
+      price: "20.000.000",
+      status: "paid",
+    },
+    {
+      title: "[TOUR NOSHOPP] BẮC KINH - HÀNG CHÂU - Ô TRẤN - THƯỢNG HẢI",
+      location: "Hà Nội",
+      departure: "Thứ 2, 29/4/2025",
+      bookingDate: "24/2/2025 19:00",
+      groupLeader: "Nguyễn Duy Tùng",
+      members: "9 người lớn, 5 trẻ em, 0 em bé",
+      deadline: "24/03/2005",
+      price: "24.000.000",
+      status: "statusPendingApproval",
+      isDeposited: true,
+    },
+    {
+      title: "[TOUR NOSHOPP] BẮC KINH - HÀNG CHÂU - Ô TRẤN - THƯỢNG HẢI",
+      location: "Hà Nội",
+      departure: "Thứ 2, 29/4/2025",
+      bookingDate: "24/2/2025 19:00",
+      groupLeader: "Nguyễn Duy Tùng",
+      members: "9 người lớn, 5 trẻ em, 0 em bé",
+      deadline: "24/03/2005",
+      price: "24.000.000",
+      status: "incomplete",
+      isDeposited: true,
+    },
+    {
+      title: "[TOUR NOSHOPP] THƯỢNG HẢI - Ô TRẤN - BẮC KINH",
+      location: "Hồ Chí Minh",
+      departure: "Thứ 2, 30/6/2025",
+      bookingDate: "15/3/2025 10:46",
+      groupLeader: "Nguyễn Phúc Thành Long",
+      members: "12 người lớn, 2 trẻ em, 0 em bé",
+      deadline: "-",
+      price: "38.000.000",
+      status: "fully_paid",
+    },
+  ];
 
   return (
     <div className="max-w-7xl mx-auto mb-10">
@@ -64,7 +134,7 @@ const ActivityList = () => {
           </div>
         </div>
       </div>
-      <div className="mt-8">
+      {/* <div className="mt-8">
         <TourCardListActive
           title="[TOUR NOSHOPP] THƯỢNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU"
           location="Hà Nội"
@@ -74,9 +144,14 @@ const ActivityList = () => {
           members="12 người lớn, 2 trẻ em, 0 em bé"
           deadline="23:25"
           price="20.000.000"
-          status="unpaid"
+          status="fully_paid"
           extraStatus=""
         />
+      </div> */}
+      <div className="mt-8 space-y-4">
+        {mockTourData.map((tour, index) => (
+          <TourCardListActive key={index} {...tour} />
+        ))}
       </div>
     </div>
   );
