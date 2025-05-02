@@ -16,7 +16,7 @@ import { Range } from "react-range";
 import placePdf from "/assets/images/placePdf.svg";
 import "./index.scss";
 import TourCard from "@/client/components/TourCard";
-import Pagination from "@/client/components/Pagination";
+import CustomPagination from "@/client/components/Pagination";
 export const ListTour = () => {
   const [isDepartureOpen, setIsDepartureOpen] = useState(false);
   const [isDestinationOpen, setIsDestinationOpen] = useState(false);
@@ -456,10 +456,11 @@ export const ListTour = () => {
         </div>
       </div>
       <div className="flex items-center justify-center  mt-10">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
+        <CustomPagination
+          currentPage={1}
+          totalPages={100}
+          pageSize={10}
+          onChange={(page) => console.log("page:", page)}
         />
       </div>
       <div className="w-full  bottom-[-20px]">

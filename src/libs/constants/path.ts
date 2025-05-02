@@ -9,6 +9,7 @@ export const PATH = {
   TIM_KIEM: "/tim-kiem",
   LIST_TOUR: "/list-tour",
   RESERVE: "/list-tour/reserve",
+  ACTIVITY_LIST: "/activity-list",
 };
 
 export const ADMIN_PATHS = {

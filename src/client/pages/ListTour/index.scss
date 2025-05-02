@@ -1,3 +1,13 @@
 .customRange {
   background: linear-gradient(336deg, #f68e1e 10.32%, #ffc909 76.82%);
 }
+.ant-pagination-item,
+.ant-pagination-next,
+.ant-pagination-prev {
+  border-radius: 100% !important;
+}
+
+.ant-pagination-item-active {
+  background: #bb2c26 !important;
+  color: #fff !important;
+}

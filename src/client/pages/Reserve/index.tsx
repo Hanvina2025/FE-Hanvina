@@ -10,6 +10,7 @@ import phoneYellow from "/assets/images/phoneYellow.svg";
 import userYellow from "/assets/images/userYellow.svg";
 import close from "/assets/images/close.svg";
 import addCircle from "/assets/images/add-circle.svg";
+import buttonMedium from "/assets/images/buttonMedium.svg";
 
 import { Link } from "react-router-dom";
 
@@ -483,8 +484,14 @@ const Reserve = () => {
           </div>
 
           <div className="mt-9 pt-0">
-            <button className="w-full py-2 rounded-full bg-gradient-to-r from-[#b32c1b] to-[#c73f22] text-white font-semibold shadow-md hover:opacity-90">
-              Xác nhận giữ chỗ
+            {/* <button className="w-full  rounded-full bg-gradient-to-r from-[#b32c1b] to-[#c73f22] text-white font-semibold shadow-md hover:opacity-90">
+         
+            </button> */}
+            <button className="mt-[28px] relative h-[48px] cursor-pointer">
+              <img src={buttonMedium} className="w-full h-[48px] mx-auto" />
+              <div className="absolute w-full top-[12px] text-center font-[500] text-[16px] text-white">
+                Xác nhận giữ chỗ
+              </div>
             </button>
           </div>
         </div>

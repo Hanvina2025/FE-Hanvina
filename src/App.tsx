@@ -18,6 +18,7 @@ import Dashboard from "./admin/Dashboard";
 import ProtectedAdminRoute from "./admin/components/ProtectedRoute";
 import { ListTour } from "./client/pages/ListTour";
 import Reserve from "./client/pages/Reserve";
+import ActivityList from "./client/pages/ActivityList";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
               }
             >
               <Route path={PATH.LIST_TOUR} element={<ListTour />} />
+              <Route path={PATH.ACTIVITY_LIST} element={<ActivityList />} />
               <Route path={PATH.RESERVE} element={<Reserve />} />
               <Route path={PATH.HOME} element={<Home />} />
             </Route>
