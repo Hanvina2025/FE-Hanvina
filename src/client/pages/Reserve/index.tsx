@@ -20,7 +20,7 @@ import CustomerInformation from "@/client/components/CustomerInformation";
 import DeductionServiceCard from "@/client/components/DeductionServiceCard";
 const Reserve = () => {
   return (
-    <div className="max-w-7xl mx-auto ">
+    <div className="max-w-7xl mx-auto mb-10">
       <div className="flex items-center justify-between mt-8">
         <Breadcrumb
           separator={<img src={arrRight} alt="" className="size-6" />}
