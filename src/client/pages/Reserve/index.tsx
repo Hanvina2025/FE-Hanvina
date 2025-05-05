@@ -1,10 +1,7 @@
 import React from "react";
 import { Breadcrumb } from "antd";
 import arrRight from "/assets/images/arrow-right.svg";
-import Phase1Active from "/assets/images/Phase1Active.svg";
-import phase2 from "/assets/images/phase2.svg";
-import phase3 from "/assets/images/phase3.svg";
-import phase4 from "/assets/images/phase4.svg";
+
 import patternTitle from "/assets/images/patternTitle.svg";
 import phoneYellow from "/assets/images/phoneYellow.svg";
 import userYellow from "/assets/images/userYellow.svg";
@@ -12,14 +9,20 @@ import close from "/assets/images/close.svg";
 import addCircle from "/assets/images/add-circle.svg";
 import buttonMedium from "/assets/images/buttonMedium.svg";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import "./index.scss";
 import TitlePattern from "@/client/components/TitlePattern";
 import TourPriceTable from "@/client/components/TourPriceTable";
 import CustomerInformation from "@/client/components/CustomerInformation";
 import DeductionServiceCard from "@/client/components/DeductionServiceCard";
+import { PATH } from "@/libs/constants/path";
+import StepPayment from "@/client/components/StepPayment";
 const Reserve = () => {
+  const navigate = useNavigate();
+  const handleConfirm = () => {
+    navigate(PATH.STEP_TWO_PROCESS);
+  };
   return (
     <div className="max-w-7xl mx-auto mb-10">
       <div className="flex items-center justify-between mt-8">
@@ -40,89 +43,12 @@ const Reserve = () => {
         </Breadcrumb>
       </div>
       <div className="mt-6">
-        <h1 className="text-[#141415] text-3xl">
+        <h1 className="text-[#141415] font-semibold text-3xl">
           [TOUR NOSHOPP] THƯỢNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU
         </h1>
       </div>
       <div className="mt-8">
-        <div className="bg-white rounded-xl p-8 flex gap-x-6">
-          <div className="flex items-center ">
-            <img src={Phase1Active} alt="" className="" />
-            <div className="ml-3">
-              <span className="text-sm text-[#252627]">Giai đoạn 1</span>
-              <p className="text-[#BB2C26] text-sm">Giữ chỗ</p>
-            </div>
-            <div className="ml-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="205"
-                height="6"
-                viewBox="0 0 205 6"
-                fill="none"
-              >
-                <path
-                  d="M2 3.14331L202.666 2.85659"
-                  stroke="#E9EBED"
-                  stroke-width="4"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <img src={phase2} alt="" />
-            <div className="ml-3">
-              <span className="text-sm text-[#252627]">Giai đoạn 2</span>
-              <p className="text-[#BB2C26] text-sm">Giữ chỗ</p>
-            </div>
-            <div className="ml-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="205"
-                height="6"
-                viewBox="0 0 205 6"
-                fill="none"
-              >
-                <path
-                  d="M2 3.14331L202.666 2.85659"
-                  stroke="#E9EBED"
-                  stroke-width="4"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <img src={phase3} alt="" />
-            <div className="ml-3">
-              <span className="text-sm text-[#252627]">Giai đoạn 3</span>
-              <p className="text-[#BB2C26] text-sm">Giữ chỗ</p>
-            </div>
-            <div className="ml-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="205"
-                height="6"
-                viewBox="0 0 205 6"
-                fill="none"
-              >
-                <path
-                  d="M2 3.14331L202.666 2.85659"
-                  stroke="#E9EBED"
-                  stroke-width="4"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </div>
-          </div>
-          <div className="flex items-center gap-x-3">
-            <img src={phase4} alt="" />
-            <div>
-              <span className="text-sm text-[#252627]">Giai đoạn 4</span>
-              <p className="text-[#BB2C26] text-sm">Giữ chỗ</p>
-            </div>
-          </div>
-        </div>
+        <StepPayment />
       </div>
 
       <div className="mt-8 grid grid-cols-2 md:grid-cols-12 gap-x-8 ">
@@ -371,7 +297,7 @@ const Reserve = () => {
                   </p>
                   <p>T2, 31/3/2025</p>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between pb-6">
                   <p className="text-base text-[#141415] font-medium">
                     Hãng bay
                   </p>
@@ -483,11 +409,14 @@ const Reserve = () => {
             </div>
           </div>
 
-          <div className="mt-9 pt-0">
+          <div className="mt-8 pt-0">
             {/* <button className="w-full  rounded-full bg-gradient-to-r from-[#b32c1b] to-[#c73f22] text-white font-semibold shadow-md hover:opacity-90">
          
             </button> */}
-            <button className="mt-[28px] relative h-[48px] cursor-pointer">
+            <button
+              className=" relative h-[48px] cursor-pointer"
+              onClick={handleConfirm}
+            >
               <img src={buttonMedium} className="w-full h-[48px] mx-auto" />
               <div className="absolute w-full top-[12px] text-center font-[500] text-[16px] text-white">
                 Xác nhận giữ chỗ

@@ -19,6 +19,7 @@ import ProtectedAdminRoute from "./admin/components/ProtectedRoute";
 import { ListTour } from "./client/pages/ListTour";
 import Reserve from "./client/pages/Reserve";
 import ActivityList from "./client/pages/ActivityList";
+import PaymentStepTwo from "./client/pages/PaymentStepTwo";
 
 function App() {
   return (
@@ -38,6 +39,10 @@ function App() {
               <Route path={PATH.ACTIVITY_LIST} element={<ActivityList />} />
               <Route path={PATH.RESERVE} element={<Reserve />} />
               <Route path={PATH.HOME} element={<Home />} />
+              <Route
+                path={PATH.STEP_TWO_PROCESS}
+                element={<PaymentStepTwo />}
+              />
             </Route>
 
             {/* Login Register Routes  */}

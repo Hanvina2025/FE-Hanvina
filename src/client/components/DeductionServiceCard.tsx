@@ -84,7 +84,7 @@ export default function DeductionServiceCard(props: {
                 <button
                   onClick={() => updateCount(service.id, -1)}
                   className={`w-6 h-6 rounded-full flex items-center justify-center text-white ${
-                    counts[service.id] === 0 ? "bg-gray-200" : "bg-yellow-500"
+                    counts[service.id] < 1 ? "bg-gray-200" : "custom_bg_btn"
                   }`}
                 >
                   <img src={minus} alt="" />
@@ -94,7 +94,7 @@ export default function DeductionServiceCard(props: {
                 </div>
                 <button
                   onClick={() => updateCount(service.id, 1)}
-                  className="w-6 h-6 rounded-full flex items-center justify-center text-white bg-yellow-500"
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-white custom_bg_btn"
                 >
                   <img src={plus} alt="" />
                 </button>

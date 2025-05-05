@@ -150,7 +150,11 @@ const ActivityList = () => {
       </div> */}
       <div className="mt-8 space-y-4">
         {mockTourData.map((tour, index) => (
-          <TourCardListActive key={index} {...tour} />
+          <TourCardListActive
+            key={index}
+            {...tour}
+            isDeposited={tour.isDeposited ?? false}
+          />
         ))}
       </div>
     </div>

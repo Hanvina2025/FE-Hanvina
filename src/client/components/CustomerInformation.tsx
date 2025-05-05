@@ -8,7 +8,7 @@ const CustomerInformation = () => {
   const [count, setCount] = React.useState(1);
   return (
     <div>
-      <TitlePattern title="Thông tin khách hàng">
+      <TitlePattern title="Số lượng khách">
         <div className="flex flex-col space-y-4">
           <div className="flex items-center gap-x-3 ">
             <img src={countUser} alt="" />
@@ -27,8 +27,13 @@ const CustomerInformation = () => {
               </div>
               <div className="rounded-[40px] border border-[#D6D9DC] w-[110px] h-[48px] flex items-center justify-between px-2">
                 <button
-                  className="rounded-full custom_bg_btn w-[30px] h-[30px] flex items-center justify-center"
-                  onClick={() => setCount(count - 1)}
+                  className={`rounded-full w-[30px] h-[30px] flex items-center justify-center  ${
+                    count < 1
+                      ? "bg-gray-200 cursor-not-allowed"
+                      : "custom_bg_btn"
+                  }`}
+                  onClick={() => count > 0 && setCount(count - 1)}
+                  disabled={count < 1}
                 >
                   <img src={minus} alt="" />
                 </button>
@@ -51,8 +56,13 @@ const CustomerInformation = () => {
               </div>
               <div className="rounded-[40px] border border-[#D6D9DC] w-[110px] h-[48px] flex items-center justify-between px-2">
                 <button
-                  className="rounded-full custom_bg_btn w-[30px] h-[30px] flex items-center justify-center"
-                  onClick={() => setCount(count - 1)}
+                  className={`rounded-full w-[30px] h-[30px] flex items-center justify-center  ${
+                    count < 1
+                      ? "bg-gray-200 cursor-not-allowed"
+                      : "custom_bg_btn"
+                  }`}
+                  onClick={() => count > 0 && setCount(count - 1)}
+                  disabled={count < 1}
                 >
                   <img src={minus} alt="" />
                 </button>
@@ -75,8 +85,13 @@ const CustomerInformation = () => {
               </div>
               <div className="rounded-[40px] border border-[#D6D9DC] w-[110px] h-[48px] flex items-center justify-between px-2">
                 <button
-                  className="rounded-full custom_bg_btn w-[30px] h-[30px] flex items-center justify-center"
-                  onClick={() => setCount(count - 1)}
+                  className={`rounded-full w-[30px] h-[30px] flex items-center justify-center  ${
+                    count < 1
+                      ? "bg-gray-200 cursor-not-allowed"
+                      : "custom_bg_btn"
+                  }`}
+                  onClick={() => count > 0 && setCount(count - 1)}
+                  disabled={count < 1}
                 >
                   <img src={minus} alt="" />
                 </button>

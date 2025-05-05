@@ -10,6 +10,7 @@ export const PATH = {
   LIST_TOUR: "/list-tour",
   RESERVE: "/list-tour/reserve",
   ACTIVITY_LIST: "/activity-list",
+  STEP_TWO_PROCESS: "/step-Two-Process",
 };
 
 export const ADMIN_PATHS = {

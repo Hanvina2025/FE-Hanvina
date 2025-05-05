@@ -4,11 +4,13 @@
   margin-inline: 14px;
 }
 .custom_bg_btn {
-  background: var(
-    --Yellow-gradient-02-Gradient,
-    linear-gradient(336deg, #f9870b 10.32%, #ffcb12 76.82%)
-  );
+  background: linear-gradient(
+    336deg,
+    #f9870b 10.32%,
+    #ffcb12 76.82%
+  ) !important;
 }
+
 .ant-collapse-header {
   padding: 16px;
 }

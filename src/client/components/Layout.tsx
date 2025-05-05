@@ -12,7 +12,7 @@ const Layout: React.FC = () => {
         backgroundSize: "100% 50%",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "top",
-        height: "50vh",
+        height: "90vh",
       }}
     >
       <div className="pt-[30px] fixed z-[100] w-full flex justify-center ">
