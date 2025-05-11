@@ -1,6 +1,6 @@
 export const PATH = {
   HOME: "/",
-  CUOC_THI: "/cuoc-thi",
+  BAO_CAO: "/bao-cao",
   TO_CHUC_DOAN: "/gioi-thieu-to-chuc-doan",
   THONG_TIN: "/thong-tin-ca-nhan/:id",
   THE_LE: "/the-le/:id",
