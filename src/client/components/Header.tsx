@@ -90,15 +90,16 @@ const Header = () => {
               to={item.link}
               onClick={() => setIsMenuOpen(false)}
               className={({ isActive }) =>
-                `group inline-flex items-centerrounded-md text-base font-medium text-center ${
-                  isActive || item.link == source ? "active" : ""
+                `group inline-flex items-centerrounded-md text-base font-medium text-center relative ${
+                  isActive || item.link == source ? "nav-link-active" : ""
                 }`
               }
             >
               <span
-                className="navbar-text text-[#141415] text-base font-semibold"
+                className="navbar-text text-[#141415] text-base font-semibold relative"
                 dangerouslySetInnerHTML={{ __html: item.title }}
               ></span>
+              <div className="bg-dot-active"></div>
             </NavLink>
           ))}
           <div className="flex gap-x-3">

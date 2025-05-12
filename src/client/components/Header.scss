@@ -11,13 +11,8 @@ header.header {
   height: 80px;
   z-index: 999999;
 }
-.navbar {
-  /* position: absolute;
-    top: 24px;
-    display: flex;
-    justify-content:  center;
-    width: 100%;
-    z-index: 100; */
+.nav-link-active .navbar-text {
+  color: #BB2C26;
 }
 .navbar-link {
   align-items: center;
@@ -59,7 +54,15 @@ header.header {
   border-radius: 100px;
   color: #fff;
 }
-
+.bg-dot-active {
+  width: 100px;
+  height: 100px;
+  background: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+}
 .menu-search-container .menu-search::placeholder {
   font-size: 14px;
   font-style: italic;
