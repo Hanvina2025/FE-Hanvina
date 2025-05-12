@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { ReactNode } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { PATH } from "@/libs/constants/path";
-import "./Header.css";
+import "./Header.scss";
 import { useAuth } from "@/admin/components/AuthProvider";
-import logo from "../../../public/assets/images/logo2.svg";
-import cart from "../../../public/assets/images/cart.svg";
-import noti from "../../../public/assets/images/noti.svg";
-import message from "../../../public/assets/images/message.svg";
-import ava from "../../../public/assets/images/ava.png";
-import iconDown from "../../../public/assets/images/arrow-down.svg";
+import logo from "/assets/images/logo2.svg";
+import cart from "/assets/images/cart.svg";
+import noti from "/assets/images/noti.svg";
+import message from "/assets/images/message.svg";
+import ava from "/assets/images/ava.png";
+import iconDown from "/assets/images/arrow-down.svg";
 interface IMenu {
   icon: ReactNode;
   link: string;
@@ -79,7 +79,7 @@ const Header = () => {
 
   return (
     <div className=" mx-auto w-[1280px] h-[116px]  ">
-      <div className="flex justify-between w-full h-[96px]  bg-white shadow rounded-[30px] ">
+      <div className="flex justify-between w-full h-[96px]  bg-white shadow rounded-[30px] header-menu-background">
         <div className="w-[300px] h-[116px] borderRadiusCustom bg-[#BB2C26]  flex justify-center items-center">
           <img src={logo} alt="header" className="" onClick={handleNavigate}/>
         </div>

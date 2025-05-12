@@ -28,7 +28,7 @@ const Home = () => {
   const locationsDeparture = ["Tất cả", "Hà Nội", "Hồ Chí Minh"];
   return (
     <div className="">
-      <div className="grid lg:grid-cols-7 gap-[66px] max-w-7xl mx-auto relative z-[10]">
+      <div className="grid lg:grid-cols-7 gap-[66px] max-w-7xl mx-auto relative z-[10] md:pb-[108px]">
         <div className="col-span-4 z-50">
           <div className="max-w-[560px]">
             <h1 className="text-[48px] font-bold leading-[56px] text-[#333]">

@@ -1,3 +1,8 @@
+.header-menu-background {
+  background: linear-gradient(to left, rgba(255, 255, 255, 1) 55%, transparent 55%), url("../../../public/assets/images/bg-img-menu.png");
+  background-size: 100%;
+}
+
 header.header {
   position: fixed;
   width: 100%;
