@@ -3,7 +3,6 @@ import { ReactNode } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { PATH } from "@/libs/constants/path";
 import "./Header.scss";
-import { useAuth } from "@/admin/components/AuthProvider";
 import logo from "/assets/images/logo2.svg";
 import cart from "/assets/images/cart.svg";
 import noti from "/assets/images/noti.svg";
@@ -17,7 +16,6 @@ interface IMenu {
 }
 
 const Header = () => {
-  const { settingValue } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,32 +31,32 @@ const Header = () => {
       icon: undefined,
     },
     {
-      link: PATH.BAO_CAO,
+      link: PATH.REPORT,
       title: "Báo cáo",
       icon: undefined,
     },
     {
-      link: PATH.TO_CHUC_DOAN,
+      link: PATH.NEWS,
       title: "Tin tức",
       icon: undefined,
     },
     {
-      link: PATH.TO_CHUC_DOAN,
+      link: PATH.CONTACT,
       title: "Liên hệ",
       icon: undefined,
     },
   ];
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  // const toggleMenu = () => {
+  //   setIsMenuOpen(!isMenuOpen);
+  // };
 
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && searchTerm.trim()) {
-      navigate(`/tim-kiem?searchTerm=${encodeURIComponent(searchTerm)}`);
-      setSearchTerm("");
-    }
-  };
+  // const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.key === "Enter" && searchTerm.trim()) {
+  //     navigate(`/tim-kiem?searchTerm=${encodeURIComponent(searchTerm)}`);
+  //     setSearchTerm("");
+  //   }
+  // };
 
   useEffect(() => {
     const handleResize = () => {
@@ -78,9 +76,9 @@ const Header = () => {
   };
 
   return (
-    <div className=" mx-auto w-[1280px] h-[116px]  ">
-      <div className="flex justify-between w-full h-[96px]  bg-white shadow rounded-[30px] header-menu-background">
-        <div className="w-[300px] h-[116px] borderRadiusCustom bg-[#BB2C26]  flex justify-center items-center">
+    <div className="container mx-auto h-[116px]">
+      <div className="flex justify-between w-full h-[96px]  shadow rounded-[30px] header-menu-background">
+        <div className="w-[300px] h-[116px] borderRadiusCustom bg-[#BB2C26]  flex justify-center items-center cursor-pointer">
           <img src={logo} alt="header" className="" onClick={handleNavigate} />
         </div>
         <div className="flex h-full gap-x-10 items-center">
@@ -104,7 +102,7 @@ const Header = () => {
           ))}
           <div className="flex gap-x-3">
             <img src={cart} alt="Cart Icon" className="size-12" />
-            <img src={message} alt="Cart Icon" className="size-12" />
+            <img onClick={() => navigate(PATH.CHAT)} src={message} alt="Cart Icon" className="size-12 cursor-pointer" />
             <img src={noti} alt="Cart Icon" className="size-12" />
           </div>
           <div className="w-[95px] h-[56px] border border-[#D6D9DC] rounded-[20px] bg-[#F4F5F6] flex  gap-x-[15px] items-center p-2 mr-[30px]">

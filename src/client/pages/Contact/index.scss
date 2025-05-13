@@ -1,0 +1,21 @@
+.contact-form {
+    border-radius: 20px;
+    background: var(--White, #FFF);
+    box-shadow: 0px 10px 24px 0px rgba(20, 20, 21, 0.09);
+}
+.contact-form-left {
+    border-radius: 15px;
+    background: linear-gradient(144deg, #F9870B 14.41%, #FFCB12 106.27%);
+}
+.contact-form-right-content {
+    .custom-input {
+        border: none;
+        border-bottom: 1px dotted #B9BDC1;
+        padding: 0;
+        height: 35px;
+        &:focus {
+          outline: none;
+          border-bottom: 1px dotted #B9BDC1;
+        }
+    }
+}

@@ -1,16 +1,13 @@
 export const PATH = {
   HOME: "/",
-  BAO_CAO: "/bao-cao",
-  TO_CHUC_DOAN: "/gioi-thieu-to-chuc-doan",
-  THONG_TIN: "/thong-tin-ca-nhan/:id",
-  THE_LE: "/the-le/:id",
-  THI_TRAC_NGHIEM: "/thi-trac-nghiem/:id",
-  KET_QUA_THI: "/ket-qua-thi",
-  TIM_KIEM: "/tim-kiem",
+  REPORT: "/report",
   LIST_TOUR: "/list-tour",
   RESERVE: "/list-tour/reserve",
   ACTIVITY_LIST: "/activity-list",
   STEP_TWO_PROCESS: "/step-Two-Process",
+  NEWS: "/news",
+  CONTACT: "/contact",
+  CHAT: "/chat",
 };
 
 export const ADMIN_PATHS = {

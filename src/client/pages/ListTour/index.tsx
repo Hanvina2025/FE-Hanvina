@@ -69,12 +69,12 @@ export const ListTour = () => {
     "Bamboo Airways",
   ];
   return (
-    <div className="bg-[#FFF5F5] min-h-[100vh] ">
+    <div className="bg-[#FFF5F5] min-h-[100vh]">
       <div>
         <img
           src={listTour}
           alt=""
-          className="w-full absolute top-0 object-cover max-h-[588px]"
+          className="w-full absolute top-0 object-cover h-[588px]"
         />
       </div>
       <div className="absolute left-1/2 transform -translate-x-1/2 top-96 z-10 ">
@@ -411,7 +411,7 @@ export const ListTour = () => {
           </div>
         </div>
       </div>
-      <div className="mt-[600px]  z-10">
+      <div className="pt-[505px] z-10">
         <div className="mt-8 w-full flex justify-center">
           <div className="relative">
             <img src={listTourImage} alt="" />

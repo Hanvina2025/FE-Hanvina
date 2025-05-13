@@ -1,39 +1,12 @@
-import { Link } from "react-router-dom";
-import { useAuth } from "@/admin/components/AuthProvider";
-import logo from "../../../public/assets/images/logo2.svg";
-import fb from "../../../public/assets/images/fb.svg";
-import zalo from "../../../public/assets/images/zalo.svg";
-import placePdf from "../../../public/assets/images/placePdf.svg";
-import "./Footer.css";
-const darkenColor = (hexColor: string, amount: number): string => {
-  let color = hexColor.replace("#", "");
-
-  if (color.length === 3) {
-    color = color
-      .split("")
-      .map((char) => char + char)
-      .join("");
-  }
-
-  const num = parseInt(color, 16);
-  let r = (num >> 16) - amount;
-  let g = ((num >> 8) & 0x00ff) - amount;
-  let b = (num & 0x0000ff) - amount;
-
-  r = Math.max(0, r);
-  g = Math.max(0, g);
-  b = Math.max(0, b);
-
-  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
-};
+import logo from "/assets/images/logo2.svg";
+import fb from "/assets/images/fb.svg";
+import zalo from "/assets/images/zalo.svg";
+import "./Footer.scss";
 
 const Footer = () => {
-  const { settingValue } = useAuth();
-  const footerColor = settingValue?.footerColor || "#0056D2";
-  const darkerColor = darkenColor(footerColor, 15);
   return (
     <footer>
-      <div className="bg-gradient-to-br from-[#a61414] to-[#c72727] text-white py-10 px-6">
+      <div className="footer text-white py-10 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-7 gap-8">
           {/* Logo + Slogan */}
           <div className="flex items-start space-x-4 col-span-3">
@@ -86,7 +59,6 @@ const Footer = () => {
             <h3 className="text-[#FFC909] font-bold mb-3">Thông tin liên hệ</h3>
             <ul className="text-sm flex items-center gap-x-[20px] ">
               <li className="flex items-center space-x-2">
-                {/* <FaFacebookF className="text-white" /> */}
                 <img src={fb} alt="Zalo" className="size-6" />
                 <span>Facebook</span>
               </li>
