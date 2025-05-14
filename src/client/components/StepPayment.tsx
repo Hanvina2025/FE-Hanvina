@@ -23,8 +23,8 @@ const StepPayment = () => {
             <path
               d="M2 3.14331L202.666 2.85659"
               stroke="#E9EBED"
-              stroke-width="4"
-              stroke-linecap="round"
+              strokeWidth="4"
+              strokeLinecap="round"
             />
           </svg>
         </div>
@@ -46,8 +46,8 @@ const StepPayment = () => {
             <path
               d="M2 3.14331L202.666 2.85659"
               stroke="#E9EBED"
-              stroke-width="4"
-              stroke-linecap="round"
+              strokeWidth="4"
+              strokeLinecap="round"
             />
           </svg>
         </div>
@@ -69,8 +69,8 @@ const StepPayment = () => {
             <path
               d="M2 3.14331L202.666 2.85659"
               stroke="#E9EBED"
-              stroke-width="4"
-              stroke-linecap="round"
+              strokeWidth="4"
+              strokeLinecap="round"
             />
           </svg>
         </div>

@@ -24,6 +24,8 @@ import { AuthProvider } from "./admin/components/AuthProvider";
 import AdminLayout from "./admin/components/Layout";
 import Dashboard from "./admin/Dashboard";
 import ProtectedAdminRoute from "./admin/components/ProtectedRoute";
+import PaymentStepThree from "./client/pages/PaymentStepThree.tsx";
+import { PaymentStepFor } from "./client/pages/PaymentStepFor.tsx/index.tsx";
 function App() {
   return (
     <>
@@ -49,6 +51,14 @@ function App() {
               <Route
                 path={PATH.STEP_TWO_PROCESS}
                 element={<PaymentStepTwo />}
+              />
+              <Route
+                path={PATH.STEP_THREE_PROCESS}
+                element={<PaymentStepThree />}
+              />
+              <Route
+                path={PATH.STEP_FOR_PROCESS}
+                element={<PaymentStepFor />}
               />
             </Route>
 

@@ -11,16 +11,18 @@ import userYellow from "/assets/images/userYellow.svg";
 import close from "/assets/images/close.svg";
 import addCircle from "/assets/images/add-circle.svg";
 import buttonMedium from "/assets/images/buttonMedium.svg";
+import upload from "/assets/images/upload.svg";
+import qrCode from "/assets/images/qrcode.svg";
+import successimage from "/assets/images/success.svg";
 
 import paymentDealine from "/assets/images/paymentDealine.svg";
 import DepartSmall from "/assets/images/DepartSmall.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../PaymentStepTwo/index.scss";
-import { PATH } from "@/libs/constants/path";
-const PaymentStepTwo = () => {
-  const navigate = useNavigate();
+import CustomerList from "@/client/components/CustomerList";
+export const PaymentStepFor = () => {
   const handlePayment = () => {
-    navigate(PATH.STEP_THREE_PROCESS);
+    console.log("handlePayment");
   };
   return (
     <div className="max-w-7xl mx-auto mb-10">
@@ -55,9 +57,11 @@ const PaymentStepTwo = () => {
             <img src={paymentDealine} alt="" />
             <div className="flex gap-x-[6px]">
               <p className="text-[#141415] text-xl font-medium">
-                Hạn thanh toán cọc:
+                Hạn tất toán:
               </p>
-              <p className="text-[#DC1F18] text-xl font-medium">Còn 23:25</p>
+              <p className="text-[#DC1F18] text-xl font-medium">
+                24:00 - 24/03/2025
+              </p>
             </div>
           </div>
           <div className="flex gap-x-6">
@@ -122,6 +126,12 @@ const PaymentStepTwo = () => {
                 <div className="flex gap-x-4">
                   <div className="space-y-4 flex flex-col">
                     <span className="text-[#141415] text-base font-semibold">
+                      Người đại diện:
+                    </span>
+                    <span className="text-[#141415] text-base font-semibold">
+                      Điện thoại liên hệ:
+                    </span>
+                    <span className="text-[#141415] text-base font-semibold">
                       Người lớn:
                     </span>
                     <span className="text-[#141415] text-base font-semibold">
@@ -132,14 +142,20 @@ const PaymentStepTwo = () => {
                     </span>
                   </div>
                   <div className="space-y-4 flex flex-col">
-                    <span className="text-[#BB2C26] text-base font-semibold">
+                    <span className="text-[#767A7F] text-base font-medium">
+                      Nguyễn Bảo An
+                    </span>
+                    <span className="text-[#767A7F] text-base font-medium">
+                      0962975312
+                    </span>
+                    <span className="text-[#BB2C26] text-base font-medium">
                       12 chỗ
                     </span>
-                    <span className="text-[#BB2C26] text-base font-semibold">
+                    <span className="text-[#BB2C26] text-base font-medium">
                       2 chỗ
                     </span>
                     <div className="flex items-center gap-x-2">
-                      <span className="text-[#BB2C26] text-base font-semibold">
+                      <span className="text-[#BB2C26] text-base font-medium">
                         0 chỗ
                       </span>
                     </div>
@@ -152,109 +168,77 @@ const PaymentStepTwo = () => {
             <TourPriceTable />
           </div>
           <div className="mt-6">
-            <TitlePattern title="Thông tin khách hàng">
-              <div className="flex gap-x-4">
-                <div className="w-1/2">
-                  <div className="flex items-center gap-x-2">
-                    <img src={userYellow} alt="" />
-                    <span className="text-[#141415] font-semibold text-base">
-                      Đại diện đoàn
-                    </span>
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      name="userName"
-                      placeholder="Nhập tên người đại diện"
-                      className="border border-[#D6D9DC] rounded-lg w-full p-3 mt-2"
-                    />
-                  </div>
+            <TitlePattern title="Tất toán">
+              <div className="pl-4 space-y-6">
+                <div className="flex gap-x-2 ">
+                  <span className="text-[#141415] opacity-80">Đã cọc:</span>
+                  <span className="text-[#141415] opacity-80">
+                    135,850,000 đ
+                  </span>
                 </div>
-                <div className="w-1/2">
-                  <div className="flex items-center ">
-                    <img src={phoneYellow} alt="" />
-                    <span className="text-[#141415] font-semibold text-base pl-2">
-                      Điện thoại liên hệ
-                    </span>
-                    <span className="text-base text-[#767A7F] pl-1">
-                      (Đại lý)
-                    </span>
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Nhập số điện thoại"
-                      name="phone"
-                      className="border border-[#D6D9DC] rounded-lg w-full p-3 mt-2"
-                    />
+                <div className="flex gap-x-2 items-center">
+                  <p className="text-[#141415] text-base font-semibold">
+                    Cần thanh toán:
+                  </p>
+                  <span className="text-[#BB2C26] text-2xl font-medium">
+                    135,850,000 đ
+                  </span>
+                </div>
+                <div className="flex gap-6">
+                  <img
+                    src={qrCode}
+                    alt="QR"
+                    className="object-contain border"
+                  />
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div className="text-sm leading-6">
+                      <div>
+                        <span className="font-medium text-[#000D21]">
+                          Tên chủ tài khoản:
+                        </span>{" "}
+                        Dương Văn A
+                      </div>
+                      <div>
+                        <span className="font-medium text-[#000D21]">
+                          Số tài khoản:
+                        </span>{" "}
+                        1241234235
+                      </div>
+                      <div>
+                        <span className="font-medium text-[#000D21]">
+                          Ngân hàng:
+                        </span>{" "}
+                        Vietcombank
+                      </div>
+                      <div>
+                        <span className="font-medium text-[#000D21]">
+                          Nội dung chuyển khoản khuyến nghị:
+                        </span>
+                        <br />
+                        <span className="italic">
+                          “Họ và tên - Tất toán Tour [Tên tour]”
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 mt-3">
+                      <img src={upload} alt="" className="w-5 h-5" />
+                      <button className="text-[#006AF5] text-sm underline hover:text-blue-700">
+                        Tải hóa đơn lên
+                      </button>
+                    </div>
+                    <button
+                      className="w-full mt-4 h-[40px] rounded-[20px] bg-gradient-to-b from-[#B9BDC1] to-[#E2E3E4] text-white text-base font-semibold flex items-center justify-center cursor-not-allowed opacity-70 border border-[#B9BDC1] shadow"
+                      disabled
+                    >
+                      Tôi đã thanh toán
+                    </button>
                   </div>
                 </div>
               </div>
             </TitlePattern>
           </div>
-          <div className="mt-6">
-            <CustomerInformation />
-          </div>
-          <div className="mt-6 grid grid-cols-2 gap-x-6">
-            <div className="col-span-1">
-              <DeductionServiceCard
-                title="Dịch vụ giảm trừ"
-                subtitle="(Giảm trừ khi đã có các dịch vụ dưới đây)"
-              />
-            </div>
-            <div className="col-span-1">
-              <DeductionServiceCard
-                title="Dịch vụ cộng thêm"
-                subtitle="(Phát sinh thêm ngoài chương trình Tour)"
-              >
-                <div>
-                  <h1 className="text-[#141415] text-base font-medium">
-                    Phát sinh thêm
-                  </h1>
-                  <div className="mt-2 rounded-lg p-2 bg-[#F4F5F6]">
-                    <div className="flex justify-between items-center gap-x-[10px]">
-                      <input
-                        type="text"
-                        name=""
-                        id=""
-                        placeholder="Nhập nội dung"
-                        className="border border-[#D6D9DC)] w-full p-3 rounded-lg"
-                      />
-                      <button className="mr-1">
-                        <img src={close} alt="" />
-                      </button>
-                    </div>
-                    <div className="flex justify-between gap-x-2 mt-2">
-                      <input
-                        type="text"
-                        name=""
-                        id=""
-                        placeholder="Nhập số tiền"
-                        className="border border-[#D6D9DC)] w-full p-3 rounded-lg"
-                      />
-                      <input
-                        type="text"
-                        name=""
-                        id=""
-                        placeholder="Nhập số lượng"
-                        className="border border-[#D6D9DC)] w-full p-3 rounded-lg"
-                      />
-                    </div>
-                    <button className="mt-4 flex items-center gap-x-2">
-                      <img src={addCircle} alt="" />
-                      <span className="text-[#006AF5] text-sm font-medium">
-                        Thêm nội dung mới
-                      </span>
-                    </button>
-                    <div className="w-full flex justify-end">
-                      <button className="px-4 py-3 rounded-[44px] bg-[#D3362F] w-[92px] text-white font-medium">
-                        Lưu
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </DeductionServiceCard>
-            </div>
+          <div className="mt-3">
+            <CustomerList />
           </div>
         </div>
         <div className="md:col-span-5 ">
@@ -422,6 +406,12 @@ const PaymentStepTwo = () => {
                   <p className="text-[#252627] font-medium">135,850,000 đ</p>
                 </div>
               </div>
+              <div className="flex items-center gap-x-2 mt-3">
+                <img src={successimage} alt="" />
+                <span className="text-[#006AF5] text-sm">
+                  billchuyenkhoanlan1.ipg
+                </span>
+              </div>
               <div className="flex items-center justify-between mt-3">
                 <div className="flex items-center gap-x-3">
                   <p className="text-[#252627] text-base">Tất toán</p>
@@ -433,30 +423,8 @@ const PaymentStepTwo = () => {
               </div>
             </div>
           </div>
-          <div className="mt-8 pt-0">
-            {/* <button className="w-full  rounded-full bg-gradient-to-r from-[#b32c1b] to-[#c73f22] text-white font-semibold shadow-md hover:opacity-90">
-         
-            </button> */}
-            <button
-              className="relative h-[48px] cursor-pointer"
-              onClick={handlePayment}
-            >
-              <img src={buttonMedium} className="w-full h-[48px] mx-auto" />
-              <div className="absolute w-full top-[12px] text-center font-[500] text-[16px] text-white">
-                Đặt chỗ
-              </div>
-            </button>
-            <button className="mt-4 relative h-[48px] cursor-pointer">
-              <img src={buttonMedium} className="w-full h-[48px] mx-auto" />
-              <div className="absolute w-full top-[12px] text-center font-[500] text-[16px] text-white">
-                Huỷ đặt chỗ
-              </div>
-            </button>
-          </div>
         </div>
       </div>
     </div>
   );
 };
-
-export default PaymentStepTwo;
