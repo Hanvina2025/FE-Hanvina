@@ -12,6 +12,84 @@ header.header {
   height: 80px;
   z-index: 999999;
 }
+.notify-content-wrapper {
+    border-radius: 20px;
+  .ant-popover-content {
+    border-radius: 20px;
+  }
+  .ant-popover-inner {
+    border-radius: 20px;
+    padding: 0;
+  }
+
+  .notify-title {
+    font-size: 16px;
+    font-weight: 500;
+    border-bottom: 1px solid #D6D9DC;
+    padding: 20px 16px;
+    background-color: #FFF;
+    position: sticky;
+    top: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+  .notify-container-content {
+    width: 373px;
+    height: 450px;
+    overflow-y: auto;
+    margin-right: 10px;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .notify-content-item {
+      padding: 20px 16px;
+      border-bottom: 1px solid #E9EBED;
+      cursor: pointer;
+      &:hover {
+        background-color: #FFFCF0;
+      }
+    }
+  }
+}
+
+.user-content-wrapper {
+    border-radius: 20px;
+  .ant-popover-content {
+    border-radius: 20px;
+  }
+  .ant-popover-inner {
+    padding: 10px 16px;
+    width: 373px;
+    border-radius: 20px;
+  }
+
+  .user-title {
+    font-size: 20px;
+    font-weight: 500;
+    padding: 20px 16px;
+    background-color: #FFF;
+  }
+  .user-container-content {
+    cursor: pointer;
+    border-top: 1px solid #E9EBED;
+    padding: 16px;
+  }
+}
+
 .nav-link-active .navbar-text {
   color: #BB2C26;
 }
@@ -65,15 +143,6 @@ header.header {
   padding: 10px;
   border-radius: 100px;
   color: #fff;
-}
-.bg-dot-active {
-  width: 100px;
-  height: 100px;
-  background: transparent;
-  position: absolute;
-  top: 0;
-  left: 0;
-  border-radius: 50%;
 }
 .menu-search-container .menu-search::placeholder {
   font-size: 14px;

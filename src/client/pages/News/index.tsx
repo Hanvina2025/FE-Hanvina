@@ -2,8 +2,10 @@ import "./index.scss";
 import placePdf from "/assets/images/placePdf.svg";
 import { ArrowRight } from "iconsax-react";
 import CustomPagination from "@/client/components/Pagination";
+import { useNavigate } from "react-router-dom";
 
 const News = () => {
+  const navigate = useNavigate();
   const data = [
     {
       id: 1,
@@ -53,7 +55,7 @@ const News = () => {
               <div className="text-[20px] font-[700] text-[#252627] truncate-lines">{item.title}</div>
               <div className="text-[14px] text-[#8F9499] mt-[8px]">{item.description}</div>
             </div>
-            <div className="text-[16px] text-[#BB2C26] flex items-center gap-[4px] mt-[16px] font-[500] cursor-pointer">Xem thêm <ArrowRight/></div>
+            <div onClick={() => navigate(`/news/${item.id}`)} className="text-[16px] text-[#BB2C26] flex items-center gap-[4px] mt-[16px] font-[500] cursor-pointer">Xem thêm <ArrowRight/></div>
           </div>
         ))}
       </div>

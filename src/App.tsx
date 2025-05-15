@@ -7,13 +7,16 @@ import ProtectedRoute from "./client/components/ProtectedRoute";
 import Layout from "./client/components/Layout";
 import Home from "./client/pages/Home";
 import { ListTour } from "./client/pages/ListTour";
+import ListTourActive from "./client/pages/ListTour/ListTourActive.tsx";
 import Reserve from "./client/pages/Reserve";
 import ActivityList from "./client/pages/ActivityList";
 import PaymentStepTwo from "./client/pages/PaymentStepTwo";
 import ReportChart from "./client/pages/Report";
 import News from "./client/pages/News";
+import NewDetail from "./client/pages/News/NewDetail";
 import Contact from "./client/pages/Contact";
 import ChatBox from "./client/pages/Chat";
+import Profile from "./client/pages/Profile";
 
 // LOGIN REGISTER
 import Login from "./admin/Login";
@@ -41,13 +44,16 @@ function App() {
               }
             >
               <Route path={PATH.LIST_TOUR} element={<ListTour />} />
+              <Route path={PATH.LIST_TOUR_ACTIVE} element={<ListTourActive />} />
               <Route path={PATH.ACTIVITY_LIST} element={<ActivityList />} />
               <Route path={PATH.RESERVE} element={<Reserve />} />
               <Route path={PATH.HOME} element={<Home />} />
               <Route path={PATH.REPORT} element={<ReportChart />} />
               <Route path={PATH.NEWS} element={<News />} />
+              <Route path={PATH.NEW_DETAIL} element={<NewDetail />} />
               <Route path={PATH.CONTACT} element={<Contact />} />
               <Route path={PATH.CHAT} element={<ChatBox />} />
+              <Route path={PATH.PROFILE} element={<Profile />} />
               <Route
                 path={PATH.STEP_TWO_PROCESS}
                 element={<PaymentStepTwo />}

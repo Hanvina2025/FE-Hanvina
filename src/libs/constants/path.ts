@@ -2,14 +2,17 @@ export const PATH = {
   HOME: "/",
   REPORT: "/report",
   LIST_TOUR: "/list-tour",
+  LIST_TOUR_ACTIVE: "/list-tour-active",
   RESERVE: "/list-tour/reserve/step1",
   ACTIVITY_LIST: "/activity-list",
   STEP_TWO_PROCESS: "/list-tour/reserve/step2",
   STEP_THREE_PROCESS: "/list-tour/reserve/step3",
   STEP_FOR_PROCESS: "/list-tour/reserve/step4",
   NEWS: "/news",
+  NEW_DETAIL: "/news/:id",
   CONTACT: "/contact",
   CHAT: "/chat",
+  PROFILE: '/profile',
 };
 
 export const ADMIN_PATHS = {
