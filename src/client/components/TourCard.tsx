@@ -1,41 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import iconDownload from "/assets/images/iconDownLoad.svg";
-import location from "/assets/images/location.svg";
-import destinationIcon from "/assets/images/destination.svg";
 import airPlane from "/assets/images/airplane.svg";
 import clock from "/assets/images/clock.svg";
 import calender from "/assets/images/calender.svg";
-// import btnReserve from "/assets/images/btnReserve.svg";
 import down from "/assets/images/arrow-down.svg";
-// import down from "/assets/images/arrow-down.svg";
 import pen from "/assets/images/pen.svg";
 import ButtonShort from "/assets/images/button-short.svg";
+import IcPosition from "/assets/images/ic-position.svg";
+import IcLocation from "/assets/images/ic-location.svg";
+import IcLine from "/assets/images/ic-line-tour.svg";
+import { getTourStartDate } from "@/client/apis/tour";
 
 import { Link, useNavigate } from "react-router-dom";
 import DropDownSelectDepartureDate from "./DropDownSelectDepartureDate";
 import { PATH } from "@/libs/constants/path";
 
-const TourCard = () => {
+const TourCard = ({ tourData }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [departure, setDeparture] = useState(null);
+  const [dataStartDate, setDataStartDate] = useState([]);
   const navigate = useNavigate();
-  const locationsDeparture = [
-    {
-      date: "T2, 31/03/2025",
-      price: "29,890,000 đ",
-      seatsLeft: "Còn 32 chỗ",
-    },
-    {
-      date: "CN, 06/04/2025",
-      price: "30,980,000 đ",
-      seatsLeft: "Còn 9 chỗ",
-    },
-    {
-      date: "T5, 10/04/2025",
-      price: "30,980,000 đ",
-      seatsLeft: "Còn 16 chỗ",
-    },
-  ];
+
+  useEffect(() => {
+    if (tourData?.key) {
+      fetchList(tourData?.key);
+    }
+    }, [tourData?.key]);
+  
+  const fetchList = async (key: string) => {
+    const query: any = new URLSearchParams({
+      key: key || ""
+    });
+    try {
+      const fetchedData = await getTourStartDate(query);
+      console.log('Fetched start dates:', fetchedData.data);
+      setDataStartDate(fetchedData.data);
+    } catch (error) {
+      console.error("Error fetching home:", error);
+    }
+  };
+
   const handleNavigate = () => {
     navigate(PATH.RESERVE);
   };
@@ -45,7 +49,7 @@ const TourCard = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-medium text-[#141415] ">
-            [TOUR NOSHOPP] THƯỢNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU
+            {tourData.name || "[TOUR NOSHOPP] Default Tour"}
           </h1>
         </div>
         <div>
@@ -55,53 +59,30 @@ const TourCard = () => {
           </button>
         </div>
       </div>
+
       <div className="mt-[16px]">
-        <div className="grid grid-cols-4">
+        <div className="flex items-center gap-3">
           <div className="flex items-center gap-x-2">
-            <img src={location} alt="" className="size-8" />
+            <img src={IcLocation} alt="" />
             <div className="flex items-center ">
               <p className="text-[#141415] font-medium text-xl pr-1">
                 Điểm đi:
               </p>
-              <span className="text-[#767A7F] text-xl font-medium">Hà Nội</span>
+              <span className="text-[#767A7F] text-xl font-medium">
+                {tourData.tourFromName || ""}
+              </span>
             </div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="107"
-              height="2"
-              viewBox="0 0 107 2"
-              fill="none"
-            >
-              <path
-                d="M0.0585938 1L106.059 1"
-                stroke="url(#paint0_linear_388_7038)"
-                strokeWidth="1.72059"
-                strokeDasharray="3.44 3.44"
-              />
-              <defs>
-                <linearGradient
-                  id="paint0_linear_388_7038"
-                  x1="112.064"
-                  y1="0.468596"
-                  x2="112.016"
-                  y2="2.65269"
-                  gradientUnits="userSpaceOnUse"
-                >
-                  <stop stopColor="#F68E1E" />
-                  <stop offset="1" stopColor="#FFC909" />
-                </linearGradient>
-              </defs>
-            </svg>
+            <img src={IcLine} alt="" />
           </div>
-          <div className="">
+          <div>
             <div className="flex items-center gap-x-2">
-              <img src={destinationIcon} alt="" className="size-8" />
+              <img src={IcPosition} alt="" />
               <div className="flex items-center ">
                 <p className="text-[#141415] font-medium text-xl pr-1">
                   Điểm đến:
                 </p>
                 <span className="text-[#767A7F] text-xl font-medium">
-                  Bắc Kinh
+                  {tourData.tourToName || ""}
                 </span>
               </div>
             </div>
@@ -119,7 +100,7 @@ const TourCard = () => {
                   Hãng bay:
                 </p>
                 <span className="text-[#767A7F] text-base font-medium">
-                  Vietjet Air
+                  {tourData.tourAirlineName || ""}
                 </span>
               </div>
             </div>
@@ -130,7 +111,7 @@ const TourCard = () => {
                   Thời gian:
                 </p>
                 <span className="text-[#767A7F] text-base font-medium">
-                  5 ngày 4 đêm
+                  {tourData.numberOfDays || ""} ngày
                 </span>
               </div>
             </div>
@@ -145,14 +126,14 @@ const TourCard = () => {
                   onClick={() => setShowDatePicker(!showDatePicker)}
                 >
                   <span className="px-2 text-base font-medium opacity-80">
-                    {departure?.date?.split(", ")[1] || "31/03/2025"}
+                    {departure?.startDate || ""}
                   </span>
                   <img src={down} alt="" className="size-[16px] mr-2" />
 
                   {showDatePicker && (
                     <div className="absolute top-full left-0 mt-2 z-100">
                       <DropDownSelectDepartureDate
-                        locations={locationsDeparture}
+                        locations={dataStartDate}
                         selected={departure}
                         onSelect={(value) => {
                           setDeparture(value);
@@ -165,6 +146,7 @@ const TourCard = () => {
               </div>
             </div>
           </div>
+
           <div className="border-l border-dashed border-[#B9BDC1]">
             <div className="flex justify-center w-full">
               <div className="w-[184px]">
@@ -176,13 +158,13 @@ const TourCard = () => {
                 </div>
                 <div className="w-full text-ce">
                   <span className="text-base text-[#767A7F]">
-                    Đặt trên 10 chỗ, tặng ngay 1 ô tô VF3 cho người nhanh tay
-                    nhất
+                    {tourData.noteExternal || ""}
                   </span>
                 </div>
               </div>
             </div>
           </div>
+
           <div className="border-l border-dashed border-[#B9BDC1]">
             <div className="w-full flex justify-center ">
               <div className="w-[260px]">
@@ -203,17 +185,16 @@ const TourCard = () => {
                     Tổng số chỗ:
                   </span>
                   <span className="ml-1 text-[#767A7F] text-base font-medium">
-                    30
+                    {tourData.numberOfSeats}
                   </span>
 
-                  {/* Gạch kẻ dọc nét đứt */}
                   <div className="h-4 border-l border-gray-300 border-dashed mx-3" />
 
                   <span className="text-base font-semibold text-[#141415]">
                     Đã bán:
                   </span>
                   <span className="ml-1 text-[#767A7F] text-base font-medium">
-                    5
+                    {tourData.numberOfSeats - 25}
                   </span>
                 </div>
                 <div className="mt-2 ">
@@ -224,16 +205,17 @@ const TourCard = () => {
               </div>
             </div>
           </div>
+
           <div className="border-l border-dashed border-[#B9BDC1]">
             <div className="flex justify-center w-full gap-x-6">
               <div>
-                <p>Giá tiền</p>
+                <p className="text-base font-[500] text-[#141415]">Giá tiền</p>
                 <h1 className="text-[#BB2C26] text-xl font-semibold">
                   29,00,000 đ
                 </h1>
               </div>
               <div>
-                <p>Giá tiền</p>
+                <p className="text-base font-[500] text-[#141415]">Hoa hồng</p>
                 <h1 className="text-[#BB2C26]  text-xl font-semibold">
                   29,00,000 đ
                 </h1>

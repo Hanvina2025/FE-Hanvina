@@ -34,18 +34,18 @@ export default function DropDownSelectDepartureDate({
               <input
                 type="radio"
                 name="location"
-                value={location.date}
-                checked={selected?.date === location.date}
+                value={location.id}
+                checked={selected?.id === location.id}
                 readOnly
                 className="appearance-none w-4 h-4 rounded-full border-2 border-gray-400 custom-radio transition duration-200"
               />
-              <span className="text-gray-900">{location.date}</span>
+              <span className="text-gray-900">{location.startDate}</span>
             </div>
             <div className="border-l border-gray-200 pl-4 text-gray-900">
-              {location.price}
+              {location.adultPrice}
             </div>
             <div className="border-l border-gray-200 pl-4 text-gray-900">
-              {location.seatsLeft}
+              Còn {location.totalSeat} chỗ
             </div>
           </label>
         ))}

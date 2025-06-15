@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import listTour from "/assets/images/listTour.svg";
 import dateTime from "/assets/images/dateTime.svg";
 import DateRangePicker from "@/client/components/DateRangePicker";
+import { Input } from "antd";
 import down from "/assets/images/arrow-down.svg";
+import { useSearchParams } from 'react-router-dom';
 import Dropdown from "@/client/components/DropDown";
 import location from "/assets/images/location.svg";
 import timeIcon from "/assets/images/time.svg";
@@ -17,7 +19,11 @@ import placePdf from "/assets/images/placePdf.svg";
 import "./index.scss";
 import TourCard from "@/client/components/TourCard";
 import CustomPagination from "@/client/components/Pagination";
+import { getTour } from "@/client/apis/tour";
+import { getTourCategory } from "@/client/apis/category";
+
 export const ListTour = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isDepartureOpen, setIsDepartureOpen] = useState(false);
   const [isDestinationOpen, setIsDestinationOpen] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -25,49 +31,192 @@ export const ListTour = () => {
   const [isShowTourType, setIsShowTourType] = useState(false);
   const [isShowAirline, setIsShowAirline] = useState(false);
   const [airlineSelected, setAirlineSelected] = useState("");
-  const [tourType, setTourType] = useState("");
+  const [tourType, setTourType] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [departure, setDeparture] = useState("");
   const [destination, setDestination] = useState("");
   const [dateNumber, setDateNumber] = useState("");
-  const [priceRange, setPriceRange] = useState([50000000, 120000000]);
-  const [selected, setSelected] = useState("Nội địa");
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 10;
-  const options = [
-    { label: "Nội địa", count: 2 },
-    { label: "Quốc tế", count: 4 },
-  ];
-  const MIN = 10000000;
+  const [priceRange, setPriceRange] = useState([0, 0]);
+  const pageIndex = parseInt(searchParams.get("page") || "1", 10);
+  const pageSize = parseInt(searchParams.get("size") || "10", 10);
+  const [dataLst, setDataLst] = useState([]);
+  const [tourFromLst, setTourFromLst] = useState([]);
+  const [tourToLst, setTourToLst] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const MIN = 0;
   const MAX = 200000000;
   const STEP = 1000000;
-  const locationsDestination = [
-    "Tất cả",
-    "Cửu Trại Câu",
-    "Phượng Hoàng Cổ Trấn",
-    "Quý Châu",
-    "Tây An",
-    "Tây Tạng",
-    "Đài Loan",
-  ];
-  const locationsDeparture = ["Tất cả", "Hà Nội", "Hồ Chí Minh"];
   const dateNumberDrpdown = [
-    "Tất cả",
-    "3 ngày 2 đêm",
-    "4 ngày 3 đêm",
-    "5 ngày 4 đêm",
-    "6 ngày 5 đêm",
-    "7 ngày 6 đêm",
-    "8 ngày 7 đêm",
+    {
+      id: "",
+      name: "Tất cả",
+    },
+    {
+      id: 2,
+      name: "2 ngày 1 đêm",
+    },
+    {
+      id: 3,
+      name: "3 ngày 2 đêm",
+    },
+    {
+      id: 4,
+      name: "4 ngày 3 đêm",
+    },
+    {
+      id: 5,
+      name: "5 ngày 4 đêm",
+    },
+    {
+      id: 6,
+      name: "6 ngày 5 đêm",
+    },
+    {
+      id: 7,
+      name: "7 ngày 6 đêm",
+    },
+    {
+      id: 8,
+      name: "8 ngày 7 đêm",
+    },
+    {
+      id: 9,
+      name: "9 ngày 8 đêm",
+    },
+    {
+      id: 10,
+      name: "10 ngày 9 đêm",
+    },
+    {
+      id: 11,
+      name: "11 ngày 10 đêm",
+    },
+    {
+      id: 12,
+      name: "12 ngày 11 đêm",
+    },
+    {
+      id: 13,
+      name: "13 ngày 12 đêm",
+    },
+    {
+      id: 14,
+      name: "14 ngày 13 đêm",
+    },
+    {
+      id: 15,
+      name: "15 ngày 14 đêm",
+    },
   ];
-  const listTourType = ["Nội địa", "Quốc tế"];
-  const airline = [
-    "Tất cả",
-    "Vietnam Airlines",
-    "Vietnam Airlines",
-    "VietJet Air",
-    "Bamboo Airways",
-  ];
+  const listTourType: any = [
+  {
+    id: 0,  
+    name: "Tất cả",
+  },{
+    id: 1,
+    name: "Nội địa",
+  },
+  {
+    id: 2,  
+    name: "Quốc tế",
+  }];
+  const [dataAirlineLst, setDataAirlineLst] = useState([]);
+
+  useEffect(() => {
+    fetchListAirline();
+    fetchListTourFrom();
+    fetchListTourTo();
+  }, []);
+
+  const fetchListAirline = async () => {
+    try {
+      const fetchedData = await getTourCategory(`type=2`);
+      const dataWithDefault = [{ id: "", name: "Tất cả" }, ...fetchedData.data];
+      setDataAirlineLst(dataWithDefault);
+    } catch (error) {
+      console.error("Error fetching home:", error);
+    }
+  };
+
+  const fetchListTourFrom = async () => {
+    try {
+      const fetchedData = await getTourCategory(`type=0`);
+      const dataWithDefault = [{ id: "", name: "Tất cả" }, ...fetchedData.data];
+      setTourFromLst(dataWithDefault);
+    } catch (error) {
+      console.error("Error fetching home:", error);
+    }
+  };
+
+  const fetchListTourTo = async () => {
+    try {
+      const fetchedData = await getTourCategory(`type=24`);
+      const dataWithDefault = [{ id: "", name: "Tất cả" }, ...fetchedData.data];
+      setTourToLst(dataWithDefault);
+    } catch (error) {
+      console.error("Error fetching home:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchList();
+  }, [
+    pageIndex,
+    pageSize,
+    name,
+    departure,
+    destination,
+    selectedDate,
+    dateNumber,
+    airlineSelected,
+    tourType,
+    priceRange,
+  ]);
+
+  const fetchList = async () => {
+    setLoading(true);
+
+    const queryParams: Record<string, any> = {
+      page: (pageIndex - 1).toString(),
+      size: pageSize.toString(),
+    };
+
+    if (name) queryParams.name = name;
+    if (departure) queryParams.tourFromId = departure;
+    if (destination) queryParams.tourToId = destination;
+    if (dateNumber) queryParams.numberOfDays = dateNumber;
+    if (airlineSelected) queryParams.tourAirlineId = airlineSelected;
+    if (tourType === 1) queryParams.domesticTour = true;
+    if (tourType === 2) queryParams.domesticTour = false;
+    if (priceRange[0] !== MIN) queryParams.minPrice = priceRange[0].toString();
+    if (priceRange[1] > 0) queryParams.maxPrice = priceRange[1].toString();
+
+    // Xử lý ngày bắt đầu (startDateFrom, startDateTo)
+    if (selectedDate) {
+      const [start, end] = selectedDate.split(" - ");
+      const formatDate = (dateStr: string) => {
+        const [day, month, year] = dateStr.split("/");
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      };
+
+      queryParams.startDateFrom = formatDate(start);
+      queryParams.startDateTo = formatDate(end);
+    }
+    const query = new URLSearchParams(queryParams);
+
+    try {
+      const fetchedData = await getTour(query);
+      setDataLst(fetchedData.data);
+      setTotalRecords(fetchedData.totalElements);
+    } catch (error) {
+      console.error("Error fetching tour list:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="bg-[#FFF5F5] min-h-[100vh] pb-[218px] relative mt-[-208px]">
       <div className="z-10 relative">
@@ -81,7 +230,7 @@ export const ListTour = () => {
         <div className="absolute left-1/2 transform -translate-x-1/2 top-96 z-10 ">
           <div className="bg-white shadow-[0px_10px_24px_rgba(20,20,21,0.09)] rounded-[20px] p-8 w-[1280px] mx-auto ">
             <div>
-              <h1 className="text-xl font-bold text-[#141415] ">
+              <h1 className="text-xl font-bold text-[#141415]">
                 Cùng khám phá những tour tour hấp dẫn nào!
               </h1>
               <span className="text-base text-[#575859] opacity-80">
@@ -89,7 +238,7 @@ export const ListTour = () => {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center my-6">
               <div>
                 {/* Điểm đi */}
 
@@ -110,7 +259,7 @@ export const ListTour = () => {
                         </div>
                       </div>
                       <div className="text-[#767A7F] text-sm whitespace-nowrap">
-                        {departure || "Chọn điểm khởi hành"}
+                        {departure ? tourFromLst.find((item) => item.id === departure)?.name : "Chọn điểm khởi hành"}
                       </div>
                     </div>
                   </div>
@@ -118,8 +267,9 @@ export const ListTour = () => {
                   {isDepartureOpen && (
                     <div className="absolute top-full left-0 mt-2 z-50">
                       <Dropdown
-                        locations={locationsDeparture}
+                        locations={tourFromLst}
                         selected={departure}
+                        setIsShowDropdown={setIsDepartureOpen}
                         onSelect={(value) => {
                           setDeparture(value);
                           setIsDepartureOpen(false);
@@ -148,18 +298,17 @@ export const ListTour = () => {
                         </div>
                       </div>
                       <div className="text-[#767A7F] text-sm whitespace-nowrap">
-                        {destination || "Chọn điểm đến"}
+                        {destination ? tourToLst.find((item) => item.id === destination)?.name : "Chọn điểm đến"}
                       </div>
                     </div>
                   </div>
-
                   {isDestinationOpen && (
                     <div className="absolute top-full left-0 mt-2 z-50">
                       <Dropdown
-                        locations={locationsDestination}
+                        locations={tourToLst}
                         selected={destination}
+                        setIsShowDropdown={setIsDestinationOpen}
                         onSelect={(value) => {
-                          console.log("🚀 ~ Home ~ value:222", value);
                           setDestination(value);
                           setIsDestinationOpen(false);
                         }}
@@ -192,10 +341,12 @@ export const ListTour = () => {
                     <div className="absolute top-full left-0 mt-2 z-50 bg-white  ">
                       <DateRangePicker
                         onConfirm={(date) => {
-                          console.log("🚀 ~ Home ~ date:", date);
+                          console.log('Selected date:', date);
+                          
                           setSelectedDate(date);
                           setShowDatePicker(false);
                         }}
+                        setIsShowDropdown={setShowDatePicker}
                       />
                     </div>
                   )}
@@ -218,7 +369,7 @@ export const ListTour = () => {
                         </div>
                       </div>
                       <div className="text-[#767A7F] text-sm whitespace-nowrap">
-                        {dateNumber || "Số ngày muốn đi"}
+                        {dateNumber ? dateNumberDrpdown.find((item) => item.id === dateNumber)?.name : "Số ngày muốn đi"}
                       </div>
                     </div>
                   </div>
@@ -228,6 +379,7 @@ export const ListTour = () => {
                       <Dropdown
                         locations={dateNumberDrpdown}
                         selected={dateNumber}
+                        setIsShowDropdown={setIsShowDateNumber}
                         onSelect={(value) => {
                           setDateNumber(value);
                           setIsShowDateNumber(false);
@@ -239,12 +391,16 @@ export const ListTour = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
               <div className="col-span-2">
-                <label className="block text-sm font-medium mb-1">
+                <div className="text-[#141415] text-[20px] font-medium mb-1">
                   Khoảng giá
-                </label>
-                <div className="px-2">
+                </div>
+                <div className="flex justify-between mt-2 mb-2 text-[16px] font-[500]">
+                  <span>{priceRange[0].toLocaleString()} đ</span>
+                  <span>{priceRange[1].toLocaleString()} đ</span>
+                </div>
+                <div>
                   <Range
                     step={STEP}
                     min={MIN}
@@ -276,70 +432,40 @@ export const ListTour = () => {
                     renderThumb={({ props }) => (
                       <div
                         {...props}
-                        className="w-5 h-5 bg-yellow-500 rounded-full shadow-lg border-2 border-white cursor-pointer"
+                        className="w-5 h-5 bg-[#fff] rounded-full shadow-lg border-[1px] border-[#D6D9DC] cursor-pointer"
                       />
                     )}
                   />
-
-                  <div className="flex justify-between mt-2 text-sm font-semibold">
-                    <span>{priceRange[0].toLocaleString()} đ</span>
-                    <span>{priceRange[1].toLocaleString()} đ</span>
-                  </div>
                 </div>
               </div>
               <div className="col-span-1">
-                <div className="relative ">
-                  <div className="flex flex-col gap-y-3  ">
-                    <div>
-                      <h1 className="text-[#141415] font-medium text-xl">
-                        Hãng bay
-                      </h1>
-                    </div>
+                <div className="relative">
+                  <div className="flex flex-col gap-y-3">
+                    <h1 className="text-[#141415] font-medium text-xl">Hãng bay</h1>
                     <div
-                      className="w-full justify-between h-12 p-3 rounded-xl bg-[#F4F5F6] flex items-center cursor-pointer "
-                      onClick={() => {
-                        setIsShowAirline(!isShowAirline);
-                      }}
+                      className="w-full h-12 p-3 rounded-xl bg-[#F4F5F6] flex items-center cursor-pointer justify-between"
+                      onClick={() => setIsShowAirline(!isShowAirline)}
                     >
-                      {airlineSelected ? (
+                      <div className="flex gap-x-2 items-center justify-between">
                         <div className="flex gap-x-2 items-center">
                           <span className="text-base text-[#252627]">
-                            {airlineSelected}
+                            {airlineSelected ? dataAirlineLst.find((airline) => airline.id === airlineSelected)?.name : "Tất cả"}
                           </span>
-                          <span className="text-xs font-medium text-[#B9BDC1] ">
-                            (
-                            {options.find(
-                              (option) => option.label === airlineSelected
-                            )?.count || 0}
-                            )
-                          </span>
+                          {/* <span className="text-xs font-medium text-[#B9BDC1]">
+                            ({options.find((option) => option.label === airlineSelected)?.count || 0})
+                          </span> */}
                         </div>
-                      ) : (
-                        <div className="flex gap-x-2 items-center">
-                          <span className="text-base text-[#252627]">
-                            {" "}
-                            Tất cả{" "}
-                          </span>
-                          <span className="text-xs font-medium text-[#B9BDC1] ">
-                            (4)
-                          </span>
-                        </div>
-                      )}
-
-                      <div className="size-6">
-                        <img
-                          src={arrow_drop_down}
-                          alt=""
-                          className="w-full h-full"
-                        />
                       </div>
+                      <img src={arrow_drop_down} alt="" className="h-full" />
                     </div>
                   </div>
+
                   {isShowAirline && (
                     <div className="absolute top-full left-0 mt-2 z-100">
                       <Dropdown
-                        locations={airline}
+                        locations={dataAirlineLst}
                         selected={airlineSelected}
+                        setIsShowDropdown={setIsShowAirline}
                         onSelect={(value) => {
                           setAirlineSelected(value);
                           setIsShowAirline(false);
@@ -348,51 +474,25 @@ export const ListTour = () => {
                     </div>
                   )}
                 </div>
+
               </div>
               <div className="col-span-1">
-                <div className="relative ">
-                  <div className="flex flex-col gap-y-3  ">
-                    <div>
-                      <h1 className="text-[#141415] font-medium text-xl">
-                        Loại tour
-                      </h1>
-                    </div>
+                <div className="relative">
+                  <div className="flex flex-col gap-y-3">
+                    <h1 className="text-[#141415] font-medium text-xl">Loại tour</h1>
                     <div
-                      className="w-full justify-between h-12 p-3 rounded-xl bg-[#F4F5F6] flex items-center cursor-pointer "
-                      onClick={() => {
-                        setIsShowTourType(!isShowTourType);
-                      }}
+                      className="w-full h-12 p-3 rounded-xl bg-[#F4F5F6] flex items-center cursor-pointer justify-between"
+                      onClick={() => setIsShowTourType(!isShowTourType)}
                     >
-                      {tourType ? (
-                        <div className="flex gap-x-2 items-center">
-                          <span className="text-base text-[#252627]">
-                            {tourType}
-                          </span>
-                          <span className="text-xs font-medium text-[#B9BDC1] ">
-                            (
-                            {options.find((option) => option.label === tourType)
-                              ?.count || 0}
-                            )
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex gap-x-2 items-center">
-                          <span className="text-base text-[#252627]">
-                            Nội địa
-                          </span>
-                          <span className="text-xs font-medium text-[#B9BDC1] ">
-                            (2)
-                          </span>
-                        </div>
-                      )}
-
-                      <div className="size-6">
-                        <img
-                          src={arrow_drop_down}
-                          alt=""
-                          className="w-full h-full"
-                        />
+                      <div className="flex gap-x-2 items-center justify-between">
+                        <span className="text-base text-[#252627]">
+                          {tourType ? listTourType.find((type) => type.id === tourType)?.name : "Tất cả"}
+                        </span>
+                        {/* <span className="text-xs font-medium text-[#B9BDC1]">
+                          ({options.find(option => option.label === tourType)?.count || 0})
+                        </span> */}
                       </div>
+                      <img src={arrow_drop_down} alt="" className="h-full" />
                     </div>
                   </div>
                   {isShowTourType && (
@@ -400,6 +500,7 @@ export const ListTour = () => {
                       <Dropdown
                         locations={listTourType}
                         selected={tourType}
+                        setIsShowDropdown={setIsShowTourType}
                         onSelect={(value) => {
                           setTourType(value);
                           setIsShowTourType(false);
@@ -419,17 +520,14 @@ export const ListTour = () => {
               <img src={patternListTour} alt="" className="absolute top-0" />
               <div className="absolute top-1/2 right-5 transform -translate-y-1/2 flex gap-x-3">
                 <div className="relative">
-                  <img
-                    src={searchIcon}
-                    alt=""
-                    className="absolute  top-1/2 -translate-y-1/2 left-3 size-6"
-                  />
-                  <input
-                    type="search"
-                    name=""
-                    id=""
+                  <Input
+                    size='large'
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     placeholder="Tìm kiếm"
-                    className="rounded-2xl border border-[#D6D9DC] h-12 p-3 w-[315px] pl-11"
+                    className="h-12 p-3 w-[315px] !rounded-2xl"
+                    prefix={<img src={searchIcon}/>}
+                    allowClear
                   />
                 </div>
                 <div className="rounded-2xl border border-[#D6D9DC] h-12 p-3  bg-white relative w-[150px] text-end cursor-pointer">
@@ -444,26 +542,23 @@ export const ListTour = () => {
             </div>
           </div>
           <div className="mt-8 z-20">
-            <TourCard />
-          </div>
-          <div className="mt-8 z-20">
-            <TourCard />
-          </div>
-          <div className="mt-8 z-20">
-            <TourCard />
-          </div>
-          <div className="mt-8 z-20">
-            <TourCard />
+            {dataLst.map((tourData, index) => (
+              <div key={index}>
+                <TourCard tourData={tourData} />
+              </div>
+            ))}
           </div>
         </div>
-        <div className="flex items-center justify-center  mt-10">
+        { dataLst.length > 0 && <div className="flex items-center justify-center  mt-10">
           <CustomPagination
-            currentPage={1}
-            totalPages={100}
-            pageSize={10}
-            onChange={(page) => console.log("page:", page)}
+            currentPage={pageIndex}
+            totalPages={totalRecords}
+            pageSize={pageSize}
+            onChange={(page) => {
+              setSearchParams({ page: page.toString(), size: pageSize.toString() });
+            }}
           />
-        </div>
+        </div> }
       </div>
       <div className="w-full absolute bottom-[-20px] z-1">
         <img src={placePdf} alt="" className="w-full" />

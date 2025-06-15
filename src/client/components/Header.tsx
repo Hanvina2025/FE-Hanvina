@@ -149,14 +149,14 @@ const Header = () => {
         <div className="w-[300px] h-[116px] borderRadiusCustom bg-[#BB2C26]  flex justify-center items-center cursor-pointer">
           <img src={logo} alt="header" className="" onClick={handleNavigate} />
         </div>
-        <div className="flex h-full gap-x-10 items-center">
+        <div className="flex h-full gap-x-5 items-center">
           {menu.map((item, index) => (
             <NavLink
               key={index}
               to={item.link}
               onClick={() => setIsMenuOpen(false)}
               className={({ isActive }) =>
-                `group inline-flex items-centerrounded-md text-base font-medium text-center relative ${
+                `group inline-flex items-centerrounded-md text-base font-medium text-center relative nav-link ${
                   isActive || item.link == source ? "nav-link-active" : ""
                 }`
               }

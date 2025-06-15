@@ -45,7 +45,7 @@ const Home = () => {
           </div>
 
           <div className="bg-white shadow-[0px_10px_24px_rgba(20,20,21,0.09)] rounded-[20px] p-6 max-w-7xl mx-auto mt-10">
-            <div className="lg:flex items-center justify-center gap-[24px]">
+            <div className="lg:flex items-center justify-center gap-[24px] relative z-[20]">
               {/* Điểm đi */}
               <div className="relative cursor-pointer">
                 <div
@@ -78,6 +78,7 @@ const Home = () => {
                         setDeparture(value);
                         setIsDepartureOpen(false);
                       }}
+                      setIsShowDropdown={setIsDepartureOpen}
                     />
                   </div>
                 )}
@@ -112,10 +113,10 @@ const Home = () => {
                       locations={locationsDestination}
                       selected={destination}
                       onSelect={(value) => {
-                        console.log("🚀 ~ Home ~ value:222", value);
                         setDestination(value);
                         setIsDestinationOpen(false);
                       }}
+                      setIsShowDropdown={setIsDestinationOpen}
                     />
                   </div>
                 )}
@@ -144,17 +145,17 @@ const Home = () => {
                   <div className="absolute top-full left-0 mt-2 z-50 bg-white  ">
                     <DateRangePicker
                       onConfirm={(date) => {
-                        console.log("🚀 ~ Home ~ date:", date);
                         setSelectedDate(date);
                         setShowDatePicker(false);
                       }}
+                      setIsShowDropdown={setShowDatePicker}
                     />
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="mt-[28px] relative h-[48px] cursor-pointer">
+            <div className="mt-[28px] h-[48px] cursor-pointer relative  z-[10]">
               <img src={ButtonLong} className="w-full h-[48px] mx-auto" />
               <div className="absolute w-full top-[12px] text-center font-[500] text-[16px] text-white">
                 Tìm kiếm

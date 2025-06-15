@@ -1,4 +1,67 @@
-import { useState, useEffect, useRef } from "react";
+// import React, { useState } from "react";
+// import { DatePicker, ConfigProvider, Button } from "antd";
+// import type { RangePickerProps } from "antd/es/date-picker";
+// import dayjs from "dayjs";
+// import "dayjs/locale/vi";
+// import viVN from "antd/locale/vi_VN";
+// import "antd/dist/reset.css"; // reset style của antd nếu bạn muốn dùng Tailwind nhiều
+
+// const { RangePicker } = DatePicker;
+
+// const DateRangePicker = () => {
+//   const [open, setOpen] = useState(false);
+//   const [dates, setDates] = useState<RangePickerProps["value"]>(null);
+
+//   const handleConfirm = () => {
+//     console.log("Confirmed dates:", dates);
+//     setOpen(false);
+//   };
+
+//   const handleCancel = () => {
+//     setDates(null);
+//     setOpen(false);
+//   };
+
+//   return (
+//     <ConfigProvider locale={viVN}>
+//       <div className="flex flex-col items-start gap-4 p-4 bg-white rounded-2xl shadow-lg">
+//         <RangePicker
+//           open={open}
+//           onOpenChange={setOpen}
+//           value={dates}
+//           onChange={(val) => setDates(val)}
+//           format="DD/MM/YYYY"
+//           className="w-full"
+//           style={{ borderRadius: "0.75rem", padding: "0.5rem" }}
+//           renderExtraFooter={() => (
+//             <div className="flex justify-between mt-2">
+//               <Button
+//                 onClick={handleCancel}
+//                 className="border-red-500 text-red-500 hover:bg-red-50"
+//               >
+//                 Hủy lọc
+//               </Button>
+//               <Button
+//                 type="primary"
+//                 className="bg-red-600 hover:bg-red-700"
+//                 onClick={handleConfirm}
+//               >
+//                 Xác nhận
+//               </Button>
+//             </div>
+//           )}
+//         />
+//         <Button onClick={() => setOpen(true)} className="bg-gray-100">
+//           Chọn khoảng thời gian
+//         </Button>
+//       </div>
+//     </ConfigProvider>
+//   );
+// };
+
+// export default DateRangePicker;
+
+import { useState } from "react";
 
 const DAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 
@@ -41,21 +104,7 @@ const padCalendar = (month: number, year: number) => {
   return [...padStart, ...currentDays, ...padEnd];
 };
 
-const DateRangePicker = ({onConfirm, setIsShowDropdown}) => {
-  const dropdownRef = useRef(null);
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsShowDropdown(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [setIsShowDropdown]);
-
+const DateRangePicker = ({onConfirm}) => {
   const [leftMonth, setLeftMonth] = useState(6); 
   const [leftYear, setLeftYear] = useState(2025);
   const [rightMonth, setRightMonth] = useState(7); 
@@ -127,8 +176,8 @@ const DateRangePicker = ({onConfirm, setIsShowDropdown}) => {
           {days.map((day, i) => (
             <div
               key={i}
-              className={`h-8 w-8 flex items-center justify-center rounded-full cursor-pointer
-                ${day.isDisabled ? "text-gray-400" : isSelected(day.date) ? "bg-[#BB2C26] text-white" : "hover:bg-red-100"}`}
+              className={`h-8 flex items-center justify-center rounded-full cursor-pointer
+                ${day.isDisabled ? "text-gray-400" : isSelected(day.date) ? "bg-red-500 text-white" : "hover:bg-red-100"}`}
               onClick={() => !day.isDisabled && handleSelect(day.date)}
             >
               {day.date ? day.date.getDate() : ""}
@@ -140,12 +189,12 @@ const DateRangePicker = ({onConfirm, setIsShowDropdown}) => {
   };
 
   return (
-    <div ref={dropdownRef} className="rounded-xl inline-block shadow-2xl">
-      <div className="flex gap-4 pb-4 bg-[#F4F5F6] m-4 p-4 rounded-lg">
+    <div className="bg-white p-4 rounded-xl shadow-lg inline-block">
+      <div className="flex gap-4 border-b pb-4">
         {renderCalendar(leftMonth, leftYear)}
         {renderCalendar(rightMonth, rightYear)}
       </div>
-      <div className="flex mt-4 px-4 gap-x-3 mb-4">
+      <div className="flex  mt-4 px-2 gap-x-3 ">
         <button
           onClick={() => {
             setStartDate(null);

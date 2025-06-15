@@ -89,9 +89,15 @@ header.header {
     padding: 16px;
   }
 }
-
+.nav-link .navbar-text {
+  padding: 8px 16px;
+  border-radius: 12px;
+}
 .nav-link-active .navbar-text {
-  color: #BB2C26;
+  background-color: #BB2C26;
+  padding: 8px 16px;
+  border-radius: 12px;
+  color: #fff;
 }
 .nav-link-active::after {
   content: "";
