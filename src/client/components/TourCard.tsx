@@ -25,7 +25,7 @@ const TourCard = ({ tourData }) => {
     if (tourData?.key) {
       fetchList(tourData?.key);
     }
-    }, [tourData?.key]);
+    }, [tourData?.key, departure]);
   
   const fetchList = async (key: string) => {
     const query: any = new URLSearchParams({
@@ -185,7 +185,7 @@ const TourCard = ({ tourData }) => {
                     Tổng số chỗ:
                   </span>
                   <span className="ml-1 text-[#767A7F] text-base font-medium">
-                    {tourData.numberOfSeats}
+                    {departure?.totalSeat || ""}
                   </span>
 
                   <div className="h-4 border-l border-gray-300 border-dashed mx-3" />
@@ -194,12 +194,16 @@ const TourCard = ({ tourData }) => {
                     Đã bán:
                   </span>
                   <span className="ml-1 text-[#767A7F] text-base font-medium">
-                    {tourData.numberOfSeats - 25}
+                    {departure?.totalSeatBooked || "0"}
                   </span>
                 </div>
                 <div className="mt-2 ">
                   <h1 className="text-[#BB2C26] font-semibold">
-                    Số chỗ còn lại: 25 chỗ
+                    Số chỗ còn lại: {
+                      departure?.totalSeat != null
+                      ? (departure.totalSeat - (departure.totalSeatBooked ?? 0)) + ' chỗ'
+                      : ""
+                    }
                   </h1>
                 </div>
               </div>
@@ -211,13 +215,13 @@ const TourCard = ({ tourData }) => {
               <div>
                 <p className="text-base font-[500] text-[#141415]">Giá tiền</p>
                 <h1 className="text-[#BB2C26] text-xl font-semibold">
-                  29,00,000 đ
+                  {departure?.adultPrice ? `${departure.adultPrice.toLocaleString()} đ` : ""}
                 </h1>
               </div>
               <div>
                 <p className="text-base font-[500] text-[#141415]">Hoa hồng</p>
                 <h1 className="text-[#BB2C26]  text-xl font-semibold">
-                  29,00,000 đ
+                  {departure?.commissionPriceCtv ? `${departure.commissionPriceCtv.toLocaleString()} đ` : ""}
                 </h1>
               </div>
             </div>

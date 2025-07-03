@@ -204,10 +204,12 @@ export const ListTour = () => {
       queryParams.startDateFrom = formatDate(start);
       queryParams.startDateTo = formatDate(end);
     }
-    const query = new URLSearchParams(queryParams);
+    const query: any = new URLSearchParams(queryParams);
 
     try {
       const fetchedData = await getTour(query);
+      console.log('fetchedData', fetchedData);
+      
       setDataLst(fetchedData.data);
       setTotalRecords(fetchedData.totalElements);
     } catch (error) {
@@ -543,7 +545,7 @@ export const ListTour = () => {
           </div>
           <div className="mt-8 z-20">
             {dataLst.map((tourData, index) => (
-              <div key={index}>
+              <div key={index} className="mb-5">
                 <TourCard tourData={tourData} />
               </div>
             ))}

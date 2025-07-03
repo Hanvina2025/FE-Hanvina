@@ -37,17 +37,18 @@ function App() {
           <Routes>
             {/* Client Routes */}
             <Route
+              path={PATH.HOME}
               element={
                 <ProtectedRoute>
                   <Layout />
                 </ProtectedRoute>
               }
             >
+              <Route index element={<Home />} />
               <Route path={PATH.LIST_TOUR} element={<ListTour />} />
               <Route path={PATH.LIST_TOUR_ACTIVE} element={<ListTourActive />} />
               <Route path={PATH.ACTIVITY_LIST} element={<ActivityList />} />
               <Route path={PATH.RESERVE} element={<Reserve />} />
-              <Route path={PATH.HOME} element={<Home />} />
               <Route path={PATH.REPORT} element={<ReportChart />} />
               <Route path={PATH.NEWS} element={<News />} />
               <Route path={PATH.NEW_DETAIL} element={<NewDetail />} />
@@ -69,7 +70,7 @@ function App() {
             </Route>
 
             {/* Login Register Routes  */}
-            <Route path="/admin/login" element={<Login />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/admin/register" element={<Register />} />
 
             {/* Admin Routes */}

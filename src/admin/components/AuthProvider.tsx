@@ -16,7 +16,7 @@ interface AuthContextProps {
   isChecking: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userData: any;
-  settingValue: any; 
+  // settingValue: any; 
   login: (token: string, role: string, id: number) => void;
   logout: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [token, setToken] = useState<string | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [userData, setUserData] = useState<any>();
-  const [settingValue, setSettingValue] = useState<any>({});
+  // const [settingValue, setSettingValue] = useState<any>({});
 
   // Initialize state from localStorage
   useEffect(() => {
@@ -79,20 +79,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, []);
   
-  useEffect(() => {
-    fetchSetting();
-  }, []);
+  // useEffect(() => {
+  //   fetchSetting();
+  // }, []);
 
-  const fetchSetting = async () => {
-    try {
-      const fetchedData = await detailSetting();
-      if (fetchedData) {
-        setSettingValue(fetchedData);
-      }
-    } catch (error) {
-      console.error("Error fetching settings:", error);
-    }
-  };
+  // const fetchSetting = async () => {
+  //   try {
+  //     const fetchedData = await detailSetting();
+  //     if (fetchedData) {
+  //       setSettingValue(fetchedData);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching settings:", error);
+  //   }
+  // };
 
   const login = (authToken: string, userRole: string, userId: number) => {
     setToken(authToken);
@@ -155,7 +155,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         token,
         userData,
         isChecking,
-        settingValue,
+        // settingValue,
         login,
         logout,
         setUserData,
