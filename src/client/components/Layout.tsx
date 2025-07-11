@@ -19,13 +19,13 @@ const Layout: React.FC = () => {
         backgroundSize: "100% 50%",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "top",
-        height: "90vh",
+        height: "110vh",
       }}
     >
       <div className="pt-[30px] fixed z-[100] w-full flex justify-center ">
         <Header />
       </div>
-      <div className="relative min-h-[calc(50vh-100px)] pt-52">
+      <div className="relative min-h-[100vh] pt-52">
         <main>{<Outlet />}</main>
       </div>
 

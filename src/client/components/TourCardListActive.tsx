@@ -1,19 +1,16 @@
 import React from "react";
 import locationList from "/assets/images/locationList.svg";
-import { Link } from "react-router-dom";
+import IcCalendar1 from "/assets/images/ic-calendar.svg";
+import IcCalendar2 from "/assets/images/ic-calendar2.svg";
+import IcClock from "/assets/images/ic-clock.svg";
+import IcProfileUser from "/assets/images/ic-profile-2user.svg";
+import IcUserTag from "/assets/images/ic-user-tag.svg";
+import IcUser from "/assets/images/ic-user2.svg";
+import { PATH } from "@/libs/constants/path";
+import { Link, useNavigate } from "react-router-dom";
 
-const TourCardListActive = ({
-  title,
-  location,
-  departure,
-  bookingDate,
-  groupLeader,
-  members,
-  deadline,
-  price,
-  status,
-  isDeposited,
-}) => {
+const TourCardListActive = ({ tourActiveData, isDeposited }) => {
+  const navigate = useNavigate();
   const statusColors = {
     unpaid: {
       label: "Chưa thanh toán cọc",
@@ -40,59 +37,75 @@ const TourCardListActive = ({
       background: "#FEF9E1",
       color: "#CC7B02",
     },
-    paid: { label: "Đã cọc", background: "#EBF4FF", color: "#006AF5" },
+    paid: {
+      label: "Đã cọc",
+      background: "#EBF4FF",
+      color: "#006AF5",
+    },
     fully_paid: {
       label: "Đã tất toán",
       background: "#E6FAED",
       color: "#34B764",
     },
   };
+
+  // Map statusName từ API sang key statusColors
+  const getStatusKey = (statusName) => {
+    switch (statusName) {
+      case "Chưa thanh toán cọc":
+        return "unpaid";
+      case "Chờ duyệt thanh toán cọc":
+        return "pending";
+      case "Chưa tất toán":
+        return "pendingTransactions";
+      case "Đã tất toán":
+        return "fully_paid";
+      case "Đã cọc":
+        return "paid";
+      default:
+        return "unpaid";
+    }
+  };
+
+  const statusKey = getStatusKey(tourActiveData?.statusName);
+
+  const handleNavigate = () => {
+    navigate(`/reserve/step2/${tourActiveData?.id}`);
+  };
+
   return (
-    // <div className="px-[30px] py-5 bg-white shadow-md rounded-[20px] ">
-    //   <h1 className="text-[#141415] font-medium text-2xl">{title}</h1>
-    //   <div className="mt-6">
-    //     <div className="flex items-center gap-x-4">
-    //       <img src={locationList} alt="" />
-    //       <div className="flex items-center gap-x-2">
-    //         <p className="text-[#141415] text-base font-semibold">Điểm đi:</p>
-    //         <span className="text-[#767A7F] text-base font-semibold">
-    //           {location}
-    //         </span>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
-    <div className="bg-white rounded-xl shadow-md p-5 flex flex-col sm:flex-row justify-between gap-4 border border-red-50">
-      {/* Left Section */}
+    <div className="bg-white rounded-[20px] boxShadowTourActive p-5 flex flex-col sm:flex-row justify-between gap-4 cursor-pointer"
+      onClick={handleNavigate}
+    >
       <div className="flex-1 ">
         <div className="flex justify-between items-center">
-          <h2 className="font-bold text-lg mb-4">{title}</h2>
+          <h2 className="font-bold text-[24px] mb-6">{tourActiveData?.tourName}</h2>
           <div className="flex items-center gap-2 rounded">
             {isDeposited && (
               <span
                 className={`px-2 py-1 rounded-md text-xs font-semibold`}
                 style={{
-                  backgroundColor: statusColors.paid?.background || "gray",
-                  color: statusColors.paid?.color || "white",
+                  backgroundColor: statusColors.paid.background,
+                  color: statusColors.paid.color,
                 }}
               >
-                {statusColors.paid?.label}
+                {statusColors.paid.label}
               </span>
             )}
             <span
-              className={`px-2 py-1 rounded-md text-xs font-semibold`}
+              className={`px-2 py-1 rounded-md text-base font-[500]`}
               style={{
-                backgroundColor: statusColors[status]?.background || "gray",
-                color: statusColors[status]?.color || "white",
+                backgroundColor: statusColors[statusKey].background,
+                color: statusColors[statusKey].color,
               }}
             >
-              {statusColors[status]?.label || "Không xác định"}
+              {statusColors[statusKey].label}
             </span>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-5 gap-y-3 gap-x-6 text-sm text-gray-700">
-          <div className="md:col-span-2 border-r border-gray-300 pr-4">
+        <div className="grid lg:grid-cols-5 gap-y-3 gap-x-6">
+          <div className="lg:col-span-2 border-r border-[#D4D3D2] border-dashed pr-4">
             <div className="flex flex-col space-y-4">
               <div className="flex items-center gap-2">
                 <img src={locationList} alt="" />
@@ -100,75 +113,73 @@ const TourCardListActive = ({
                   <p className="text-[#141415] text-base font-semibold">
                     Điểm đi:
                   </p>
-                  <span className="text-[#767A7F] text-base font-semibold">
-                    {location}
+                  <span className="text-[#8F9499] text-base font-[500]">
+                    {tourActiveData?.tourFrom} - {tourActiveData?.tourTo}
                   </span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <img src={locationList} alt="" />
+                <img src={IcCalendar1} alt="" />
                 <div className="flex items-center gap-x-2">
                   <p className="text-[#141415] text-base font-semibold">
                     Ngày khởi hành:
                   </p>
-                  <span className="text-[#767A7F] text-base font-semibold">
-                    {departure}
+                  <span className="text-[#8F9499] text-base font-[500]">
+                    {tourActiveData?.startDate}
                   </span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <img src={locationList} alt="" />
+                <img src={IcProfileUser} alt="" />
                 <div className="flex items-center gap-x-2">
                   <p className="text-[#141415] text-base font-semibold">
                     Thông tin hành khách:
                   </p>
-                  <span className="text-[#767A7F] text-base font-semibold">
-                    {members}
+                  <span className="text-[#8F9499] text-base font-[500]">
+                    Người lớn: {tourActiveData?.adultCount ?? 0}, Trẻ em: {tourActiveData?.childrenCount ?? 0}, Em bé: {tourActiveData?.babyCount ?? 0}
                   </span>
                 </div>
               </div>
             </div>
           </div>
-          <div className="md:col-span-2 pl-4">
+
+          <div className="lg:col-span-2 pl-4">
             <div className="flex flex-col space-y-4">
               <div className="flex items-center gap-2">
-                <img src={locationList} alt="" />
+                <img src={IcCalendar2} alt="" />
                 <div className="flex items-center gap-x-2">
                   <p className="text-[#141415] text-base font-semibold">
                     Ngày đặt:
                   </p>
-                  <span className="text-[#767A7F] text-base font-semibold">
-                    {bookingDate}
+                  <span className="text-[#8F9499] text-base font-[500]">
+                    {tourActiveData?.createdTime?.slice(0, 10)}
                   </span>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <img src={locationList} alt="" />
+                <img src={IcUser} alt="" />
                 <div className="flex items-center gap-x-2">
                   <p className="text-[#141415] text-base font-semibold">
                     Đại diện đoàn:
                   </p>
-                  <span className="text-[#767A7F] text-base font-semibold">
-                    {groupLeader}
+                  <span className="text-[#8F9499] text-base font-[500]">
+                    {tourActiveData?.customerName}
                   </span>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <img src={locationList} alt="" />
+                <img src={IcUserTag} alt="" />
                 <div className="flex items-center gap-x-2">
                   <p className="text-[#141415] text-base font-semibold">
                     Số thứ tự giữ chỗ:
                   </p>
                   <div className="flex items-center gap-x-2">
-                    <span className="text-[#767A7F] text-base font-semibold">
-                      01
+                    <span className="text-[#8F9499] text-base font-[500]">
+                      {tourActiveData?.orderNo ?? "01"}
                     </span>
-                    <Link
-                      to="/chi-tiet-tour"
-                      className="text-sm text-[#006AF5]"
-                    >
+                    <Link to="/chi-tiet-tour" className="text-sm text-[#006AF5]">
                       Chi tiết
                     </Link>
                   </div>
@@ -176,48 +187,32 @@ const TourCardListActive = ({
               </div>
             </div>
           </div>
-          <div className="md:col-span-1">
-            <div className="flex flex-col items-end space-y-4">
-              <div className="flex items-center  gap-2">
-                <img src={locationList} alt="" />
+
+          <div className="lg:col-span-1">
+            <div className="flex flex-col items-end space-y-3">
+              <div className="flex items-center gap-2">
+                <img src={IcClock} alt="" />
                 <div className="flex items-center gap-x-2">
                   <p className="text-[#141415] text-base font-semibold">
                     Hạn thanh toán cọc:
                   </p>
                   <div className="flex items-center gap-x-2">
-                    <span className="text-[#767A7F] text-base font-semibold">
-                      {deadline}
+                    <span className="text-[#8F9499] text-base font-[500]">
+                      {/* {tourActiveData?.settlementDate} */}
                     </span>
                   </div>
                 </div>
               </div>
-              <div>
-                <p className="text-[#141415] text-base font-semibold">
-                  Giá tiền
-                </p>
+              <div className="text-[#141415] text-base font-semibold">
+                Giá tiền
               </div>
-              <div>
-                <p className="text-[#BB2C26] text-2xl font-medium">{price} đ</p>
+              <div className="text-[#BB2C26] text-[24px] font-medium">
+                {tourActiveData?.totalPrice?.toLocaleString()} đ
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Right Section */}
-      {/* <div className="flex flex-col  items-end justify-between min-w-[160px]">
-        <div className="bg-red-100 text-red-600 text-xs font-semibold px-3 py-1 rounded-md mb-2">
-          Chưa thanh toán cọc
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-black font-semibold">Hạn thanh toán cọc: </span>
-          <span className="text-black">{deadline}</span>
-        </div>
-        <div className="text-right mt-4">
-          <p className="text-sm text-gray-600">Giá tiền</p>
-          <p className="text-red-600 text-xl font-bold">{price} đ</p>
-        </div>
-      </div> */}
     </div>
   );
 };

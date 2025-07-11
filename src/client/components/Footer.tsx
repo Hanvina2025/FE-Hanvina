@@ -2,6 +2,8 @@ import logo from "/assets/images/logo2.svg";
 import fb from "/assets/images/fb.svg";
 import zalo from "/assets/images/zalo.svg";
 import "./Footer.scss";
+import { Link } from 'react-router-dom';
+import { PATH } from "@/libs/constants/path";
 
 const Footer = () => {
   return (
@@ -32,24 +34,24 @@ const Footer = () => {
               </h3>
 
               <li>
-                <a href="#" className="hover:underline">
+                <Link to={PATH.LIST_TOUR} className="hover:underline">
                   Khám phá tour
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:underline">
+                <Link to={PATH.REPORT} className="hover:underline">
                   Về chúng tôi
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:underline">
+                <Link to={PATH.NEWS} className="hover:underline">
                   Tin tức
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:underline">
+                <Link to={PATH.CONTACT} className="hover:underline">
                   Liên hệ
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

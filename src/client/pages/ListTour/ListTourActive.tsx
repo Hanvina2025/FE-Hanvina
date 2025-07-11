@@ -1,14 +1,69 @@
-
+import React, { useState, useEffect } from "react";
+import "./index.scss";
 import listTourImage from "/assets/images/listTourImage.svg";
 import patternListTour from "/assets/images/patternListTour.svg";
 import searchIcon from "/assets/images/search.svg";
 import filterIcon from "/assets/images/filter.svg";
 import placePdf from "/assets/images/placePdf.svg";
-import "./index.scss";
 import TourCard from "@/client/components/TourCard";
 import CustomPagination from "@/client/components/Pagination";
+import { useSearchParams } from 'react-router-dom';
+import { getTourActive } from "@/client/apis/tour";
 
 const ListTourActive = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageIndex = parseInt(searchParams.get("page") || "1", 10);
+  const pageSize = parseInt(searchParams.get("size") || "10", 10);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [dataLst, setDataLst] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+
+  useEffect(() => {
+    fetchList();
+  }, [
+    pageIndex,
+    pageSize,
+    name,
+    selectedDate
+  ]);
+
+  const fetchList = async () => {
+    setLoading(true);
+
+    const queryParams: Record<string, any> = {
+      page: (pageIndex - 1).toString(),
+      size: pageSize.toString(),
+    };
+
+    if (name) queryParams.name = name;
+
+    // Xử lý ngày bắt đầu (startDateFrom, startDateTo)
+    if (selectedDate) {
+      const [start, end] = selectedDate.split(" - ");
+      const formatDate = (dateStr: string) => {
+        const [day, month, year] = dateStr.split("/");
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      };
+
+      queryParams.startDateFrom = formatDate(start);
+      queryParams.startDateTo = formatDate(end);
+    }
+    const query: any = new URLSearchParams(queryParams);
+
+    try {
+      const fetchedData = await getTourActive(query);
+      console.log('fetchedData', fetchedData);
+
+      setDataLst(fetchedData.data);
+      setTotalRecords(fetchedData.totalElements);
+    } catch (error) {
+      console.error("Error fetching tour list:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="bg-[#FFF5F5] pb-[218px]">
       <div className="z-10">

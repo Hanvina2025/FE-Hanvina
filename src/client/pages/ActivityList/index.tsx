@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import searchIcon from "/assets/images/search.svg";
 import filterIcon from "/assets/images/filter.svg";
 import listActive from "/assets/images/listActive.svg";
@@ -6,85 +6,71 @@ import patternListTour from "/assets/images/patternListTour.svg";
 import calendarBlack from "/assets/images/calendarBlack.svg";
 import DateRangePicker from "@/client/components/DateRangePicker";
 import TourCardListActive from "@/client/components/TourCardListActive";
+import CustomPagination from "@/client/components/Pagination";
+import { useSearchParams } from 'react-router-dom';
+import { getTourActive } from "@/client/apis/tour";
+import { getTourCategory } from "@/client/apis/category";
+import loadingGif from "/assets/images/loading.gif"
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
 
 const ActivityList = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageIndex = parseInt(searchParams.get("page") || "1", 10);
+  const pageSize = parseInt(searchParams.get("size") || "10", 10);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [dataLst, setDataLst] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const mockTourData = [
-    {
-      title: "[TOUR NOSHOPP] THƯỢNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU",
-      location: "Hà Nội",
-      departure: "Thứ 2, 31/3/2025",
-      bookingDate: "28/2/2025 15:20",
-      groupLeader: "Nguyễn Bảo An",
-      members: "12 người lớn, 2 trẻ em, 0 em bé",
-      deadline: "23:25",
-      price: "20.000.000",
-      status: "unpaid",
-    },
-    {
-      title: "[TOUR NOSHOPP] THƯỢNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU",
-      location: "Hà Nội",
-      departure: "Thứ 2, 31/3/2025",
-      bookingDate: "28/2/2025 15:20",
-      groupLeader: "Nguyễn Bảo An",
-      members: "12 người lớn, 2 trẻ em, 0 em bé",
-      deadline: "23:25",
-      price: "20.000.000",
-      status: "pending",
-    },
-    {
-      title: "[TOUR NOSHOPP] THƯỢNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU",
-      location: "Hồ Chí Minh",
-      departure: "Thứ 2, 31/3/2025",
-      bookingDate: "28/2/2025 15:20",
-      groupLeader: "Nguyễn Bảo An",
-      members: "12 người lớn, 2 trẻ em, 0 em bé",
-      deadline: "24/03/2005",
-      price: "20.000.000",
-      status: "paid",
-    },
-    {
-      title: "[TOUR NOSHOPP] BẮC KINH - HÀNG CHÂU - Ô TRẤN - THƯỢNG HẢI",
-      location: "Hà Nội",
-      departure: "Thứ 2, 29/4/2025",
-      bookingDate: "24/2/2025 19:00",
-      groupLeader: "Nguyễn Duy Tùng",
-      members: "9 người lớn, 5 trẻ em, 0 em bé",
-      deadline: "24/03/2005",
-      price: "24.000.000",
-      status: "statusPendingApproval",
-      isDeposited: true,
-    },
-    {
-      title: "[TOUR NOSHOPP] BẮC KINH - HÀNG CHÂU - Ô TRẤN - THƯỢNG HẢI",
-      location: "Hà Nội",
-      departure: "Thứ 2, 29/4/2025",
-      bookingDate: "24/2/2025 19:00",
-      groupLeader: "Nguyễn Duy Tùng",
-      members: "9 người lớn, 5 trẻ em, 0 em bé",
-      deadline: "24/03/2005",
-      price: "24.000.000",
-      status: "incomplete",
-      isDeposited: true,
-    },
-    {
-      title: "[TOUR NOSHOPP] THƯỢNG HẢI - Ô TRẤN - BẮC KINH",
-      location: "Hồ Chí Minh",
-      departure: "Thứ 2, 30/6/2025",
-      bookingDate: "15/3/2025 10:46",
-      groupLeader: "Nguyễn Phúc Thành Long",
-      members: "12 người lớn, 2 trẻ em, 0 em bé",
-      deadline: "-",
-      price: "38.000.000",
-      status: "fully_paid",
-    },
-  ];
+
+  useEffect(() => {
+    fetchList();
+  }, [
+    pageIndex,
+    pageSize,
+    name,
+    selectedDate
+  ]);
+
+  const fetchList = async () => {
+    setLoading(true);
+
+    const queryParams: Record<string, any> = {
+      page: (pageIndex - 1).toString(),
+      size: pageSize.toString(),
+    };
+
+    if (name) queryParams.name = name;
+
+    if (selectedDate) {
+      const [start, end] = selectedDate.split(" - ");
+      const formatDate = (dateStr: string) => {
+        const [day, month, year] = dateStr.split("/");
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      };
+
+      queryParams.startDateFrom = formatDate(start);
+      queryParams.startDateTo = formatDate(end);
+    }
+    const query: any = new URLSearchParams(queryParams);
+
+    try {
+      const fetchedData = await getTourActive(query);
+      setDataLst(fetchedData.data);
+      setTotalRecords(fetchedData.totalElements);
+    } catch (error) {
+      console.error("Error fetching tour list:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="max-w-7xl mx-auto mb-10">
+    <div className="container mx-auto pb-10">
       <div>
-        <div className="mt-8 w-full flex justify-center">
+        <div className="w-full flex justify-center">
           <div className="relative">
             <img src={listActive} alt="" />
             <img src={patternListTour} alt="" className="absolute top-0" />
@@ -111,13 +97,13 @@ const ActivityList = () => {
                   <img src={calendarBlack} alt="" />
                 </div>
                 {showDatePicker && (
-                  <div className="absolute top-full right-0 mt-2 z-50 bg-white  ">
+                  <div className="absolute top-full right-0 mt-2 z-50 bg-white rounded-lg">
                     <DateRangePicker
                       onConfirm={(date) => {
-                        console.log("🚀 ~ Home ~ date:", date);
                         setSelectedDate(date);
                         setShowDatePicker(false);
                       }}
+                      setIsShowDropdown={setShowDatePicker}
                     />
                   </div>
                 )}
@@ -134,29 +120,35 @@ const ActivityList = () => {
           </div>
         </div>
       </div>
-      {/* <div className="mt-8">
-        <TourCardListActive
-          title="[TOUR NOSHOPP] THƯỢNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU"
-          location="Hà Nội"
-          departure="Thứ 2, 31/3/2025"
-          bookingDate="28/2/2025 15:20"
-          groupLeader="Nguyễn Bảo An"
-          members="12 người lớn, 2 trẻ em, 0 em bé"
-          deadline="23:25"
-          price="20.000.000"
-          status="fully_paid"
-          extraStatus=""
-        />
-      </div> */}
-      <div className="mt-8 space-y-4">
-        {mockTourData.map((tour, index) => (
-          <TourCardListActive
-            key={index}
-            {...tour}
-            isDeposited={tour.isDeposited ?? false}
-          />
-        ))}
-      </div>
+
+      {
+        loading ?
+          <div className="flex items-center justify-center mt-8">
+            <Spin indicator={<LoadingOutlined style={{ fontSize: 50, color: "#BB2C26" }} spin />} size="large" />
+          </div>
+          :
+          <>
+            <div className="mt-8 space-y-5">
+              {dataLst.map((tourActive) => (
+                <TourCardListActive
+                  key={tourActive?.id}
+                  tourActiveData={tourActive}
+                  isDeposited={tourActive?.isDeposited ?? false}
+                />
+              ))}
+            </div>
+            {dataLst.length > 0 && <div className="flex items-center justify-center mt-10">
+              <CustomPagination
+                currentPage={pageIndex}
+                totalPages={totalRecords}
+                pageSize={pageSize}
+                onChange={(page) => {
+                  setSearchParams({ page: page.toString(), size: pageSize.toString() });
+                }}
+              />
+            </div>}
+          </>
+      }
     </div>
   );
 };

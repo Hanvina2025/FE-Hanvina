@@ -1,12 +1,27 @@
 import "../pages/Home/index.scss";
-
+import React, { useEffect, useRef } from "react";
 export default function DropDownSelectDepartureDate({
   locations,
   onSelect,
   selected,
+  setIsShowDropdown
 }) {
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setIsShowDropdown]);
   return (
-    <div className="w-[480px] rounded-2xl bg-white p-4 shadow-xl text-sm font-medium">
+    <div ref={dropdownRef} className="w-[480px] rounded-2xl bg-white p-4 shadow text-sm font-medium">
       {/* Header */}
       <div className="grid grid-cols-3 bg-[#FBCFCD] rounded-[6px] px-6 py-3 text-gray-800">
         <div className="font-medium text-[#252627] text-base">

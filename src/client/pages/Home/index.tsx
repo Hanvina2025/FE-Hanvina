@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import "./index.scss";
 import bannerHome from "/assets/images/banner-home.svg";
 import location from "/assets/images/location.svg";
@@ -7,8 +8,10 @@ import placePdf from "/assets/images/placePdf.svg";
 import ButtonLong from "/assets/images/button-long.svg";
 import Dropdown from "@/client/components/DropDown";
 import down from "/assets/images/arrow-down.svg";
-import { useState } from "react";
 import DateRangePicker from "@/client/components/DateRangePicker";
+import { ArrowDown2 } from "iconsax-react"
+import { getTourCategory } from "@/client/apis/category";
+
 const Home = () => {
   const [isDepartureOpen, setIsDepartureOpen] = useState(false);
   const [isDestinationOpen, setIsDestinationOpen] = useState(false);
@@ -16,6 +19,8 @@ const Home = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [departure, setDeparture] = useState("");
   const [destination, setDestination] = useState("");
+  const [tourFromLst, setTourFromLst] = useState([]);
+  const [tourToLst, setTourToLst] = useState([]);
   const locationsDestination = [
     "Tất cả",
     "Cửu Trại Câu",
@@ -25,7 +30,29 @@ const Home = () => {
     "Tây Tạng",
     "Đài Loan",
   ];
-  const locationsDeparture = ["Tất cả", "Hà Nội", "Hồ Chí Minh"];
+  useEffect(() => {
+    fetchListTourFrom();
+    fetchListTourTo();
+  }, []);
+  const fetchListTourFrom = async () => {
+    try {
+      const fetchedData = await getTourCategory(`type=0`);
+      const dataWithDefault = [{ id: "", name: "Tất cả" }, ...fetchedData.data];
+      setTourFromLst(dataWithDefault);
+    } catch (error) {
+      console.error("Error fetching home:", error);
+    }
+  };
+
+  const fetchListTourTo = async () => {
+    try {
+      const fetchedData = await getTourCategory(`type=24`);
+      const dataWithDefault = [{ id: "", name: "Tất cả" }, ...fetchedData.data];
+      setTourToLst(dataWithDefault);
+    } catch (error) {
+      console.error("Error fetching home:", error);
+    }
+  };
   return (
     <div className="">
       <div className="grid lg:grid-cols-7 gap-[66px] max-w-7xl mx-auto relative z-[10] md:pb-[108px]">
@@ -60,7 +87,7 @@ const Home = () => {
                     <div className="font-semibold text-[#333] flex gap-x-2 items-center">
                       <span>Điểm đi</span>
                       <div className="w-6 h-6">
-                        <img src={down} alt="" className="w-full h-full" />
+                        <ArrowDown2 />
                       </div>
                     </div>
                     <div className="text-[#767A7F] text-sm whitespace-nowrap">
@@ -72,7 +99,7 @@ const Home = () => {
                 {isDepartureOpen && (
                   <div className="absolute top-full left-0 mt-2 z-100">
                     <Dropdown
-                      locations={locationsDeparture}
+                      locations={tourFromLst}
                       selected={departure}
                       onSelect={(value) => {
                         setDeparture(value);
@@ -98,7 +125,7 @@ const Home = () => {
                     <div className="font-semibold text-[#333] flex gap-x-2 items-center">
                       <span>Điểm đến</span>
                       <div className="w-6 h-6">
-                        <img src={down} alt="" className="w-full h-full" />
+                        <ArrowDown2 />
                       </div>
                     </div>
                     <div className="text-[#767A7F] text-sm whitespace-nowrap">
@@ -110,7 +137,7 @@ const Home = () => {
                 {isDestinationOpen && (
                   <div className="absolute top-full left-0 mt-2 z-50">
                     <Dropdown
-                      locations={locationsDestination}
+                      locations={tourToLst}
                       selected={destination}
                       onSelect={(value) => {
                         setDestination(value);
@@ -142,7 +169,7 @@ const Home = () => {
                 </div>
 
                 {showDatePicker && (
-                  <div className="absolute top-full left-0 mt-2 z-50 bg-white  ">
+                  <div className="absolute top-full left-0 mt-2 z-50 bg-white rounded-xl">
                     <DateRangePicker
                       onConfirm={(date) => {
                         setSelectedDate(date);

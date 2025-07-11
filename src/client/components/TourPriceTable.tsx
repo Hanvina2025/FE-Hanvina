@@ -1,6 +1,13 @@
-export default function TourPriceTable() {
+import React from "react";
+
+export default function TourPriceTable({ departure }) {
+  const adultPrice = departure?.adultPrice;
+  const childrenPrice = departure?.childrenPrice;
+  const commissionAdultPrice = departure?.commissionAdultPrice | departure?.commissionPriceAdult;
+  const commissionChildrenPrice = departure?.commissionChildrenPrice | departure?.commissionPriceChildren;
+
   return (
-    <div className="rounded-2xl shadow-md overflow-hidden w-full max-w-3xl mx-auto">
+    <div className="rounded-2xl shadow-all overflow-hidden w-full max-w-3xl mx-auto">
       <table className="min-w-full text-sm text-left">
         <thead>
           <tr className="bg-[#FDF3F3] text-black">
@@ -26,16 +33,24 @@ export default function TourPriceTable() {
             <td className="px-4 py-3 font-semibold text-[#141415] text-base">
               Hoa hồng
             </td>
-            <td className="px-4 py-3 text-[#141415]">500,000 đ</td>
-            <td className="px-4 py-3 text-[#141415]">400,000 đ</td>
-            <td className="px-4 py-3  text-[#141415]">0 đ</td>
+            <td className="px-4 py-3 text-[#141415]">
+              {commissionAdultPrice ? `${commissionAdultPrice.toLocaleString()} đ` : "0 đ"}
+            </td>
+            <td className="px-4 py-3 text-[#141415]">
+              {commissionChildrenPrice ? `${commissionChildrenPrice.toLocaleString()} đ` : "0 đ"}
+            </td>
+            <td className="px-4 py-3 text-[#141415]">0 đ</td>
           </tr>
           <tr className="border-t">
             <td className="px-4 py-3 font-semibold text-[#141415] text-base">
               Giá bán
             </td>
-            <td className="px-4 py-3 text-[#141415]">20,000,000 đ</td>
-            <td className="px-4 py-3 text-[#141415]">19,000,000 đ</td>
+            <td className="px-4 py-3 text-[#141415]">
+              {adultPrice ? `${adultPrice.toLocaleString()} đ` : "0 đ"}
+            </td>
+            <td className="px-4 py-3 text-[#141415]">
+              {childrenPrice ? `${childrenPrice.toLocaleString()} đ` : "0 đ"}
+            </td>
             <td className="px-4 py-3 text-[#141415]">0 đ</td>
           </tr>
         </tbody>

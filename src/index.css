@@ -4,11 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
+* {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
@@ -22,41 +23,52 @@ code {
 }
 
 
-input{
+input {
   height: 48px;
 }
 
 .ant-input {
   height: 24px;
-  line-height: 24px; /* Ensure text is vertically centered */
+  line-height: 24px;
+  /* Ensure text is vertically centered */
 }
 
-.ant-input-affix-wrapper{
+.ant-input-affix-wrapper {
   border-radius: 8px;
 }
 
 .boxShadowCustom {
-  box-shadow: 0px 2px 6px 0px rgba(20, 20, 21, 0.14);
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.08)
+}
+
+.shadow-all {
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.08)
+}
+
+.boxShadowTourActive {
+  box-shadow: 0px 10px 24px 0px rgba(20, 20, 21, 0.09);
 }
 
 .ant-pagination-item-active {
   background: #0D509F !important;
   border-color: #0D509F !important;
 }
+
 .ant-pagination-item-active a {
   color: #fff !important;
 }
+
 @media (min-width: 768px) {
   .container {
     width: 768px;
-      max-width: 768px;
+    max-width: 768px;
   }
 }
 
 @media (min-width: 1024px) {
   .container {
     width: 1024px;
-      max-width: 1024px;
+    max-width: 1024px;
   }
 }
 
@@ -64,13 +76,14 @@ input{
 @media (min-width: 1280px) {
   .container {
     width: 1280px;
-      max-width: 1280px;
+    max-width: 1280px;
   }
 }
+
 @media (min-width: 1536px) {
   .container {
     width: 1280px;
-      max-width: 1280px;
+    max-width: 1280px;
   }
 }
 

@@ -145,8 +145,8 @@ const Header = () => {
 
   return (
     <div className="container mx-auto h-[116px]">
-      <div className="flex justify-between w-full h-[96px]  shadow rounded-[30px] header-menu-background">
-        <div className="w-[300px] h-[116px] borderRadiusCustom bg-[#BB2C26]  flex justify-center items-center cursor-pointer">
+      <div className="flex justify-between w-full h-[96px]  shadow-all rounded-[30px] header-menu-background">
+        <div className="w-[300px] h-[116px] borderRadiusCustom bg-[#BB2C26]  flex justify-center items-center cursor-pointer shadow-all">
           <img src={logo} alt="header" className="" onClick={handleNavigate} />
         </div>
         <div className="flex h-full gap-x-5 items-center">
@@ -161,10 +161,10 @@ const Header = () => {
                 }`
               }
             >
-              <span
+              <div
                 className="navbar-text text-[#141415] text-base font-semibold relative"
                 dangerouslySetInnerHTML={{ __html: item.title }}
-              ></span>
+              ></div>
             </NavLink>
           ))}
           <div className="flex gap-x-3">

@@ -3,7 +3,6 @@ import {
   FavoriteChart,
   Book,
   Award,
-  UserTag,
   Setting2,
   Subtitle,
   ArrowRight3,
@@ -11,7 +10,7 @@ import {
 import "./Sidebar.scss";
 import React, { ReactNode, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { ADMIN_PATHS } from "../../libs/constants/path";
+import { PATH } from "../../libs/constants/path";
 import Logo from "./Logo";
 
 interface IMenu {
@@ -23,27 +22,27 @@ interface IMenu {
 const menu: IMenu[] = [
   {
     icon: <Teacher size="24" />,
-    link: ADMIN_PATHS.THI_CU,
+    link: PATH.REPORT,
     title: "Quản lý thi cử",
   },
   {
     icon: <FavoriteChart size="24" />,
-    link: ADMIN_PATHS.BAO_CAO_THONG_KE,
+    link: PATH.REPORT,
     title: "Báo cáo thống kê",
   },
   {
     icon: <Book size="24" />,
-    link: ADMIN_PATHS.BAI_VIET,
+    link: PATH.REPORT,
     title: "Quản lý bài viết",
   },
   {
     icon: <Award size="24" />,
-    link: ADMIN_PATHS.CHUNG_CHI,
+    link: PATH.REPORT,
     title: "Quản lý chứng chỉ",
   },
   {
     icon: <Setting2 size="24" />,
-    link: ADMIN_PATHS.CAI_DAT_BO_LOC,
+    link: PATH.REPORT,
     title: "Cài đặt bộ lọc",
     children: [
       {
@@ -70,7 +69,7 @@ const menu: IMenu[] = [
   },
   {
     icon: <Subtitle size="24" />,
-    link: ADMIN_PATHS.CAI_DAT_WEB,
+    link: PATH.REPORT,
     title: "Cài đặt website",
   },
 ];

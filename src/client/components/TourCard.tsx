@@ -25,7 +25,13 @@ const TourCard = ({ tourData }) => {
     if (tourData?.key) {
       fetchList(tourData?.key);
     }
-    }, [tourData?.key, departure]);
+    }, [tourData?.key]);
+
+  useEffect(() => {
+    if (dataStartDate.length > 0 && !departure) {
+      setDeparture(dataStartDate[0]);  // Chọn đối tượng đầu tiên khi dataStartDate có dữ liệu
+    }
+  }, [dataStartDate, departure]);
   
   const fetchList = async (key: string) => {
     const query: any = new URLSearchParams({
@@ -41,15 +47,20 @@ const TourCard = ({ tourData }) => {
   };
 
   const handleNavigate = () => {
-    navigate(PATH.RESERVE);
+    navigate(PATH.RESERVE, { state: { tourData } });
+  };
+
+  const handleDateChange = (value) => {
+    setDeparture(value);
+    setShowDatePicker(false);
   };
 
   return (
-    <div className="max-w-7xl bg-white mx-auto p-8 py-[20px] rounded-[20px] shadow-md">
+    <div className="container bg-white mx-auto p-8 py-[20px] rounded-[20px] shadow-all">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-medium text-[#141415] ">
-            {tourData.name || "[TOUR NOSHOPP] Default Tour"}
+            {tourData?.name || "[TOUR NOSHOPP] Default Tour"}
           </h1>
         </div>
         <div>
@@ -69,7 +80,7 @@ const TourCard = ({ tourData }) => {
                 Điểm đi:
               </p>
               <span className="text-[#767A7F] text-xl font-medium">
-                {tourData.tourFromName || ""}
+                {tourData?.tourFromName || ""}
               </span>
             </div>
             <img src={IcLine} alt="" />
@@ -82,7 +93,7 @@ const TourCard = ({ tourData }) => {
                   Điểm đến:
                 </p>
                 <span className="text-[#767A7F] text-xl font-medium">
-                  {tourData.tourToName || ""}
+                  {tourData?.tourToName || ""}
                 </span>
               </div>
             </div>
@@ -100,7 +111,7 @@ const TourCard = ({ tourData }) => {
                   Hãng bay:
                 </p>
                 <span className="text-[#767A7F] text-base font-medium">
-                  {tourData.tourAirlineName || ""}
+                  {tourData?.tourAirlineName || ""}
                 </span>
               </div>
             </div>
@@ -111,7 +122,7 @@ const TourCard = ({ tourData }) => {
                   Thời gian:
                 </p>
                 <span className="text-[#767A7F] text-base font-medium">
-                  {tourData.numberOfDays || ""} ngày
+                  {tourData?.numberOfDays || ""} ngày
                 </span>
               </div>
             </div>
@@ -123,7 +134,7 @@ const TourCard = ({ tourData }) => {
                 </p>
                 <div
                   className="relative rounded-lg border cursor-pointer border-[#B9BDC1] h-8 flex items-center justify-between "
-                  onClick={() => setShowDatePicker(!showDatePicker)}
+                  onClick={() => {setShowDatePicker(!showDatePicker)}}
                 >
                   <span className="px-2 text-base font-medium opacity-80">
                     {departure?.startDate || ""}
@@ -135,10 +146,8 @@ const TourCard = ({ tourData }) => {
                       <DropDownSelectDepartureDate
                         locations={dataStartDate}
                         selected={departure}
-                        onSelect={(value) => {
-                          setDeparture(value);
-                          setShowDatePicker(false);
-                        }}
+                        setIsShowDropdown={setShowDatePicker}
+                        onSelect={handleDateChange}
                       />
                     </div>
                   )}
@@ -158,7 +167,7 @@ const TourCard = ({ tourData }) => {
                 </div>
                 <div className="w-full text-ce">
                   <span className="text-base text-[#767A7F]">
-                    {tourData.noteExternal || ""}
+                    {tourData?.noteExternal || ""}
                   </span>
                 </div>
               </div>

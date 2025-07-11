@@ -1,10 +1,35 @@
 .custom_bg_btn-payment {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 247, 246, 0) -23.81%,
-    #ffeae8 71.07%
-  ) !important;
+  background: linear-gradient(90deg,
+      rgba(255, 247, 246, 0) -23.81%,
+      #ffeae8 71.07%) !important;
 
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
+  border-bottom: 1px dashed #D6D9DC;
+}
+
+.step-two-upload {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  .ant-upload-list-text .ant-upload-list-item-name {
+    display: inline-block;
+    max-width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+  }
+}
+
+.custom-dragger-supplier {
+  .ant-upload-drag {
+    background: #fff !important;
+    border: none;
+
+    .ant-upload {
+      padding: 0;
+    }
+  }
 }

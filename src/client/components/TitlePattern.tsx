@@ -3,8 +3,8 @@ import patternTitle from "/assets/images/patternTitle.svg";
 
 const TitlePattern = ({ children, title }) => {
   return (
-    <div className="bg-white rounded-[20px] shadow-md  ">
-      <div className="relative ">
+    <div className="bg-white rounded-[20px] shadow-all ">
+      <div className="relative border-b border-[#D6D9DC] border-dashed">
         <img src={patternTitle} alt="" />
         <div className="absolute top-0 w-full h-full px-5 py-4">
           <div className="w-full flex items-center h-full justify-between">

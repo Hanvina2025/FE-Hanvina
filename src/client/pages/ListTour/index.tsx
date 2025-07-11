@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import listTour from "/assets/images/listTour.svg";
 import dateTime from "/assets/images/dateTime.svg";
 import DateRangePicker from "@/client/components/DateRangePicker";
-import { Input } from "antd";
-import down from "/assets/images/arrow-down.svg";
+import { Input, Spin } from "antd";
+import { ArrowDown2 } from "iconsax-react"
 import { useSearchParams } from 'react-router-dom';
+import { LoadingOutlined } from '@ant-design/icons';
 import Dropdown from "@/client/components/DropDown";
 import location from "/assets/images/location.svg";
 import timeIcon from "/assets/images/time.svg";
@@ -34,9 +35,11 @@ export const ListTour = () => {
   const [tourType, setTourType] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [departure, setDeparture] = useState("");
+  const [sort, setSort] = useState("");
+  const [isSort, setIsSort] = useState(false);
   const [destination, setDestination] = useState("");
   const [dateNumber, setDateNumber] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 0]);
+  const [priceRange, setPriceRange] = useState([0, 120000000]);
   const pageIndex = parseInt(searchParams.get("page") || "1", 10);
   const pageSize = parseInt(searchParams.get("size") || "10", 10);
   const [dataLst, setDataLst] = useState([]);
@@ -46,7 +49,7 @@ export const ListTour = () => {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const MIN = 0;
-  const MAX = 200000000;
+  const MAX = 120000000;
   const STEP = 1000000;
   const dateNumberDrpdown = [
     {
@@ -111,18 +114,37 @@ export const ListTour = () => {
     },
   ];
   const listTourType: any = [
-  {
-    id: 0,  
-    name: "Tất cả",
-  },{
-    id: 1,
-    name: "Nội địa",
-  },
-  {
-    id: 2,  
-    name: "Quốc tế",
-  }];
+    {
+      id: 0,
+      name: "Tất cả",
+    }, {
+      id: 1,
+      name: "Nội địa",
+    },
+    {
+      id: 2,
+      name: "Quốc tế",
+    }];
+  const sortLst: any = [
+    {
+      id: 0,
+      name: "Tất cả",
+    }, {
+      id: 1,
+      name: "Bán chạy",
+    },
+    {
+      id: 2,
+      name: "Giá tăng dần",
+    },
+    {
+      id: 3,
+      name: "Giá giảm dần",
+    }
+  ];
   const [dataAirlineLst, setDataAirlineLst] = useState([]);
+  const debouncedName = useDebounce(name);
+  const debouncedPriceRange = useDebounce(priceRange);
 
   useEffect(() => {
     fetchListAirline();
@@ -160,19 +182,30 @@ export const ListTour = () => {
     }
   };
 
+  function useDebounce<T>(value: T, delay = 500): T {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+      const handler = setTimeout(() => setDebouncedValue(value), delay);
+      return () => clearTimeout(handler);
+    }, [value, delay]);
+
+    return debouncedValue;
+  }
+
   useEffect(() => {
     fetchList();
   }, [
     pageIndex,
     pageSize,
-    name,
     departure,
     destination,
     selectedDate,
     dateNumber,
     airlineSelected,
     tourType,
-    priceRange,
+    debouncedName,
+    debouncedPriceRange,
   ]);
 
   const fetchList = async () => {
@@ -208,8 +241,6 @@ export const ListTour = () => {
 
     try {
       const fetchedData = await getTour(query);
-      console.log('fetchedData', fetchedData);
-      
       setDataLst(fetchedData.data);
       setTotalRecords(fetchedData.totalElements);
     } catch (error) {
@@ -257,7 +288,7 @@ export const ListTour = () => {
                       <div className="font-semibold text-[#333] flex gap-x-2 items-center">
                         <span>Điểm đi</span>
                         <div className="w-6 h-6">
-                          <img src={down} alt="" className="w-full h-full" />
+                          <ArrowDown2 />
                         </div>
                       </div>
                       <div className="text-[#767A7F] text-sm whitespace-nowrap">
@@ -296,7 +327,7 @@ export const ListTour = () => {
                       <div className="font-semibold text-[#333] flex gap-x-2 items-center">
                         <span>Điểm đến</span>
                         <div className="w-6 h-6">
-                          <img src={down} alt="" className="w-full h-full" />
+                          <ArrowDown2 />
                         </div>
                       </div>
                       <div className="text-[#767A7F] text-sm whitespace-nowrap">
@@ -330,7 +361,7 @@ export const ListTour = () => {
                       <div className="font-semibold text-[#333] flex gap-x-2 items-center">
                         <span>Thời gian</span>
                         <div className="w-6 h-6">
-                          <img src={down} alt="" className="w-full h-full" />
+                          <ArrowDown2 />
                         </div>
                       </div>
                       <div className="text-[#767A7F] text-sm whitespace-nowrap">
@@ -343,8 +374,6 @@ export const ListTour = () => {
                     <div className="absolute top-full left-0 mt-2 z-50 bg-white  ">
                       <DateRangePicker
                         onConfirm={(date) => {
-                          console.log('Selected date:', date);
-                          
                           setSelectedDate(date);
                           setShowDatePicker(false);
                         }}
@@ -367,7 +396,7 @@ export const ListTour = () => {
                       <div className="font-semibold text-[#333] flex gap-x-2 items-center">
                         <span>Số ngày</span>
                         <div className="w-6 h-6">
-                          <img src={down} alt="" className="w-full h-full" />
+                          <ArrowDown2 />
                         </div>
                       </div>
                       <div className="text-[#767A7F] text-sm whitespace-nowrap">
@@ -422,9 +451,8 @@ export const ListTour = () => {
                             className="absolute h-full  rounded-full customRange"
                             style={{
                               left: `${((minVal - MIN) / (MAX - MIN)) * 100}%`,
-                              width: `${
-                                ((maxVal - minVal) / (MAX - MIN)) * 100
-                              }%`,
+                              width: `${((maxVal - minVal) / (MAX - MIN)) * 100
+                                }%`,
                             }}
                           />
                           {children}
@@ -453,9 +481,6 @@ export const ListTour = () => {
                           <span className="text-base text-[#252627]">
                             {airlineSelected ? dataAirlineLst.find((airline) => airline.id === airlineSelected)?.name : "Tất cả"}
                           </span>
-                          {/* <span className="text-xs font-medium text-[#B9BDC1]">
-                            ({options.find((option) => option.label === airlineSelected)?.count || 0})
-                          </span> */}
                         </div>
                       </div>
                       <img src={arrow_drop_down} alt="" className="h-full" />
@@ -490,9 +515,6 @@ export const ListTour = () => {
                         <span className="text-base text-[#252627]">
                           {tourType ? listTourType.find((type) => type.id === tourType)?.name : "Tất cả"}
                         </span>
-                        {/* <span className="text-xs font-medium text-[#B9BDC1]">
-                          ({options.find(option => option.label === tourType)?.count || 0})
-                        </span> */}
                       </div>
                       <img src={arrow_drop_down} alt="" className="h-full" />
                     </div>
@@ -528,30 +550,58 @@ export const ListTour = () => {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Tìm kiếm"
                     className="h-12 p-3 w-[315px] !rounded-2xl"
-                    prefix={<img src={searchIcon}/>}
+                    prefix={<img src={searchIcon} />}
                     allowClear
                   />
                 </div>
-                <div className="rounded-2xl border border-[#D6D9DC] h-12 p-3  bg-white relative w-[150px] text-end cursor-pointer">
-                  <img
-                    src={filterIcon}
-                    alt=""
-                    className="absolute  top-1/2 -translate-y-1/2 left-3 size-6"
-                  />
-                  Sắp xếp theo
+                <div className="relative cursor-pointer">
+                  <div className="rounded-2xl border border-[#D6D9DC] h-12 p-3  bg-white relative w-[150px] text-end cursor-pointer"
+                    onClick={() => {
+                      setIsSort(!isSort);
+                    }}>
+                    <img
+                      src={filterIcon}
+                      alt=""
+                      className="absolute  top-1/2 -translate-y-1/2 left-3 size-6"
+                    />
+                    {sort ? sortLst.find((airline) => airline.id === sort)?.name : "Sắp xếp theo"}
+                  </div>
+
+                  {isSort && (
+                    <div className="absolute top-full right-0 mt-2 z-50">
+                      <Dropdown
+                        locations={sortLst}
+                        selected={sort}
+                        setIsShowDropdown={setIsSort}
+                        onSelect={(value) => {
+                          setSort(value);
+                          setIsSort(false);
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-          <div className="mt-8 z-20">
-            {dataLst.map((tourData, index) => (
-              <div key={index} className="mb-5">
-                <TourCard tourData={tourData} />
+          {
+            loading ?
+              <div className="flex items-center justify-center mt-8">
+                <Spin indicator={<LoadingOutlined style={{ fontSize: 50, color: "#BB2C26" }} spin />} size="large" />
               </div>
-            ))}
-          </div>
+              :
+              <>
+                <div className="mt-8 z-20">
+                  {dataLst.map((tourData, index) => (
+                    <div key={index} className="mb-5">
+                      <TourCard tourData={tourData} />
+                    </div>
+                  ))}
+                </div>
+              </>
+          }
         </div>
-        { dataLst.length > 0 && <div className="flex items-center justify-center  mt-10">
+        {dataLst.length > 0 && <div className="flex items-center justify-center mt-10">
           <CustomPagination
             currentPage={pageIndex}
             totalPages={totalRecords}
@@ -560,7 +610,7 @@ export const ListTour = () => {
               setSearchParams({ page: page.toString(), size: pageSize.toString() });
             }}
           />
-        </div> }
+        </div>}
       </div>
       <div className="w-full absolute bottom-[-20px] z-1">
         <img src={placePdf} alt="" className="w-full" />

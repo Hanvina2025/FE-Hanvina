@@ -1,13 +1,12 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { PATH, ADMIN_PATHS } from "./libs/constants/path";
+import { PATH } from "./libs/constants/path";
 
 // CLIENT
 import ProtectedRoute from "./client/components/ProtectedRoute";
 import Layout from "./client/components/Layout";
 import Home from "./client/pages/Home";
 import { ListTour } from "./client/pages/ListTour";
-import ListTourActive from "./client/pages/ListTour/ListTourActive.tsx";
 import Reserve from "./client/pages/Reserve";
 import ActivityList from "./client/pages/ActivityList";
 import PaymentStepTwo from "./client/pages/PaymentStepTwo";
@@ -24,9 +23,6 @@ import Register from "./admin/Register";
 
 // ADMIN_PATHS
 import { AuthProvider } from "./admin/components/AuthProvider";
-import AdminLayout from "./admin/components/Layout";
-import Dashboard from "./admin/Dashboard";
-import ProtectedAdminRoute from "./admin/components/ProtectedRoute";
 import PaymentStepThree from "./client/pages/PaymentStepThree.tsx";
 import { PaymentStepFor } from "./client/pages/PaymentStepFor.tsx/index.tsx";
 function App() {
@@ -46,8 +42,7 @@ function App() {
             >
               <Route index element={<Home />} />
               <Route path={PATH.LIST_TOUR} element={<ListTour />} />
-              <Route path={PATH.LIST_TOUR_ACTIVE} element={<ListTourActive />} />
-              <Route path={PATH.ACTIVITY_LIST} element={<ActivityList />} />
+              <Route path={PATH.LIST_TOUR_ACTIVE} element={<ActivityList />} />
               <Route path={PATH.RESERVE} element={<Reserve />} />
               <Route path={PATH.REPORT} element={<ReportChart />} />
               <Route path={PATH.NEWS} element={<News />} />
@@ -72,19 +67,6 @@ function App() {
             {/* Login Register Routes  */}
             <Route path="/login" element={<Login />} />
             <Route path="/admin/register" element={<Register />} />
-
-            {/* Admin Routes */}
-
-            <Route
-              path={ADMIN_PATHS.DASHBOARD}
-              element={
-                <ProtectedAdminRoute>
-                  <AdminLayout />
-                </ProtectedAdminRoute>
-              }
-            >
-              <Route index element={<Dashboard />} />
-            </Route>
           </Routes>
         </Router>
       </AuthProvider>
