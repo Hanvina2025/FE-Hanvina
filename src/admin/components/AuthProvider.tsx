@@ -8,7 +8,6 @@ import React, {
 } from "react";
 import { ROLE } from "../types/enum";
 import { getAccountDetail } from "../apis/accountService";
-import { detailSetting } from "../apis/setting";
 interface AuthContextProps {
   isAuthenticated: boolean;
   role: string | null;
@@ -40,14 +39,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     const storedToken = localStorage.getItem("authToken");
     const storeId = localStorage.getItem("authId");
-    
+
     if (storedToken) {
       const isValid = validateToken(storedToken);
-      
+
       if (isValid) {
         const decodedToken: { roles: string[]; sub: string } =
           jwtDecode(storedToken);
-          
+
         if (storeId) {
           getAccountDetail(storeId)
             .then((res) => {
@@ -74,11 +73,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         setIsAuthenticated(true);
         setIsChecking(false);
       }
-    }else{
+    } else {
       setIsChecking(false);
     }
   }, []);
-  
+
   // useEffect(() => {
   //   fetchSetting();
   // }, []);
@@ -129,7 +128,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         logout(); // Token is expired, log out the user
         return false;
       }
-      
+
       const [role] = decodedToken.roles;
 
       // Ensure the role is valid (matches one of the ROLE enum values)

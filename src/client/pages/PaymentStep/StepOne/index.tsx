@@ -21,7 +21,6 @@ import {
   postPreOrder, postOrderCustomer, postOrderDiscountPlus
 } from "@/client/apis/tour";
 import { PATH } from "@/libs/constants/path";
-import { count } from "console";
 
 const Reserve = () => {
   const location = useLocation();

@@ -368,7 +368,7 @@ const PaymentStepTwo = () => {
           </div>
           <div className="flex gap-x-6">
             <div className="bg-white rounded-[20px] shadow-md  mt-6">
-              <div className="relative custom_bg_btn">
+              <div className="relative custom_bg_btn-payment">
                 <img src={DepartSmall} alt="" />
                 <div className="absolute top-0 w-full h-full px-5 py-4">
                   <div className="w-full flex items-center h-full justify-between">
