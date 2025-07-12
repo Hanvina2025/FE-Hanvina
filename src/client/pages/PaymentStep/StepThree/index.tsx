@@ -16,11 +16,14 @@ import countUser from "/assets/images/countUser.svg";
 import CustomerList from "@/client/components/CustomerList";
 import ButtonShort from "/assets/images/button-short.svg";
 
+import ConfirmModal from "@/client/components/ConfirmModal"
+
 const PaymentStepThree = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [preOrder, setPreOrder] = useState<any>({});
   const [preOrderCustomer, setPreOrderCustomer] = useState<any>({});
+  const [isModalConfirm, setIsModalConfirm] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -47,6 +50,14 @@ const PaymentStepThree = () => {
     } catch (error) {
       console.error("Error fetching home:", error);
     }
+  };
+
+  const handleConfirmCancel = () => {
+    navigate(PATH.LIST_TOUR_ACTIVE)
+  };
+
+  const handleConfirmApply = async () => {
+    navigate(`/reserve/step4/${preOrder?.id}`)
   };
 
   return (
@@ -129,7 +140,7 @@ const PaymentStepThree = () => {
             </h2>
             <CustomerList />
           </div>
-          <div className="mt-6 flex justify-end">
+          <div className="mt-6 flex justify-end" onClick={() => setIsModalConfirm(true)}>
             <div className="relative h-[48px] w-[180px] cursor-pointer">
               <img src={ButtonShort} className="h-[48px] w-full" />
               <div className="absolute inset-0 flex items-center justify-center font-[500] text-[16px] text-white">
@@ -139,6 +150,15 @@ const PaymentStepThree = () => {
           </div>
         </div>
       </div>
+      <ConfirmModal
+        visible={isModalConfirm}
+        onCancel={handleConfirmCancel}
+        onConfirm={handleConfirmApply}
+        buttonTxtClose="Hoàn tất"
+        buttonTxtConfirm="Tất toán ngay"
+        title="Nộp hồ sơ khách hàng thành công!"
+        description="Hồ sơ khách hàng của bạn đã được gửi lên hệ thống thành công"
+      />
     </div>
   );
 };

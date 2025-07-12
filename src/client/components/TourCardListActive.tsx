@@ -75,10 +75,16 @@ const TourCardListActive = ({ tourActiveData }) => {
   const statusKey = getStatusKey(tourActiveData?.statusName);
 
   const handleNavigate = () => {
-    if (tourActiveData?.status == 118 || tourActiveData?.status == 119) {
-      navigate(`/reserve/step2/${tourActiveData?.id}`);
-    } else if (tourActiveData?.status == 120) {
-      navigate(`/reserve/step3/${tourActiveData?.id}`);
+    const { status, id } = tourActiveData || {};
+
+    if ([118, 119].includes(status)) {
+      navigate(`/reserve/step2/${id}`);
+    } else if (status === 120) {
+      navigate(`/reserve/step3/${id}`);
+    } else if ([121, 122, 123].includes(status)) {
+      navigate(`/reserve/step4/${id}`);
+    } else if ([124].includes(status)) {
+      navigate(`/reserve/step-done/${id}`);
     }
   };
 
@@ -205,13 +211,13 @@ const TourCardListActive = ({ tourActiveData }) => {
 
           <div className="">
             <div className="flex flex-col items-end space-y-3">
-              <div className="flex items-center gap-2">
+              <div className={`flex items-center gap-2 ${tourActiveData?.status === 124 ? 'invisible' : ''}`}>
                 <img src={IcClock} alt="" />
                 <div className="flex items-center gap-x-2">
                   <p className="text-[#141415] text-base font-semibold">
                     {([118, 119].includes(tourActiveData?.status))
                       ? "Hạn thanh toán cọc"
-                      : ([120, 121, 122].includes(tourActiveData?.status))
+                      : ([120, 121, 122, 123].includes(tourActiveData?.status))
                         ? "Hạn tất toán"
                         : ""}
                   </p>

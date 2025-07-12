@@ -40,7 +40,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link to={PATH.REPORT} className="hover:underline">
-                  Về chúng tôi
+                  Báo cáo
                 </Link>
               </li>
               <li>

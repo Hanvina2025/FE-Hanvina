@@ -11,8 +11,11 @@ import down from "/assets/images/arrow-down.svg";
 import DateRangePicker from "@/client/components/DateRangePicker";
 import { ArrowDown2 } from "iconsax-react"
 import { getTourCategory } from "@/client/apis/category";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "@/libs/constants/path"
 
 const Home = () => {
+  const navigate = useNavigate();
   const [isDepartureOpen, setIsDepartureOpen] = useState(false);
   const [isDestinationOpen, setIsDestinationOpen] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -21,15 +24,6 @@ const Home = () => {
   const [destination, setDestination] = useState("");
   const [tourFromLst, setTourFromLst] = useState([]);
   const [tourToLst, setTourToLst] = useState([]);
-  const locationsDestination = [
-    "Tất cả",
-    "Cửu Trại Câu",
-    "Phượng Hoàng Cổ Trấn",
-    "Quý Châu",
-    "Tây An",
-    "Tây Tạng",
-    "Đài Loan",
-  ];
   useEffect(() => {
     fetchListTourFrom();
     fetchListTourTo();
@@ -182,9 +176,9 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="mt-[28px] h-[48px] cursor-pointer relative  z-[10]">
+            <div className="mt-[28px] h-[48px] cursor-pointer relative z-[10]" onClick={() => navigate(PATH.LIST_TOUR)}>
               <img src={ButtonLong} className="w-full h-[48px] mx-auto" />
-              <div className="absolute w-full top-[12px] text-center font-[500] text-[16px] text-white">
+              <div className="absolute w-full top-[11px] text-center font-[500] text-[16px] text-white">
                 Tìm kiếm
               </div>
             </div>

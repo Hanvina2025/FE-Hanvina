@@ -1,48 +1,38 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Breadcrumb, Modal, Upload, message, Image, Button } from "antd";
-import "../PaymentStepTwo/index.scss";
+import React, { useState, useEffect } from "react";
+import { Breadcrumb, Upload, message } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import ConfirmModal from "@/client/components/ConfirmModal"
+import type { UploadProps } from "antd";
+import { CloseOutlined } from "@ant-design/icons"
+import dayjs from "dayjs";
 import { PATH } from "@/libs/constants/path";
+
+import arrRight from "/assets/images/arrow-right.svg";
+import StepPayment from "@/client/components/StepPayment";
+import TitlePattern from "@/client/components/TitlePattern";
+import TourPriceTable from "@/client/components/TourPriceTable";
+import buttonMedium from "/assets/images/button-short.svg";
+import buttonMediumDisable from "/assets/images/button-short-disable.svg";
+import upload from "/assets/images/upload.svg";
+import qrCode from "/assets/images/qrcode.svg";
+import successimage from "/assets/images/success.svg";
+
 import {
   getDetailPreOrder,
   getDetailOrderCustomer,
   getDetailOrderDiscountPlus,
-  postOrderPaymentDeposit,
-  putPreOrder,
-  putOrderCustomer,
-  putOrderDiscountPlus
+  postOrderPaymentSettlement
 } from "@/client/apis/tour";
-import ConfirmModal from "@/client/components/ConfirmModal"
-import type { UploadProps } from "antd";
-import { CloseOutlined } from "@ant-design/icons"
 
-import arrRight from "/assets/images/arrow-right.svg";
-import StepPayment from "@/client/components/StepPayment";
-import CustomerInformation from "@/client/components/CustomerInformation";
-import TitlePattern from "@/client/components/TitlePattern";
-import TourPriceTable from "@/client/components/TourPriceTable";
-import DeductionServiceCard from "@/client/components/DeductionServiceCard";
-import phoneYellow from "/assets/images/phoneYellow.svg";
-import userYellow from "/assets/images/userYellow.svg";
-import buttonMedium from "/assets/images/buttonMedium.svg";
-import buttonMediumNotBG from "/assets/images/buttonMediumNotBG.svg";
-import buttonMediumDisable from "/assets/images/buttonMediumDisable.svg";
 import paymentDealine from "/assets/images/paymentDealine.svg";
 import DepartSmall from "/assets/images/DepartSmall.svg";
-import upload from "/assets/images/upload.svg";
-import qrCode from "/assets/images/qrcode.svg";
+import CustomerList from "@/client/components/CustomerList";
 
 const { Dragger } = Upload;
 
-const PaymentStepTwo = () => {
+const PaymentStepFour = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const tourData = {}
-  const [customInput, setCustomInput] = useState({
-    content: "",
-    price: "",
-    quantity: 1
-  });
   const [preOrder, setPreOrder] = useState<any>({});
   const [preOrderCustomer, setPreOrderCustomer] = useState<any>({});
   const [adultCount, setAdultCount] = useState(0);
@@ -51,7 +41,6 @@ const PaymentStepTwo = () => {
   const [servicesDiscount, setServicesDiscount] = useState({ type: 1, items: [] });
   const [servicesPlus, setServicesPlus] = useState({ type: 2, items: [] });
   const [totalData, setTotalData] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalConfirm, setIsModalConfirm] = useState(false);
   const [fileBill, setFileBill] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
@@ -131,6 +120,9 @@ const PaymentStepTwo = () => {
       const fetchedData = await getDetailOrderCustomer(id);
       if (fetchedData) {
         setPreOrderCustomer(fetchedData[0])
+        setAdultCount(fetchedData[0]?.adultCount)
+        setChildrenCount(fetchedData[0]?.childrenCount)
+        setBabyCount(fetchedData[0]?.babyCount)
       }
     } catch (error) {
       console.error("Error fetching home:", error);
@@ -167,44 +159,6 @@ const PaymentStepTwo = () => {
     }
   };
 
-  const handleCustomerChange = useCallback(({ adultCount, childrenCount, babyCount }) => {
-    setAdultCount(adultCount);
-    setChildrenCount(childrenCount);
-    setBabyCount(babyCount);
-  }, []);
-
-  const handleAddCustomInput = () => {
-    if (!customInput.content || !customInput.price) {
-      alert("Vui lòng nhập đầy đủ nội dung, giá và số lượng");
-      return;
-    }
-
-    const newService = {
-      id: Date.now(), // unique
-      content: customInput.content,
-      price: Number(customInput.price),
-      count: Number(customInput.quantity),
-      tourId: tourData?.id || 0,
-      type: 2,
-      isCustom: true,
-    };
-
-    setServicesPlus(prev => ({
-      ...prev,
-      items: [...prev.items, newService],
-    }));
-    setCustomInput({ content: "", price: "", quantity: 1 }); // reset form
-  };
-
-
-  const handleCustomInputChange = (field, value) => {
-    setCustomInput(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleConfirmCancel = () => {
-    setIsModalConfirm(false);
-  };
-
   const handleSave = async () => {
     if (!fileBill) {
       message.warning("Vui lòng tải lên hóa đơn trước khi xác nhận!");
@@ -216,72 +170,8 @@ const PaymentStepTwo = () => {
       preOrderId: id,
     };
 
-    const preOrderPayload = {
-      id: preOrder?.id,
-      tourId: preOrder?.tourId,
-      customerName: preOrder?.customerName,
-      customerPhone: preOrder?.customerPhone,
-      status: preOrder?.status,
-      totalPrice: totalData?.finalTotal,
-    };
-
-
-    const orderCustomerPayload = {
-      id: preOrderCustomer?.id,
-      preOrderId: preOrderCustomer?.preOrderId,
-      adultPrice: preOrderCustomer?.adultPrice,
-      childrenPrice: preOrderCustomer?.childrenPrice,
-      commissionPriceAdult: preOrderCustomer?.commissionPriceAdult,
-      commissionPriceChildren: preOrderCustomer?.commissionPriceChildren,
-      adultCount,
-      childrenCount,
-      babyCount,
-      totalSeats: adultCount + childrenCount,
-    };
-
-    const orderDiscountPayload = {
-      preOrderId: preOrder?.id,
-      type: 1,
-      items: Array.isArray(servicesDiscount?.items) && servicesDiscount.items.length > 0
-        ? servicesDiscount.items.map(item => ({
-          id: item.id,
-          content: item.content,
-          price: item.price,
-          count: item.count,
-          totalPrice: Number(item.price) * (item.count || 1),
-        }))
-        : [],
-    };
-
-    const orderPlusPayload = {
-      preOrderId: preOrder?.id,
-      type: 2,
-      items: Array.isArray(servicesPlus.items) && servicesPlus.items.length > 0
-        ? servicesPlus.items.map(item => {
-          const payloadItem: any = {
-            content: item.content,
-            price: item.price,
-            count: item.count,
-            totalPrice: Number(item.price) * (item.count || 1),
-          };
-
-          if (item.id && !item.isCustom) {
-            payloadItem.id = item.id;
-          }
-
-          return payloadItem;
-        })
-        : [],
-    };
-
     try {
-      await postOrderPaymentDeposit(data);
-
-      await putPreOrder(preOrderPayload)
-      await putOrderCustomer(orderCustomerPayload)
-      await putOrderDiscountPlus(orderDiscountPayload)
-      await putOrderDiscountPlus(orderPlusPayload)
-
+      await postOrderPaymentSettlement(data);
       message.success("Gửi hóa đơn thành công!");
       setIsModalConfirm(true)
     } catch (error) {
@@ -292,6 +182,10 @@ const PaymentStepTwo = () => {
   };
 
   const handleConfirmApply = async () => {
+    navigate(PATH.LIST_TOUR_ACTIVE)
+  };
+
+  const handleConfirmCancel = () => {
     navigate(PATH.LIST_TOUR_ACTIVE)
   };
 
@@ -307,33 +201,31 @@ const PaymentStepTwo = () => {
       console.log('file', file);
 
       setFileBill(file);
-      return false; // Ngăn upload tự động
+      return false;
     },
   };
   return (
-    <div className="container mx-auto mb-10">
-      <div className="flex items-center justify-between">
+    <div className="max-w-7xl mx-auto mb-10">
+      <div className="flex items-center justify-between mt-8">
         <Breadcrumb
           separator={<img src={arrRight} alt="" className="size-6" />}
           className="custom-ant-breadcrumb-separator "
         >
           <Breadcrumb.Item>
-            <span className="text-[#53575A] text-xl underline cursor-pointer"
-              onClick={() => navigate(PATH.LIST_TOUR_ACTIVE)}
-            >
+            <span className="text-[#53575A] text-xl underline cursor-pointer">
               Hoạt động
             </span>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
             <span className="text-[#BB2C26] font-medium text-xl">
-              {preOrder?.tourInformation?.name || ""}
+              [TOUR NOSHOPP] THƯỢNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU
             </span>
           </Breadcrumb.Item>
         </Breadcrumb>
       </div>
       <div className="mt-6">
-        <h1 className="text-[#141415] text-[30px] font-semibold">
-          {preOrder?.tourInformation?.name || ""}
+        <h1 className="text-[#141415] text-3xl font-semibold">
+          [TOUR NOSHOPP] THƯỢNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU
         </h1>
       </div>
       <div className="mt-8">
@@ -343,12 +235,31 @@ const PaymentStepTwo = () => {
         <div className="md:col-span-7">
           <div className="mt-9 flex items-center gap-x-7">
             <img src={paymentDealine} alt="" />
-            <div className="flex gap-x-[6px]">
+            {preOrder?.status != 123 && <div className="flex gap-x-[6px]">
               <p className="text-[#141415] text-xl font-medium">
-                Hạn thanh toán cọc:
+                Hạn tất toán:
               </p>
-              <p className="text-[#DC1F18] text-xl font-medium">Còn 23:25</p>
-            </div>
+              <p className="text-[#DC1F18] text-xl font-medium">
+                {preOrder?.depositDateTime
+                  ? (() => {
+                    const now = dayjs();
+                    const end = dayjs(preOrder.depositDateTime);
+                    const diff = end.diff(now);
+                    if (diff <= 0) return "Hết hạn";
+
+                    const duration = dayjs.duration(diff);
+                    const hours = String(duration.hours()).padStart(2, "0");
+                    const minutes = String(duration.minutes()).padStart(2, "0");
+
+                    return `${hours}:${minutes}`;
+                  })()
+                  : "--"}
+              </p>
+            </div>}
+            {preOrder?.status == 123 &&
+              <div className="text-[#006AF5] text-[20px] font-[500]">
+                CHỜ DUYỆT TẤT TOÁN
+              </div>}
           </div>
           <div className="flex gap-x-6">
             <div className="bg-white rounded-[20px] boxShadowCustom mt-6">
@@ -413,6 +324,12 @@ const PaymentStepTwo = () => {
                 <div className="flex gap-x-4">
                   <div className="space-y-4 flex flex-col">
                     <span className="text-[#141415] text-base font-semibold">
+                      Người đại diện:
+                    </span>
+                    <span className="text-[#141415] text-base font-semibold">
+                      Điện thoại liên hệ:
+                    </span>
+                    <span className="text-[#141415] text-base font-semibold">
                       Người lớn:
                     </span>
                     <span className="text-[#141415] text-base font-semibold">
@@ -423,14 +340,20 @@ const PaymentStepTwo = () => {
                     </span>
                   </div>
                   <div className="space-y-4 flex flex-col">
-                    <span className="text-[#BB2C26] text-base font-semibold">
+                    <span className="text-[#767A7F] text-base font-[500]">
+                      {preOrder?.customerName ?? ""}
+                    </span>
+                    <span className="text-[#767A7F] text-base font-[500]">
+                      {preOrder?.customerPhone ?? ""}
+                    </span>
+                    <span className="text-[#BB2C26] text-base font-[500]">
                       {preOrderCustomer?.adultCount ?? 0} chỗ
                     </span>
-                    <span className="text-[#BB2C26] text-base font-semibold">
+                    <span className="text-[#BB2C26] text-base font-[500]">
                       {preOrderCustomer?.childrenCount ?? 0} chỗ
                     </span>
                     <div className="flex items-center gap-x-2">
-                      <span className="text-[#BB2C26] text-base font-semibold">
+                      <span className="text-[#BB2C26] text-base font-[500]">
                         {preOrderCustomer?.babyCount ?? 0} chỗ
                       </span>
                     </div>
@@ -442,127 +365,102 @@ const PaymentStepTwo = () => {
           <div className="mt-6">
             <TourPriceTable departure={preOrderCustomer} />
           </div>
-          <div className="mt-6">
-            <TitlePattern title="Thông tin khách hàng">
-              <div className="flex gap-x-4">
-                <div className="w-1/2">
-                  <div className="flex items-center gap-x-2">
-                    <img src={userYellow} alt="" />
-                    <span className="text-[#141415] font-semibold text-base">
-                      Đại diện đoàn
-                    </span>
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      name="userName"
-                      value={preOrder?.customerName}
-                      placeholder="Nhập tên người đại diện"
-                      className="border border-[#D6D9DC] rounded-lg w-full p-3 mt-2"
-                    />
-                  </div>
+          {preOrder?.status != 123 && <div className="mt-6">
+            <TitlePattern title="Tất toán">
+              <div className="pl-4 space-y-6">
+                <div className="flex gap-x-2 ">
+                  <span className="text-[#141415] opacity-80">Đã cọc:</span>
+                  <span className="text-[#141415] opacity-80">
+                    {totalData
+                      ? `${preOrder?.settlementPrice?.toLocaleString()} đ`
+                      : "0 đ"}
+                  </span>
                 </div>
-                <div className="w-1/2">
-                  <div className="flex items-center ">
-                    <img src={phoneYellow} alt="" />
-                    <span className="text-[#141415] font-semibold text-base pl-2">
-                      Điện thoại liên hệ
-                    </span>
-                    <span className="text-base text-[#767A7F] pl-1">
-                      (Đại lý)
-                    </span>
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Nhập số điện thoại"
-                      name="phone"
-                      value={preOrder?.customerPhone}
-                      className="border border-[#D6D9DC] rounded-lg w-full p-3 mt-2"
-                    />
+                <div className="flex gap-x-2 items-center">
+                  <p className="text-[#141415] text-base font-semibold">
+                    Cần thanh toán:
+                  </p>
+                  <span className="text-[#BB2C26] text-[24px] font-[700]">
+                    {totalData
+                      ? `${Math.round(Number(preOrder?.totalPrice) - Number(preOrder?.settlementPrice)).toLocaleString()} đ`
+                      : "0 đ"}
+                  </span>
+                </div>
+                <div className="flex gap-6">
+                  <img
+                    src={qrCode}
+                    alt="QR"
+                    className="object-contain w-[228px]"
+                  />
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div className="text-sm leading-6">
+                      <div className="text-base">
+                        <span className="font-medium text-[#000D21]">
+                          Tên chủ tài khoản:
+                        </span>{" "}
+                        Dương Văn A
+                      </div>
+                      <div className="text-base">
+                        <span className="font-medium text-[#000D21]">
+                          Số tài khoản:
+                        </span>{" "}
+                        1241234235
+                      </div>
+                      <div className="text-base">
+                        <span className="font-medium text-[#000D21]">
+                          Ngân hàng:
+                        </span>{" "}
+                        Vietcombank
+                      </div>
+                      <div className="text-base">
+                        <span className="font-medium text-[#000D21]">
+                          Nội dung chuyển khoản khuyến nghị:
+                        </span>
+                        <br />
+                        <span>
+                          “Họ và tên - Tất toán Tour [Tên tour]”
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 mt-3">
+                      {!fileBill ? (
+                        <Dragger {...props} className="custom-dragger-supplier">
+                          <button className="text-[#006AF5] text-sm underline hover:text-blue-700 flex gap-2 pt-2">
+                            <img src={upload} alt="" className="w-5 h-5" />
+                            Tải hóa đơn lên
+                          </button>
+                        </Dragger>
+                      ) : (
+                        <div className="flex justify-between items-center gap-2">
+                          <button className="text-[#006AF5] text-sm underline hover:text-blue-700 flex gap-2">
+                            <img src={upload} alt="" className="w-5 h-5" />
+                            Tải hóa đơn lên
+                          </button>
+                          <div className="ml-2 text-[#006AF5] text-sm">{fileBill?.name}</div>
+                          <CloseOutlined onClick={handleRemoveImage} />
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      className="relative h-[48px] cursor-pointer mt-4 w-[192px]"
+                      onClick={() => handleSave()}
+                      disabled={!fileBill}
+                    >
+                      <img src={fileBill ? buttonMedium : buttonMediumDisable} className="w-[192px] h-[48px]" />
+                      <div
+                        className="absolute w-full top-[11px] text-center font-[500] text-[16px] text-white"
+
+                      >
+                        Tôi đã thanh toán
+                      </div>
+                    </button>
                   </div>
                 </div>
               </div>
             </TitlePattern>
-          </div>
+          </div>}
           <div className="mt-6">
-            <CustomerInformation
-              onChange={handleCustomerChange}
-              tourData={preOrderCustomer}
-              statusPreOrder={preOrder?.status}
-            />
-          </div>
-          <div className="mt-6 grid grid-cols-2 gap-x-6">
-            <div className="col-span-1">
-              <DeductionServiceCard
-                title="Dịch vụ giảm trừ"
-                subtitle="(Giảm trừ khi đã có các dịch vụ dưới đây)"
-                type={1}
-                statusPreOrder={preOrder?.status}
-                services={servicesDiscount.items}
-                onChange={(data) => setServicesDiscount(data)}
-              />
-            </div>
-            <div className="col-span-1">
-              <DeductionServiceCard
-                title="Dịch vụ cộng thêm"
-                subtitle="(Phát sinh thêm ngoài chương trình Tour)"
-                type={2}
-                statusPreOrder={preOrder?.status}
-                services={servicesPlus.items}
-                onChange={(data) => setServicesPlus(data)}
-                onRemove={(id) => {
-                  setServicesPlus(prev => ({
-                    ...prev,
-                    items: prev.items.filter(item => item.id !== id),
-                  }));
-                }}
-              >
-                {preOrder?.status == 118 && <div>
-                  <h1 className="text-[#141415] text-base font-medium">
-                    Phát sinh thêm
-                  </h1>
-                  <div className="mt-2 rounded-lg p-2 bg-[#F4F5F6]">
-                    <div className="flex justify-between items-center gap-x-[10px]">
-                      <input
-                        type="text"
-                        placeholder="Nhập nội dung"
-                        value={customInput.content}
-                        onChange={(e) =>
-                          handleCustomInputChange("content", e.target.value)
-                        }
-                        className="border border-[#D6D9DC] w-full p-3 rounded-lg"
-                      />
-                    </div>
-                    <div className="flex justify-between gap-x-2 mt-2">
-                      <input
-                        type="number"
-                        placeholder="Nhập số tiền"
-                        value={customInput.price}
-                        onChange={(e) =>
-                          handleCustomInputChange("price", e.target.value)
-                        }
-                        className="border border-[#D6D9DC] w-full p-3 rounded-lg"
-                      />
-                      <input
-                        type="number"
-                        placeholder="Nhập số lượng"
-                        value={customInput.quantity}
-                        onChange={(e) =>
-                          handleCustomInputChange("quantity", e.target.value)
-                        }
-                        className="border border-[#D6D9DC] w-full p-3 rounded-lg"
-                      />
-                    </div>
-                    <div className="w-full flex justify-end mt-4" onClick={handleAddCustomInput}>
-                      <button className="px-4 py-3 rounded-[44px] bg-[#D3362F] w-[92px] text-white font-medium">
-                        Lưu
-                      </button>
-                    </div>
-                  </div>
-                </div>}
-              </DeductionServiceCard>
-            </div>
+            <CustomerList />
           </div>
         </div>
         <div className="md:col-span-5 ">
@@ -704,7 +602,7 @@ const PaymentStepTwo = () => {
             {/* Tổng tiền */}
             <div className="pt-6 flex justify-between font-bold text-[#BB2C26] text-xl">
               <p>Tổng tiền</p>
-              <p>{totalData?.finalTotal.toLocaleString()} đ</p>
+              <p>{preOrder?.totalPrice?.toLocaleString()} đ</p>
             </div>
           </div>
           <div className="bg-white rounded-[20px] shadow-all mt-8 p-5 ">
@@ -721,6 +619,12 @@ const PaymentStepTwo = () => {
                   <p className="text-[#252627] font-medium">135,850,000 đ</p>
                 </div>
               </div>
+              <div className="flex items-center gap-x-2 mt-3">
+                <img src={successimage} alt="" />
+                <span className="text-[#006AF5] text-sm">
+                  billchuyenkhoanlan1.ipg
+                </span>
+              </div>
               <div className="flex items-center justify-between mt-3">
                 <div className="flex items-center gap-x-3">
                   <p className="text-[#252627] text-base">Tất toán</p>
@@ -732,124 +636,8 @@ const PaymentStepTwo = () => {
               </div>
             </div>
           </div>
-          {preOrder?.status == 118 && <div className="mt-8 pt-0">
-            <button
-              className="relative h-[48px] cursor-pointer"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <img src={buttonMedium} className="w-full h-[48px] mx-auto" />
-              <div
-                className="absolute w-full top-[12px] text-center font-[500] text-[16px] text-white"
-
-              >
-                Đặt chỗ
-              </div>
-            </button>
-            <button className="mt-4 relative h-[48px] cursor-pointer"
-              onClick={() => navigate(PATH.LIST_TOUR_ACTIVE)}>
-              <img src={buttonMediumNotBG} className="w-full h-[48px] mx-auto" />
-              <div className="absolute w-full top-[12px] text-center font-[500] text-[16px] text-[#BB2C26]"
-              >
-                Huỷ đặt chỗ
-              </div>
-            </button>
-          </div>}
         </div>
       </div>
-      <Modal
-        open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
-        width={734}
-        title={<span style={{ fontSize: 20, fontWeight: 500 }}>Thanh toán cọc</span>}
-        style={{ borderRadius: 20 }}
-        footer={
-          <div className="flex justify-center gap-3 py-4 border-t border-[#D6D9DC] mt-5 pt-5">
-            <button
-              className="relative h-[48px] cursor-pointer"
-              onClick={() => handleSave()}
-              disabled={!fileBill}
-            >
-              <img src={fileBill ? buttonMedium : buttonMediumDisable} className="w-full h-[48px] mx-auto" />
-              <div
-                className="absolute w-full top-[11px] text-center font-[500] text-[16px] text-white"
-
-              >
-                Tôi đã thanh toán
-              </div>
-            </button>
-          </div>
-        }
-      >
-        <div className="">
-          <div className="flex gap-x-2 items-center border-t border-[#D6D9DC] pt-4 px-4">
-            <p className="text-[#141415] text-[20px] font-semibold">
-              Cần thanh toán:
-            </p>
-            <span className="text-[#BB2C26] text-[24px] font-[700]">
-              {totalData
-                ? `${Math.round(Number(totalData.finalTotal) * 0.5).toLocaleString()} đ`
-                : "0 đ"}
-            </span>
-          </div>
-          <div className="flex gap-6 border-t border-[#D6D9DC] border-dashed pt-5 mt-4 px-4">
-            <img
-              src={qrCode}
-              alt="QR"
-              className="object-contain w-[180px]"
-            />
-            <div className="flex-1 flex flex-col justify-between">
-              <div className="text-sm leading-6">
-                <div className="text-base">
-                  <span className="font-medium text-[#000D21]">
-                    Tên chủ tài khoản:
-                  </span>{" "}
-                  Dương Văn A
-                </div>
-                <div className="text-base">
-                  <span className="font-medium text-[#000D21]">
-                    Số tài khoản:
-                  </span>{" "}
-                  1241234235
-                </div>
-                <div className="text-base">
-                  <span className="font-medium text-[#000D21]">
-                    Ngân hàng:
-                  </span>{" "}
-                  Vietcombank
-                </div>
-                <div className="text-base">
-                  <span className="font-medium text-[#000D21]">
-                    Nội dung chuyển khoản khuyến nghị:
-                  </span>
-                  <br />
-                  <span>
-                    “Họ và tên - Tất toán Tour [Tên tour]”
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 mt-3">
-                {!fileBill ? (
-                  <Dragger {...props} className="custom-dragger-supplier">
-                    <button className="text-[#006AF5] text-sm underline hover:text-blue-700 flex gap-2 pt-2">
-                      <img src={upload} alt="" className="w-5 h-5" />
-                      Tải hóa đơn lên
-                    </button>
-                  </Dragger>
-                ) : (
-                  <div className="flex justify-between items-center gap-2">
-                    <button className="text-[#006AF5] text-sm underline hover:text-blue-700 flex gap-2">
-                      <img src={upload} alt="" className="w-5 h-5" />
-                      Tải hóa đơn lên
-                    </button>
-                    <div className="ml-2 text-[#006AF5]">{fileBill?.name}</div>
-                    <CloseOutlined onClick={handleRemoveImage} />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </Modal>
       <ConfirmModal
         visible={isModalConfirm}
         onCancel={handleConfirmCancel}
@@ -859,8 +647,8 @@ const PaymentStepTwo = () => {
         trong vòng 30 phút. Vui lòng theo dõi
         trạng thái đơn hàng. Xin cảm ơn!"
       />
-    </div >
+    </div>
   );
 };
 
-export default PaymentStepTwo;
+export default PaymentStepFour;

@@ -58,7 +58,7 @@ const StepPayment = () => {
     phase2Active = true;
     phase3Active = true;
   }
-  if (path.startsWith("/reserve/step/done")) {
+  if (path.startsWith("/reserve/step-done")) {
     phase1Img = IcPhaseDone;
     phase2Img = IcPhaseDone;
     phase3Img = IcPhaseDone;

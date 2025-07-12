@@ -10,7 +10,6 @@ import CustomPagination from "@/client/components/Pagination";
 import { useSearchParams } from 'react-router-dom';
 import { getTourActive } from "@/client/apis/tour";
 import { getTourCategory } from "@/client/apis/category";
-import loadingGif from "/assets/images/loading.gif"
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import Dropdown from "@/client/components/DropDown";
@@ -19,17 +18,30 @@ const sortLst: any = [
   {
     id: 0,
     name: "Tất cả",
-  }, {
-    id: 1,
-    name: "Bán chạy",
   },
   {
-    id: 2,
-    name: "Giá tăng dần",
+    id: 118,
+    name: "Chưa thanh toán cọc",
   },
   {
-    id: 3,
-    name: "Giá giảm dần",
+    id: 119,
+    name: "Chờ duyệt thanh toán cọc",
+  },
+  {
+    id: 120,
+    name: "Chưa nộp hồ sơ",
+  },
+  {
+    id: 121,
+    name: "Chưa tất toán",
+  },
+  {
+    id: 122,
+    name: "Chờ duyệt tất toán",
+  },
+  {
+    id: 123,
+    name: "Đã tất toán",
   }
 ];
 
@@ -52,7 +64,8 @@ const ActivityList = () => {
     pageIndex,
     pageSize,
     name,
-    selectedDate
+    selectedDate,
+    sort
   ]);
 
   const fetchList = async () => {
@@ -64,6 +77,7 @@ const ActivityList = () => {
     };
 
     if (name) queryParams.name = name;
+    if (sort) queryParams.status = sort;
 
     if (selectedDate) {
       const [start, end] = selectedDate.split(" - ");
@@ -112,10 +126,11 @@ const ActivityList = () => {
               </div>
               <div className="relative cursor-pointer">
                 <div
-                  className="rounded-2xl bg-white p-3 "
+                  className="rounded-2xl bg-white p-3 flex items-center gap-x-2"
                   onClick={() => setShowDatePicker(!showDatePicker)}
                 >
                   <img src={calendarBlack} alt="" />
+                  {selectedDate ? selectedDate : ""}
                 </div>
                 {showDatePicker && (
                   <div className="absolute top-full right-0 mt-2 z-50 bg-white rounded-lg">
@@ -131,7 +146,7 @@ const ActivityList = () => {
               </div>
 
               <div className="relative cursor-pointer">
-                <div className="rounded-2xl border border-[#D6D9DC] h-12 p-3  bg-white relative w-[128px] text-end cursor-pointer"
+                <div className="rounded-2xl border border-[#D6D9DC] h-12 p-3  bg-white relative text-end cursor-pointer"
                   onClick={() => {
                     setIsSort(!isSort);
                   }}>
@@ -140,7 +155,7 @@ const ActivityList = () => {
                     alt=""
                     className="absolute  top-1/2 -translate-y-1/2 left-3 size-6"
                   />
-                  {sort ? sortLst.find((airline) => airline.id === sort)?.name : "Trạng thái"}
+                  <div className="pl-8">{sort ? sortLst.find((airline) => airline.id === sort)?.name : "Trạng thái"}</div>
                 </div>
 
                 {isSort && (

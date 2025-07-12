@@ -650,7 +650,7 @@ const Reserve = () => {
               onClick={handleConfirm}
             >
               <img src={buttonMedium} className="w-full h-[48px] mx-auto" />
-              <div className="absolute w-full top-[12px] text-center font-[500] text-[16px] text-white">
+              <div className="absolute w-full top-[11px] text-center font-[500] text-[16px] text-white">
                 Xác nhận giữ chỗ
               </div>
             </button>

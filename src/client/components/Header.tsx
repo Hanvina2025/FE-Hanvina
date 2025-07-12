@@ -18,6 +18,7 @@ interface IMenu {
   link: string;
   title: string;
 }
+import { useAuth } from "@/admin/components/AuthProvider";
 
 const notifications = [
   {
@@ -63,6 +64,7 @@ const Header = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { logout } = useAuth();
 
   const content = (
     <>
@@ -89,14 +91,14 @@ const Header = () => {
           <img src={IcUser} alt="user" className="user-icon" />
           <div className="text-[14px] font-[500] text-[#000]">Thông tin đại lý</div>
         </div>
-        <ArrowRight2 size="16px" color="#8F9499"/>
+        <ArrowRight2 size="16px" color="#8F9499" />
       </div>
-      <div className="flex justify-between items-center user-container-content" onClick={() => console.log("Đăng xuất")}>
+      <div className="flex justify-between items-center user-container-content" onClick={logout}>
         <div className="flex gap-[18px] items-center">
           <img src={IcLogout} alt="IcLogout" className="user-icon" />
           <div className="text-[14px] font-[500] text-[#000]">Đăng xuất</div>
         </div>
-        <ArrowRight2 size="16px" color="#8F9499"/>
+        <ArrowRight2 size="16px" color="#8F9499" />
       </div>
     </>
   );
@@ -156,8 +158,7 @@ const Header = () => {
               to={item.link}
               onClick={() => setIsMenuOpen(false)}
               className={({ isActive }) =>
-                `group inline-flex items-centerrounded-md text-base font-medium text-center relative nav-link ${
-                  isActive || item.link == source ? "nav-link-active" : ""
+                `group inline-flex items-centerrounded-md text-base font-medium text-center relative nav-link ${isActive || item.link == source ? "nav-link-active" : ""
                 }`
               }
             >
@@ -174,7 +175,7 @@ const Header = () => {
               <img src={noti} alt="Notification Icon" className="size-12 cursor-pointer" />
             </Popover>
           </div>
-          
+
           <Popover content={contentUser} trigger="click" placement="bottomRight" overlayClassName="user-content-wrapper">
             <div className="w-[95px] h-[56px] border border-[#D6D9DC] rounded-[20px] bg-[#F4F5F6] flex  gap-x-[10px] items-center p-2 mr-[30px] cursor-pointer">
               <img

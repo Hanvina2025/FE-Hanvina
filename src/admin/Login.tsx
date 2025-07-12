@@ -1,13 +1,15 @@
-import { Form } from "antd";
+import { Form, Input } from "antd";
 import { useNavigate } from "react-router-dom";
 import { ChangeEvent, useState, useEffect } from "react";
 import { useAuth } from "./components/AuthProvider";
 import { getAccountDetail } from "./apis/accountService";
 import { postLogin } from "./apis/auth";
 import { jwtDecode } from "jwt-decode";
-import Logo from "/assets/images/logo.svg";
+import "./Login.scss"
 import LogoBanner from "/assets/images/login-banner.png"
 import placePdf from "/assets/images/placePdf.svg";
+import buttonMedium from "/assets/images/buttonMedium.svg";
+import IcLogo2 from "/assets/images/logo2.svg";
 
 type LoginFormInputs = {
   username: string;
@@ -53,17 +55,24 @@ const Login = () => {
   return (
     <div className="flex h-screen">
       {/* LEFT - IMAGE BANNER */}
-      <div className="w-2/5 hidden lg:block">
+      <div className="w-2/5 hidden lg:block relative">
         <img
           src={LogoBanner}
           alt="Login Banner"
           className="w-full h-full object-cover"
         />
+        <div className="absolute top-14 w-full flex items-center justify-center">
+          <img
+            src={IcLogo2}
+            alt="Login Banner"
+            className="w-[206px]"
+          />
+        </div>
       </div>
 
       {/* RIGHT - LOGIN FORM */}
-      <div className="w-3/5 flex items-center justify-center bg-white relative overflow-hidden">
-        <div className="w-full max-w-[70%] px-8">
+      <div className="w-full lg:w-3/5 flex items-center justify-center bg-white relative overflow-hidden">
+        <div className="w-full lg:max-w-[60%] md:max-w-[80%] px-8">
           {/* <img src={Logo} alt="Logo" className="mb-8 w-[180px]" /> */}
           <h1 className="text-[30px] font-semibold text-[#333] mb-2">Đăng nhập</h1>
           <p className="text-[#555] mb-10 text-[16px]">Chào mừng đến với HanVina Travel</p>
@@ -74,12 +83,13 @@ const Login = () => {
                 name="username"
                 rules={[{ required: true, message: "Vui lòng nhập tài khoản" }]}
               >
-                <input
+                <Input
                   id="username"
                   placeholder="Nhập tài khoản"
-                  className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md"
+                  className="mt-2 block w-full !h-[48px] border border-gray-300 rounded-md"
                   onChange={handleChange}
                   autoComplete="off"
+                  size="large"
                 />
               </Form.Item>
             </div>
@@ -90,11 +100,12 @@ const Login = () => {
                 name="password"
                 rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
               >
-                <input
+                <Input.Password
+                  size="large"
                   id="password"
                   type="password"
                   placeholder="Nhập mật khẩu"
-                  className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md"
+                  className="mt-2 w-full py-0 border border-gray-300 rounded-md custom-login-password"
                   onChange={handleChange}
                   autoComplete="off"
                 />
@@ -108,23 +119,34 @@ const Login = () => {
                 <input type="checkbox" className="mr-2" />
                 Lưu thông tin đăng nhập
               </label>
-              <a href="#" className="text-sm text-blue-500">Quên mật khẩu?</a>
+              <a href="#" className="text-sm text-[#36383A]">Quên mật khẩu?</a>
             </div>
+            <div className="mt-4 flex justify-center items-center cursor-pointer relative z-[100]">
+              <button
+                type="submit"
+                className="relative h-[48px] cursor-pointer"
+              >
+                <img
+                  src={buttonMedium}
+                  className="mx-auto object-cover h-[43px] lg:h-auto"
+                  alt="button"
+                />
+                <div
+                  className="absolute w-full top-[10px] text-center font-[500] text-[16px] text-white"
 
-            <button
-              type="submit"
-              className="w-full mt-4 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-            >
-              Đăng nhập
-            </button>
+                >
+                  Đăng nhập
+                </div>
+              </button>
+            </div>
           </Form>
         </div>
-        
+
         <div className="w-full absolute bottom-[-20px]">
           <img src={placePdf} alt="" className="w-full" />
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

@@ -3,7 +3,6 @@ import TitlePattern from "./TitlePattern";
 import countUser from "/assets/images/countUser.svg";
 import minus from "/assets/images/minus.svg";
 import plus from "/assets/images/plus.svg";
-import "../pages/Reserve/index.scss";
 
 const CustomerInformation = ({
   onChange,

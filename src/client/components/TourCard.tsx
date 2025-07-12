@@ -242,7 +242,7 @@ const TourCard = ({ tourData }) => {
               onClick={handleNavigate}
             >
               <img src={ButtonShort} className="w-full h-[48px] mx-auto" />
-              <div className="absolute w-full top-[12px] text-center font-[500] text-[16px] text-white">
+              <div className="absolute w-full top-[11px] text-center font-[500] text-[16px] text-white">
                 Giữ chỗ
               </div>
             </div>

@@ -7,9 +7,12 @@ import ProtectedRoute from "./client/components/ProtectedRoute";
 import Layout from "./client/components/Layout";
 import Home from "./client/pages/Home";
 import { ListTour } from "./client/pages/ListTour";
-import Reserve from "./client/pages/Reserve";
 import ActivityList from "./client/pages/ActivityList";
-import PaymentStepTwo from "./client/pages/PaymentStepTwo";
+import Reserve from "@/client/pages/PaymentStep/StepOne";
+import PaymentStepTwo from "./client/pages/PaymentStep/StepTwo";
+import PaymentStepThree from "@/client/pages/PaymentStep/StepThree";
+import PaymentStepFour from "@/client/pages/PaymentStep/StepFour";
+import PaymentStepDone from "@/client/pages/PaymentStep/StepDone";
 import ReportChart from "./client/pages/Report";
 import News from "./client/pages/News";
 import NewDetail from "./client/pages/News/NewDetail";
@@ -23,8 +26,6 @@ import Register from "./admin/Register";
 
 // ADMIN_PATHS
 import { AuthProvider } from "./admin/components/AuthProvider";
-import PaymentStepThree from "./client/pages/PaymentStepThree.tsx";
-import { PaymentStepFor } from "./client/pages/PaymentStepFor.tsx/index.tsx";
 function App() {
   return (
     <>
@@ -60,7 +61,11 @@ function App() {
               />
               <Route
                 path={PATH.STEP_FOR_PROCESS}
-                element={<PaymentStepFor />}
+                element={<PaymentStepFour />}
+              />
+              <Route
+                path={PATH.STEP_DONE}
+                element={<PaymentStepDone />}
               />
             </Route>
 
