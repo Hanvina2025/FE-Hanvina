@@ -30,7 +30,7 @@ function App() {
   return (
     <>
       <AuthProvider>
-        <Router>
+        <Router basename="/hanvinaweb">
           <Routes>
             {/* Client Routes */}
             <Route

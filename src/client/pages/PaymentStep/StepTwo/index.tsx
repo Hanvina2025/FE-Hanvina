@@ -38,7 +38,7 @@ const { Dragger } = Upload;
 const PaymentStepTwo = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const tourData = {}
+  const tourData: any = {}
   const [customInput, setCustomInput] = useState({
     content: "",
     price: "",
