@@ -7,7 +7,7 @@ export const PATH = {
   // Step
   RESERVE: "/reserve/step1",
   STEP_TWO_PROCESS: "/reserve/step2/:id",
-  STEP_THREE_PROCESS: "/reserve/step3",
+  STEP_THREE_PROCESS: "/reserve/step3/:id",
   STEP_FOR_PROCESS: "/reserve/step4",
   // End Step
   NEWS: "/news",

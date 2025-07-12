@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import locationList from "/assets/images/locationList.svg";
 import IcCalendar1 from "/assets/images/ic-calendar.svg";
 import IcCalendar2 from "/assets/images/ic-calendar2.svg";
@@ -6,19 +6,17 @@ import IcClock from "/assets/images/ic-clock.svg";
 import IcProfileUser from "/assets/images/ic-profile-2user.svg";
 import IcUserTag from "/assets/images/ic-user-tag.svg";
 import IcUser from "/assets/images/ic-user2.svg";
-import { PATH } from "@/libs/constants/path";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import ReservationList from "@/client/components/ReservationList"
+import { Modal } from "antd"
+import dayjs from "dayjs"
 
-const TourCardListActive = ({ tourActiveData, isDeposited }) => {
+const TourCardListActive = ({ tourActiveData }) => {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const statusColors = {
     unpaid: {
       label: "Chưa thanh toán cọc",
-      background: "#FFEBEB",
-      color: "#DC1F18",
-    },
-    pendingTransactions: {
-      label: "Chưa tất toán",
       background: "#FFEBEB",
       color: "#DC1F18",
     },
@@ -32,20 +30,25 @@ const TourCardListActive = ({ tourActiveData, isDeposited }) => {
       background: "#FEF9E1",
       color: "#CC7B02",
     },
+    pendingTransactions: {
+      label: "Chưa tất toán",
+      background: "#FFEBEB",
+      color: "#DC1F18",
+    },
     statusPendingApproval: {
       label: "Chờ duyệt tất toán",
       background: "#FEF9E1",
       color: "#CC7B02",
     },
-    paid: {
-      label: "Đã cọc",
-      background: "#EBF4FF",
-      color: "#006AF5",
-    },
     fully_paid: {
       label: "Đã tất toán",
       background: "#E6FAED",
       color: "#34B764",
+    },
+    paid: {
+      label: "Đã cọc",
+      background: "#EBF4FF",
+      color: "#006AF5",
     },
   };
 
@@ -56,12 +59,14 @@ const TourCardListActive = ({ tourActiveData, isDeposited }) => {
         return "unpaid";
       case "Chờ duyệt thanh toán cọc":
         return "pending";
+      case "Chưa nộp hồ sơ":
+        return "incomplete";
       case "Chưa tất toán":
         return "pendingTransactions";
+      case "Chờ duyệt tất toán":
+        return "statusPendingApproval";
       case "Đã tất toán":
         return "fully_paid";
-      case "Đã cọc":
-        return "paid";
       default:
         return "unpaid";
     }
@@ -70,7 +75,11 @@ const TourCardListActive = ({ tourActiveData, isDeposited }) => {
   const statusKey = getStatusKey(tourActiveData?.statusName);
 
   const handleNavigate = () => {
-    navigate(`/reserve/step2/${tourActiveData?.id}`);
+    if (tourActiveData?.status == 118 || tourActiveData?.status == 119) {
+      navigate(`/reserve/step2/${tourActiveData?.id}`);
+    } else if (tourActiveData?.status == 120) {
+      navigate(`/reserve/step3/${tourActiveData?.id}`);
+    }
   };
 
   return (
@@ -81,9 +90,9 @@ const TourCardListActive = ({ tourActiveData, isDeposited }) => {
         <div className="flex justify-between items-center">
           <h2 className="font-bold text-[24px] mb-6">{tourActiveData?.tourName}</h2>
           <div className="flex items-center gap-2 rounded">
-            {isDeposited && (
+            {["incomplete", "pendingTransactions", "statusPendingApproval"].includes(statusKey) && (
               <span
-                className={`px-2 py-1 rounded-md text-xs font-semibold`}
+                className={`px-2 py-1 rounded-md text-base`}
                 style={{
                   backgroundColor: statusColors.paid.background,
                   color: statusColors.paid.color,
@@ -93,7 +102,7 @@ const TourCardListActive = ({ tourActiveData, isDeposited }) => {
               </span>
             )}
             <span
-              className={`px-2 py-1 rounded-md text-base font-[500]`}
+              className={`px-2 py-1 rounded-md text-base`}
               style={{
                 backgroundColor: statusColors[statusKey].background,
                 color: statusColors[statusKey].color,
@@ -104,8 +113,8 @@ const TourCardListActive = ({ tourActiveData, isDeposited }) => {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-5 gap-y-3 gap-x-6">
-          <div className="lg:col-span-2 border-r border-[#D4D3D2] border-dashed pr-4">
+        <div className="grid grid-cols-[2fr_1.5fr_1fr] gap-y-3 gap-x-6">
+          <div className="border-r border-[#D4D3D2] border-dashed pr-4">
             <div className="flex flex-col space-y-4">
               <div className="flex items-center gap-2">
                 <img src={locationList} alt="" />
@@ -143,7 +152,7 @@ const TourCardListActive = ({ tourActiveData, isDeposited }) => {
             </div>
           </div>
 
-          <div className="lg:col-span-2 pl-4">
+          <div className="pl-4">
             <div className="flex flex-col space-y-4">
               <div className="flex items-center gap-2">
                 <img src={IcCalendar2} alt="" />
@@ -179,26 +188,49 @@ const TourCardListActive = ({ tourActiveData, isDeposited }) => {
                     <span className="text-[#8F9499] text-base font-[500]">
                       {tourActiveData?.orderNo ?? "01"}
                     </span>
-                    <Link to="/chi-tiet-tour" className="text-sm text-[#006AF5]">
+                    <div
+                      className="text-[#6961FF] underline text-sm cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsModalOpen(true);
+                      }}
+                    >
                       Chi tiết
-                    </Link>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-1">
+          <div className="">
             <div className="flex flex-col items-end space-y-3">
               <div className="flex items-center gap-2">
                 <img src={IcClock} alt="" />
                 <div className="flex items-center gap-x-2">
                   <p className="text-[#141415] text-base font-semibold">
-                    Hạn thanh toán cọc:
+                    {([118, 119].includes(tourActiveData?.status))
+                      ? "Hạn thanh toán cọc"
+                      : ([120, 121, 122].includes(tourActiveData?.status))
+                        ? "Hạn tất toán"
+                        : ""}
                   </p>
                   <div className="flex items-center gap-x-2">
                     <span className="text-[#8F9499] text-base font-[500]">
-                      {/* {tourActiveData?.settlementDate} */}
+                      {tourActiveData?.depositDateTime
+                        ? (() => {
+                          const now = dayjs();
+                          const end = dayjs(tourActiveData.depositDateTime);
+                          const diff = end.diff(now);
+                          if (diff <= 0) return "Hết hạn";
+
+                          const duration = dayjs.duration(diff);
+                          const hours = String(duration.hours()).padStart(2, "0");
+                          const minutes = String(duration.minutes()).padStart(2, "0");
+
+                          return `${hours}:${minutes}`;
+                        })()
+                        : "--"}
                     </span>
                   </div>
                 </div>
@@ -213,6 +245,19 @@ const TourCardListActive = ({ tourActiveData, isDeposited }) => {
           </div>
         </div>
       </div>
+      <Modal
+        open={isModalOpen}
+        onCancel={(e) => {
+          e?.stopPropagation();
+          setIsModalOpen(false);
+        }}
+        width={1000}
+        title={<span style={{ fontSize: 20, fontWeight: 500 }}>Danh sách giữ chỗ</span>}
+        style={{ borderRadius: 20 }}
+        footer={null}
+      >
+        <ReservationList id={tourActiveData?.tourId} />
+      </Modal>
     </div>
   );
 };

@@ -13,6 +13,25 @@ import { getTourCategory } from "@/client/apis/category";
 import loadingGif from "/assets/images/loading.gif"
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
+import Dropdown from "@/client/components/DropDown";
+
+const sortLst: any = [
+  {
+    id: 0,
+    name: "Tất cả",
+  }, {
+    id: 1,
+    name: "Bán chạy",
+  },
+  {
+    id: 2,
+    name: "Giá tăng dần",
+  },
+  {
+    id: 3,
+    name: "Giá giảm dần",
+  }
+];
 
 const ActivityList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -24,6 +43,8 @@ const ActivityList = () => {
   const [name, setName] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [sort, setSort] = useState("");
+  const [isSort, setIsSort] = useState(false);
 
   useEffect(() => {
     fetchList();
@@ -108,13 +129,33 @@ const ActivityList = () => {
                   </div>
                 )}
               </div>
-              <div className="rounded-2xl border border-[#D6D9DC] h-12 p-3  bg-white relative w-[128px] text-end cursor-pointer">
-                <img
-                  src={filterIcon}
-                  alt=""
-                  className="absolute  top-1/2 -translate-y-1/2 left-3 size-6"
-                />
-                Trạng thái
+
+              <div className="relative cursor-pointer">
+                <div className="rounded-2xl border border-[#D6D9DC] h-12 p-3  bg-white relative w-[128px] text-end cursor-pointer"
+                  onClick={() => {
+                    setIsSort(!isSort);
+                  }}>
+                  <img
+                    src={filterIcon}
+                    alt=""
+                    className="absolute  top-1/2 -translate-y-1/2 left-3 size-6"
+                  />
+                  {sort ? sortLst.find((airline) => airline.id === sort)?.name : "Trạng thái"}
+                </div>
+
+                {isSort && (
+                  <div className="absolute top-full right-0 mt-2 z-50">
+                    <Dropdown
+                      locations={sortLst}
+                      selected={sort}
+                      setIsShowDropdown={setIsSort}
+                      onSelect={(value) => {
+                        setSort(value);
+                        setIsSort(false);
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -133,7 +174,6 @@ const ActivityList = () => {
                 <TourCardListActive
                   key={tourActive?.id}
                   tourActiveData={tourActive}
-                  isDeposited={tourActive?.isDeposited ?? false}
                 />
               ))}
             </div>

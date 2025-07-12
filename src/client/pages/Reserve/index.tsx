@@ -15,7 +15,11 @@ import TourPriceTable from "@/client/components/TourPriceTable";
 import CustomerInformation from "@/client/components/CustomerInformation";
 import DeductionServiceCard from "@/client/components/DeductionServiceCard";
 import StepPayment from "@/client/components/StepPayment";
-import { getTourStartDate, getTourPriceServices, postPreOrder, postOrderCustomer, postOrderDiscountPlus } from "@/client/apis/tour";
+import {
+  getTourStartDate,
+  getTourPriceServices,
+  postPreOrder, postOrderCustomer, postOrderDiscountPlus
+} from "@/client/apis/tour";
 import { PATH } from "@/libs/constants/path";
 import { count } from "console";
 
@@ -312,7 +316,7 @@ const Reserve = () => {
       <div className="mt-8 grid grid-cols-2 md:grid-cols-12 gap-x-8 ">
         <div className="md:col-span-7">
           <div className="bg-white rounded-[20px] shadow-all">
-            <div className="relative ">
+            <div className="relative border-b border-[#D6D9DC] border-dashed">
               <img src={patternTitle} alt="" />
               <div className="absolute top-0 w-full h-full px-5 py-4">
                 <div className="w-full flex items-center h-full justify-between">
@@ -422,7 +426,7 @@ const Reserve = () => {
             </TitlePattern>
           </div>
           <div className="mt-6">
-            <CustomerInformation onChange={handleCustomerChange} tourData={tourData} />
+            <CustomerInformation onChange={handleCustomerChange} tourData={tourData} statusPreOrder={118} />
           </div>
           <div className="mt-6 grid grid-cols-2 gap-x-6">
             <div className="col-span-1">
@@ -431,6 +435,7 @@ const Reserve = () => {
                 subtitle="(Giảm trừ khi đã có các dịch vụ dưới đây)"
                 type={1}
                 services={servicesDiscount.items}
+                statusPreOrder={118}
                 onChange={(data) => setServicesDiscount(data)}
               />
             </div>
@@ -439,6 +444,7 @@ const Reserve = () => {
                 title="Dịch vụ cộng thêm"
                 subtitle="(Phát sinh thêm ngoài chương trình Tour)"
                 type={2}
+                statusPreOrder={118}
                 services={servicesPlus.items}
                 onChange={(data) => setServicesPlus(data)}
                 onRemove={(id) => {

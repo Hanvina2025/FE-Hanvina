@@ -33,6 +33,17 @@ export const getTourStartDate = async (params: string) => {
   }
 };
 
+export const getListPreOrderTour = async (params: string) => {
+  try {
+    const url = `/pre-order/list-preorder-tour?${params.toString()}`;
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};
+
 // Pre-Order
 export const postPreOrder = async (
   data: any

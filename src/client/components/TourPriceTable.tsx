@@ -14,44 +14,44 @@ export default function TourPriceTable({ departure }) {
             <th className="px-4 py-3 flex font-medium text-xl text-[#141415]">
               Giá tour
             </th>
-            <th className="px-4 py-3 font-medium text-xl">
+            <th className="px-4 py-3 font-medium text-xl text-center">
               Người lớn <br />
               <span className="text-[#53575A] text-sm">{`(>12 tuổi)`}</span>
             </th>
-            <th className="px-4 py-3 font-medium text-xl">
+            <th className="px-4 py-3 font-medium text-xl text-center">
               Trẻ em <br />
               <span className="text-[#53575A] text-sm">(2-12 tuổi)</span>
             </th>
-            <th className="px-4 py-3 font-medium text-xl">
+            <th className="px-4 py-3 font-medium text-xl text-center">
               Em bé <br />
               <span className="text-[#53575A] text-sm">(&lt;2 tuổi)</span>
             </th>
           </tr>
         </thead>
         <tbody className="bg-white">
-          <tr className="border-t">
+          <tr>
             <td className="px-4 py-3 font-semibold text-[#141415] text-base">
               Hoa hồng
             </td>
-            <td className="px-4 py-3 text-[#141415]">
+            <td className="px-4 py-3 text-[#141415] text-center">
               {commissionAdultPrice ? `${commissionAdultPrice.toLocaleString()} đ` : "0 đ"}
             </td>
-            <td className="px-4 py-3 text-[#141415]">
+            <td className="px-4 py-3 text-[#141415] text-center">
               {commissionChildrenPrice ? `${commissionChildrenPrice.toLocaleString()} đ` : "0 đ"}
             </td>
-            <td className="px-4 py-3 text-[#141415]">0 đ</td>
+            <td className="px-4 py-3 text-[#141415] text-center">0 đ</td>
           </tr>
-          <tr className="border-t">
+          <tr>
             <td className="px-4 py-3 font-semibold text-[#141415] text-base">
               Giá bán
             </td>
-            <td className="px-4 py-3 text-[#141415]">
+            <td className="px-4 py-3 text-[#141415] text-center">
               {adultPrice ? `${adultPrice.toLocaleString()} đ` : "0 đ"}
             </td>
-            <td className="px-4 py-3 text-[#141415]">
+            <td className="px-4 py-3 text-[#141415] text-center">
               {childrenPrice ? `${childrenPrice.toLocaleString()} đ` : "0 đ"}
             </td>
-            <td className="px-4 py-3 text-[#141415]">0 đ</td>
+            <td className="px-4 py-3 text-[#141415] text-center">0 đ</td>
           </tr>
         </tbody>
       </table>

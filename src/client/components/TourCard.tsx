@@ -10,13 +10,15 @@ import IcPosition from "/assets/images/ic-position.svg";
 import IcLocation from "/assets/images/ic-location.svg";
 import IcLine from "/assets/images/ic-line-tour.svg";
 import { getTourStartDate } from "@/client/apis/tour";
-
-import { Link, useNavigate } from "react-router-dom";
+import { Modal } from "antd"
+import { useNavigate } from "react-router-dom";
 import DropDownSelectDepartureDate from "./DropDownSelectDepartureDate";
 import { PATH } from "@/libs/constants/path";
+import ReservationList from "@/client/components/ReservationList"
 
 const TourCard = ({ tourData }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [departure, setDeparture] = useState(null);
   const [dataStartDate, setDataStartDate] = useState([]);
   const navigate = useNavigate();
@@ -25,14 +27,14 @@ const TourCard = ({ tourData }) => {
     if (tourData?.key) {
       fetchList(tourData?.key);
     }
-    }, [tourData?.key]);
+  }, [tourData?.key]);
 
   useEffect(() => {
     if (dataStartDate.length > 0 && !departure) {
       setDeparture(dataStartDate[0]);  // Chọn đối tượng đầu tiên khi dataStartDate có dữ liệu
     }
   }, [dataStartDate, departure]);
-  
+
   const fetchList = async (key: string) => {
     const query: any = new URLSearchParams({
       key: key || ""
@@ -134,7 +136,7 @@ const TourCard = ({ tourData }) => {
                 </p>
                 <div
                   className="relative rounded-lg border cursor-pointer border-[#B9BDC1] h-8 flex items-center justify-between "
-                  onClick={() => {setShowDatePicker(!showDatePicker)}}
+                  onClick={() => { setShowDatePicker(!showDatePicker) }}
                 >
                   <span className="px-2 text-base font-medium opacity-80">
                     {departure?.startDate || ""}
@@ -182,12 +184,12 @@ const TourCard = ({ tourData }) => {
                   <h1 className="text-base font-semibold text-[#141415]">
                     Tình trạng giữ chỗ:
                   </h1>
-                  <Link
-                    to="/chi-tiet-tour"
-                    className="text-[#6961FF] underline text-base font-semibold "
+                  <div
+                    className="text-[#6961FF] underline text-base font-semibold cursor-pointer"
+                    onClick={() => setIsModalOpen(true)}
                   >
                     Xem chi tiết
-                  </Link>
+                  </div>
                 </div>
                 <div className="flex items-center text-base mt-5">
                   <span className="text-base font-semibold text-[#141415]">
@@ -210,8 +212,8 @@ const TourCard = ({ tourData }) => {
                   <h1 className="text-[#BB2C26] font-semibold">
                     Số chỗ còn lại: {
                       departure?.totalSeat != null
-                      ? (departure.totalSeat - (departure.totalSeatBooked ?? 0)) + ' chỗ'
-                      : ""
+                        ? (departure.totalSeat - (departure.totalSeatBooked ?? 0)) + ' chỗ'
+                        : ""
                     }
                   </h1>
                 </div>
@@ -247,6 +249,16 @@ const TourCard = ({ tourData }) => {
           </div>
         </div>
       </div>
+      <Modal
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        width={1000}
+        title={<span style={{ fontSize: 20, fontWeight: 500 }}>Danh sách giữ chỗ</span>}
+        style={{ borderRadius: 20 }}
+        footer={null}
+      >
+        <ReservationList id={departure?.id} />
+      </Modal>
     </div>
   );
 };

@@ -1,0 +1,37 @@
+.highlighted-row {
+    background-color: #FDF3F3 !important;
+}
+
+.custom-reservation-table {
+    th.ant-table-cell {
+        font-weight: 500;
+        font-size: 16px;
+    }
+
+    .ant-table-cell {
+        font-weight: 500;
+    }
+
+    .ant-table-body {
+        scrollbar-width: thin; // Firefox
+        scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+
+        &::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.15);
+            border-radius: 3px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+    }
+}
