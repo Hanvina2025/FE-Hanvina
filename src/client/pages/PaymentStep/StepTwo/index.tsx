@@ -345,25 +345,35 @@ const PaymentStepTwo = () => {
           <div className="mt-9 flex items-center gap-x-7">
             <img src={paymentDealine} alt="" />
             <div className="flex gap-x-[6px]">
-              <p className="text-[#141415] text-xl font-medium">
-                Hạn thanh toán cọc:
-              </p>
-              <p className="text-[#DC1F18] text-xl font-medium">
-                {preOrder?.depositDateTime
-                  ? (() => {
-                    const now = dayjs();
-                    const end = dayjs(preOrder.depositDateTime);
-                    const diff = end.diff(now);
-                    if (diff <= 0) return "Hết hạn";
+              {
+                preOrder?.status == 118 &&
+                <>
 
-                    const duration = dayjs.duration(diff);
-                    const hours = String(duration.hours()).padStart(2, "0");
-                    const minutes = String(duration.minutes()).padStart(2, "0");
+                  <p className="text-[#141415] text-xl font-medium">
+                    Hạn thanh toán cọc:
+                  </p>
+                  <p className="text-[#DC1F18] text-xl font-medium">
+                    {preOrder?.depositDateTime
+                      ? (() => {
+                        const now = dayjs();
+                        const end = dayjs(preOrder.depositDateTime);
+                        const diff = end.diff(now);
+                        if (diff <= 0) return "Hết hạn";
 
-                    return `${hours}:${minutes}`;
-                  })()
-                  : "--"}
-              </p>
+                        const duration = dayjs.duration(diff);
+                        const hours = String(duration.hours()).padStart(2, "0");
+                        const minutes = String(duration.minutes()).padStart(2, "0");
+
+                        return `${hours}:${minutes}`;
+                      })()
+                      : "--"}
+                  </p>
+                </>
+              }
+              {
+                preOrder?.status == 119 &&
+                <div className="text-[#006AF5] text-[20px] font-[500]">CHỜ DUYỆT THANH TOÁN CỌC</div>
+              }
             </div>
           </div>
           <div className="flex gap-x-6">

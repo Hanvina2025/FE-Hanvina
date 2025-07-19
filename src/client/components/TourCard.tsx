@@ -226,13 +226,13 @@ const TourCard = ({ tourData }) => {
               <div>
                 <p className="text-base font-[500] text-[#141415]">Giá tiền</p>
                 <h1 className="text-[#BB2C26] text-xl font-semibold">
-                  {departure?.adultPrice ? `${departure.adultPrice.toLocaleString()} đ` : ""}
+                  {departure?.adultPrice ? `${departure.adultPrice.toLocaleString()} đ` : "0 đ"}
                 </h1>
               </div>
               <div>
                 <p className="text-base font-[500] text-[#141415]">Hoa hồng</p>
                 <h1 className="text-[#BB2C26]  text-xl font-semibold">
-                  {departure?.commissionPriceCtv ? `${departure.commissionPriceCtv.toLocaleString()} đ` : ""}
+                  {departure?.commissionAdultPrice ? `${departure.commissionAdultPrice.toLocaleString()} đ` : "0 đ"}
                 </h1>
               </div>
             </div>

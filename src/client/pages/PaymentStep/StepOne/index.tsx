@@ -1,6 +1,6 @@
 import "./index.scss";
 import React, { useState, useEffect, useCallback } from "react";
-import { Breadcrumb } from "antd";
+import { Breadcrumb, Modal } from "antd";
 import arrRight from "/assets/images/arrow-right.svg";
 import { CalendarEdit } from "iconsax-react"
 import patternTitle from "/assets/images/patternTitle.svg";
@@ -21,6 +21,7 @@ import {
   postPreOrder, postOrderCustomer, postOrderDiscountPlus
 } from "@/client/apis/tour";
 import { PATH } from "@/libs/constants/path";
+import ReservationList from "@/client/components/ReservationList"
 
 const Reserve = () => {
   const location = useLocation();
@@ -44,6 +45,7 @@ const Reserve = () => {
   });
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const calcTotal = () => {
     if (!departure) return null;
@@ -365,12 +367,12 @@ const Reserve = () => {
                     <span className="text-[#BB2C26] text-base font-semibold">
                       01
                     </span>
-                    <Link
-                      to="/chi-tiet-tour"
-                      className="text-sm text-[#006AF5]"
+                    <div
+                      className="text-[#6961FF] underline text-base font-semibold cursor-pointer"
+                      onClick={() => setIsModalOpen(true)}
                     >
                       Chi tiết
-                    </Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -656,6 +658,16 @@ const Reserve = () => {
           </div>
         </div>
       </div>
+      <Modal
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        width={1000}
+        title={<span style={{ fontSize: 20, fontWeight: 500 }}>Danh sách giữ chỗ</span>}
+        style={{ borderRadius: 20 }}
+        footer={null}
+      >
+        <ReservationList id={departure?.id} />
+      </Modal>
     </div>
   );
 };

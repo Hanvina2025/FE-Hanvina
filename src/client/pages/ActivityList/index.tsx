@@ -122,8 +122,13 @@ const ActivityList = () => {
                   id=""
                   placeholder="Tìm kiếm"
                   className="rounded-2xl border border-[#D6D9DC] h-12 p-3 w-[278px] pl-11"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                  }}
                 />
               </div>
+
               <div className="relative cursor-pointer">
                 <div
                   className="rounded-2xl bg-white p-3 flex items-center gap-x-2"
