@@ -52,9 +52,9 @@ const ReservationList = ({ id }) => {
             key: "name",
             align: "center",
             width: 170,
-            render: (text, record) => (
+            render: (text, record, index) => (
                 <span style={{ color: record.isCurrentUser ? "red" : "inherit" }}>
-                    {text}
+                    {record.isCurrentUser ? text : `Đại lý ${index + 1}`}
                 </span>
             ),
         },

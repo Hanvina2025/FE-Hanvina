@@ -613,25 +613,34 @@ const PaymentStepFour = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-x-3">
                   <p className="text-[#252627] text-base">Đặt cọc</p>
-                  <p className=" text-[#8F9499] text-sm">15:20 - 29/2/2025</p>
+                  <p className=" text-[#8F9499] text-sm">
+                    {dayjs(preOrder?.createdTime).format("HH:mm - D/M/YYYY")}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-[#252627] font-medium">135,850,000 đ</p>
+                  <p className="text-[#252627] font-medium">
+                    {preOrder?.depositPrice?.toLocaleString()} ₫
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center gap-x-2 mt-3">
-                <img src={successimage} alt="" />
-                <span className="text-[#006AF5] text-sm">
-                  billchuyenkhoanlan1.ipg
-                </span>
-              </div>
+              {preOrder?.fileDeposit && (
+                <div
+                  className="text-blue-600 text-sm mt-2"
+                >
+                  {preOrder.fileDeposit.fileName}
+                </div>
+              )}
               <div className="flex items-center justify-between mt-3">
                 <div className="flex items-center gap-x-3">
                   <p className="text-[#252627] text-base">Tất toán</p>
-                  <p className=" text-[#8F9499] text-sm">15:20 - 29/2/2025</p>
+                  <p className=" text-[#8F9499] text-sm">
+                    {preOrder?.settlementDate ? dayjs(preOrder.settlementDate).format("HH:mm - D/M/YYYY") : "Chưa có"}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-[#252627] font-medium">135,850,000 đ</p>
+                  <p className="text-[#252627] font-medium">
+                    {preOrder?.settlementPrice?.toLocaleString()} ₫
+                  </p>
                 </div>
               </div>
             </div>

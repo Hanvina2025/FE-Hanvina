@@ -16,6 +16,7 @@ import ConfirmModal from "@/client/components/ConfirmModal"
 import type { UploadProps } from "antd";
 import { CloseOutlined } from "@ant-design/icons"
 import dayjs from "dayjs";
+import ReservationList from "@/client/components/ReservationList"
 
 import arrRight from "/assets/images/arrow-right.svg";
 import StepPayment from "@/client/components/StepPayment";
@@ -32,6 +33,7 @@ import paymentDealine from "/assets/images/paymentDealine.svg";
 import DepartSmall from "/assets/images/DepartSmall.svg";
 import upload from "/assets/images/upload.svg";
 import qrCode from "/assets/images/qrcode.svg";
+import ConfirmTour from "@/client/components/ConfirmTour";
 
 const { Dragger } = Upload;
 
@@ -56,6 +58,8 @@ const PaymentStepTwo = () => {
   const [isModalConfirm, setIsModalConfirm] = useState(false);
   const [fileBill, setFileBill] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
+  const [isModalOpenTB, setIsModalOpenTB] = useState(false);
+  const [isModalHuy, setIsModalHuy] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -413,12 +417,12 @@ const PaymentStepTwo = () => {
                         <span className="text-[#BB2C26] text-base font-semibold">
                           01
                         </span>
-                        <Link
-                          to="/chi-tiet-tour"
+                        <div
                           className="text-sm text-[#006AF5]"
+                          onClick={() => setIsModalOpenTB(true)}
                         >
                           Chi tiết
-                        </Link>
+                        </div>
                       </div>}
                   </div>
                 </div>
@@ -741,19 +745,34 @@ const PaymentStepTwo = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-x-3">
                   <p className="text-[#252627] text-base">Đặt cọc</p>
-                  <p className=" text-[#8F9499] text-sm">15:20 - 29/2/2025</p>
+                  <p className=" text-[#8F9499] text-sm">
+                    {dayjs(preOrder?.createdTime).format("HH:mm - D/M/YYYY")}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-[#252627] font-medium">135,850,000 đ</p>
+                  <p className="text-[#252627] font-medium">
+                    {preOrder?.depositPrice?.toLocaleString()} ₫
+                  </p>
                 </div>
               </div>
+              {preOrder?.fileDeposit && (
+                <div
+                  className="text-blue-600 text-sm mt-2"
+                >
+                  {preOrder.fileDeposit.fileName}
+                </div>
+              )}
               <div className="flex items-center justify-between mt-3">
                 <div className="flex items-center gap-x-3">
                   <p className="text-[#252627] text-base">Tất toán</p>
-                  <p className=" text-[#8F9499] text-sm">15:20 - 29/2/2025</p>
+                  <p className=" text-[#8F9499] text-sm">
+                    {preOrder?.settlementDate ? dayjs(preOrder.settlementDate).format("HH:mm - D/M/YYYY") : "Chưa có"}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-[#252627] font-medium">135,850,000 đ</p>
+                  <p className="text-[#252627] font-medium">
+                    {preOrder?.settlementPrice?.toLocaleString()} ₫
+                  </p>
                 </div>
               </div>
             </div>
@@ -772,7 +791,7 @@ const PaymentStepTwo = () => {
               </div>
             </button>
             <button className="mt-4 relative h-[48px] cursor-pointer"
-              onClick={() => navigate(PATH.LIST_TOUR_ACTIVE)}>
+              onClick={() => setIsModalHuy(true)}>
               <img src={buttonMediumNotBG} className="w-full h-[48px] mx-auto" />
               <div className="absolute w-full top-[11px] text-center font-[500] text-[16px] text-[#BB2C26]"
               >
@@ -885,8 +904,31 @@ const PaymentStepTwo = () => {
         trong vòng 30 phút. Vui lòng theo dõi
         trạng thái đơn hàng. Xin cảm ơn!"
       />
+      <ConfirmTour
+        visible={isModalHuy}
+        onCancel={() => setIsModalHuy(false)}
+        onConfirm={() => {
+          setIsModalHuy(false);
+        }}
+        title="Bạn muốn huỷ đặt chỗ cho tour này không?"
+        description="Sau khi huỷ, chỗ của bạn có thể được mở lại cho khách khác."
+        buttonTxtClose="Quay lại"
+        buttonTxtConfirm="Xác nhận"
+        imgCheck={false}
+      />
+      <Modal
+        open={isModalOpenTB}
+        onCancel={() => setIsModalOpenTB(false)}
+        width={1000}
+        title={<span style={{ fontSize: 20, fontWeight: 500 }}>Danh sách giữ chỗ</span>}
+        style={{ borderRadius: 20 }}
+        footer={null}
+      >
+        <ReservationList id={preOrder?.tourId} />
+      </Modal>
     </div >
   );
 };
 
 export default PaymentStepTwo;
+

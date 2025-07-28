@@ -9,7 +9,7 @@ import userYellow from "/assets/images/userYellow.svg";
 import buttonMedium from "/assets/images/buttonMedium.svg";
 import DropDownSelectDepartureDate from "@/client/components/DropDownSelectDepartureDate";
 
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import TitlePattern from "@/client/components/TitlePattern";
 import TourPriceTable from "@/client/components/TourPriceTable";
 import CustomerInformation from "@/client/components/CustomerInformation";
@@ -22,6 +22,7 @@ import {
 } from "@/client/apis/tour";
 import { PATH } from "@/libs/constants/path";
 import ReservationList from "@/client/components/ReservationList"
+import ConfirmTour from "@/client/components/ConfirmTour";
 
 const Reserve = () => {
   const location = useLocation();
@@ -46,6 +47,7 @@ const Reserve = () => {
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTourVisible, setIsTourVisible] = useState(false);
 
   const calcTotal = () => {
     if (!departure) return null;
@@ -237,9 +239,8 @@ const Reserve = () => {
       // 4. Gọi postOrderPlus cho dịch vụ cộng thêm
       const orderPlusData = { ...orderPlusPayload, preOrderId };
       await postOrderDiscountPlus(orderPlusData);
+      setIsTourVisible(true);
 
-      alert("Đặt chỗ thành công!");
-      navigate(PATH.LIST_TOUR_ACTIVE)
     } catch (error) {
       alert("Có lỗi xảy ra, vui lòng thử lại!");
       console.error(error);
@@ -668,6 +669,15 @@ const Reserve = () => {
       >
         <ReservationList id={departure?.id} />
       </Modal>
+      <ConfirmTour
+        visible={isTourVisible}
+        onCancel={() => setIsTourVisible(false)}
+        onConfirm={() => navigate(PATH.LIST_TOUR_ACTIVE)}
+        title="Giữ chỗ thành công!"
+        description="Bạn là người giữ chỗ đầu tiên! Hãy thanh toán luôn để không bỏ lỡ cơ hội."
+        buttonTxtClose="Đóng"
+        buttonTxtConfirm="Xem đơn"
+      />
     </div>
   );
 };
