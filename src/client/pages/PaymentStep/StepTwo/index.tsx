@@ -226,7 +226,7 @@ const PaymentStepTwo = () => {
       tourId: preOrder?.tourId,
       customerName: preOrder?.customerName,
       customerPhone: preOrder?.customerPhone,
-      status: preOrder?.status,
+      status: 119,
       totalPrice: totalData?.finalTotal,
     };
 
@@ -290,7 +290,13 @@ const PaymentStepTwo = () => {
       message.success("Gửi hóa đơn thành công!");
       setIsModalConfirm(true)
     } catch (error) {
-      message.error("Gửi hóa đơn thất bại!", error);
+      const errorMsg =
+        error?.response?.data?.errorMsg ||
+        error?.errorMsg ||
+        "Lỗi không xác định";
+
+      message.error(errorMsg);
+      console.error("Lỗi:", error);
     } finally {
       setUploading(false);
     }
