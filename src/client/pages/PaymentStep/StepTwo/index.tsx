@@ -874,7 +874,7 @@ const PaymentStepTwo = () => {
                   </span>
                   <br />
                   <span>
-                    “Họ và tên - Tất toán Tour [Tên tour]”
+                    “Họ và tên - Thanh toán cọc Tour [Tên tour]”
                   </span>
                 </div>
               </div>
