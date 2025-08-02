@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -15,35 +15,7 @@ import grayCalender from "/assets/images/grayCalender.svg";
 import reportCardPattern from "/assets/images/reportCardPattern.svg";
 import "./index.scss";
 import DateRangePicker from "@/client/components/DateRangePicker";
-const dataTotalProfit = [
-  { date: "15/07", value: 50000000 },
-  { date: "16/07", value: 150000000 },
-  { date: "17/07", value: 100000000 },
-  { date: "18/07", value: 400000000 },
-  { date: "19/07", value: 300000000 },
-  { date: "20/07", value: 350000000 },
-  { date: "21/07", value: 250000000 },
-];
-const dataTourBooked = [
-  { date: "15/07", value: 20 },
-  { date: "16/07", value: 60 },
-  { date: "17/07", value: 40 },
-  { date: "18/07", value: 120 },
-  { date: "19/07", value: 100 },
-  { date: "20/07", value: 110 },
-  { date: "21/07", value: 80 },
-];
-const dataTotalRevenue = [
-  { date: "15/07", value: 10000000 },
-  { date: "16/07", value: 40000000 },
-  { date: "17/07", value: 30000000 },
-  { date: "18/07", value: 90000000 },
-  { date: "19/07", value: 70000000 },
-  { date: "20/07", value: 80000000 },
-  { date: "21/07", value: 60000000 },
-];
-
-const chartDataArr = [dataTotalProfit, dataTourBooked, dataTotalRevenue];
+import { getChart, getSummary } from "@/client/apis/report";
 
 const formatCurrency = (value) => value.toLocaleString("vi-VN");
 
@@ -65,27 +37,6 @@ const CustomTooltip = ({ active, payload, label, selectedIndex }) => {
   return null;
 };
 
-const summaryData = [
-  {
-    icon: totalProfit,
-    title: "Tổng doanh thu",
-    value: 420000000,
-    unit: "Đồng",
-  },
-  {
-    icon: tourBooked,
-    title: "Tour đã đặt",
-    value: 240,
-    unit: "Tour",
-  },
-  {
-    icon: totalRevenue,
-    title: "Tổng hoa hồng",
-    value: 90000000,
-    unit: "Đồng",
-  },
-];
-
 const formatYAxis = (value, selectedIndex) => {
   if (selectedIndex === 0 || selectedIndex === 2) {
     if (value === 0) return "0";
@@ -98,6 +49,150 @@ export default function ReportChart() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [summaryLst, setSummaryLst] = useState([]);
+  const [chartLst, setChartLst] = useState([]);
+  const [summaryData, setSummaryData] = useState({
+    totalRevenue: 0,
+    totalTours: 0,
+    totalCommission: 0
+  });
+  const [chartData, setChartData] = useState({
+    type: "revenue",
+    typeName: "Tổng doanh thu",
+    chartData: []
+  });
+
+  // Khởi tạo dữ liệu chart mặc định
+  const defaultChartData = [
+    { date: "20/07", value: 0 },
+    { date: "21/07", value: 0 },
+    { date: "22/07", value: 0 },
+    { date: "23/07", value: 0 },
+    { date: "24/07", value: 0 },
+    { date: "25/07", value: 0 },
+    { date: "26/07", value: 0 },
+    { date: "27/07", value: 0 },
+    { date: "28/07", value: 0 },
+    { date: "29/07", value: 0 },
+    { date: "30/07", value: 0 },
+    { date: "31/07", value: 0 },
+    { date: "01/08", value: 0 },
+    { date: "02/08", value: 0 }
+  ];
+
+  useEffect(() => {
+    fetchSummary();
+    fetchChart();
+  }, []);
+
+  useEffect(() => {
+    fetchChart();
+  }, [selectedDate]);
+
+  const fetchSummary = async () => {
+    try {
+      const fetchedData = await getSummary();
+      setSummaryLst(fetchedData);
+
+      // Map dữ liệu từ summaryLst vào summaryData
+      if (fetchedData && fetchedData.length > 0) {
+        const mappedData = {
+          totalRevenue: fetchedData.find(item => item.type === 'revenue')?.value || 0,
+          totalTours: fetchedData.find(item => item.type === 'tours')?.value || 0,
+          totalCommission: fetchedData.find(item => item.type === 'commission')?.value || 0
+        };
+        setSummaryData(mappedData);
+      }
+    } catch (error) {
+      console.error("Error fetching summary:", error);
+    }
+  };
+
+  const fetchChart = async () => {
+    console.log("fetchChart", selectedDate);
+    const chartTypes = ['revenue', 'tours', 'commission'];
+    const currentType = chartTypes[selectedIndex];
+
+    // Tạo object params thay vì URLSearchParams
+    const params: any = {
+      type: currentType
+    };
+
+    // Chỉ thêm date parameters nếu có selectedDate
+    if (selectedDate) {
+      const [start, end] = selectedDate.split(" - ");
+      const formatDate = (dateStr: string) => {
+        const [day, month, year] = dateStr.split("/");
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      };
+
+      params.fromDate = formatDate(start);
+      params.toDate = formatDate(end);
+    }
+
+    console.log("API params:", params);
+
+    try {
+      const fetchedData = await getChart(params);
+      setChartLst(fetchedData);
+
+      // Cập nhật chartData với dữ liệu từ API
+      if (fetchedData) {
+        setChartData({
+          type: currentType,
+          typeName: getTypeName(currentType),
+          chartData: fetchedData.chartData || defaultChartData
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching chart:", error);
+      // Fallback về dữ liệu mặc định nếu API lỗi
+      setChartData({
+        type: currentType,
+        typeName: getTypeName(currentType),
+        chartData: defaultChartData
+      });
+    }
+  };
+
+  const getTypeName = (type) => {
+    switch (type) {
+      case 'revenue':
+        return 'Tổng doanh thu';
+      case 'tours':
+        return 'Tour đã đặt';
+      case 'commission':
+        return 'Tổng hoa hồng';
+      default:
+        return 'Tổng doanh thu';
+    }
+  };
+
+  // Cập nhật chart khi selectedIndex thay đổi
+  useEffect(() => {
+    fetchChart();
+  }, [selectedIndex]);
+
+  const summaryDataArr = [
+    {
+      icon: totalRevenue,
+      title: "Tổng doanh thu",
+      value: summaryData.totalRevenue,
+      unit: "Đồng",
+    },
+    {
+      icon: tourBooked,
+      title: "Tour đã đặt",
+      value: summaryData.totalTours,
+      unit: "Tour",
+    },
+    {
+      icon: totalProfit,
+      title: "Tổng hoa hồng",
+      value: summaryData.totalCommission,
+      unit: "Đồng",
+    },
+  ];
 
   return (
     <div className="container mx-auto bg-white p-5 rounded-[20px] boxShadowTourActive mb-[100px]">
@@ -105,7 +200,7 @@ export default function ReportChart() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        {summaryData.map((item, idx) => {
+        {summaryDataArr.map((item, idx) => {
           let baseClass =
             "max-w-[400px] h-[217px] rounded-2xl px-6 py-2 cursor-pointer border  border-[#D6D9DC] relative ";
 
@@ -151,7 +246,7 @@ export default function ReportChart() {
         })}
       </div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-[20px] font-medium">Tổng doanh thu</h3>
+        <h3 className="text-[20px] font-medium">{chartData.typeName}</h3>
         <div className="relative">
           <div
             className="flex cursor-pointer items-center justify-between gap-2 text-sm text-[#141415] border border-[#E9EBED] rounded-[100px] min-w-[276px] px-4 py-3"
@@ -181,7 +276,7 @@ export default function ReportChart() {
       <div className="bg-white p-4 rounded-2xl  border border-[#E9EBED]">
         <ResponsiveContainer width="100%" height={300}>
           <LineChart
-            data={chartDataArr[selectedIndex]}
+            data={chartData.chartData}
             margin={{ top: 16, right: 24, left: 8, bottom: 8 }}
           >
             <CartesianGrid strokeDasharray="3 3" vertical={false} />

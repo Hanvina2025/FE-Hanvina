@@ -1,5 +1,7 @@
 import { Modal } from "antd";
 import IcNotifyPopup from "/assets/images/IcCheckPopup.svg";
+import IcButtonRight from "/assets/images/button-confirm-right.svg"
+import IcButtonLeft from "/assets/images/button-confirm-left.svg"
 
 const ConfirmDeleteModal = ({
   visible,
@@ -20,19 +22,20 @@ const ConfirmDeleteModal = ({
       closable={false}
       maskClosable={false}
       footer={
-        <div className="grid grid-cols-2 justify-center gap-3 py-4">
+        <div className="grid grid-cols-2 justify-center py-4">
           <button
             onClick={onCancel}
-            className="px-10 py-3 flex-1 border border-[#BB2C26] rounded-full text-[#BB2C26] font-[500] text-base"
+            className="font-[500] text-base relative"
           >
-            {buttonTxtClose}
+            <img src={IcButtonLeft} />
+            <div className="absolute top-[10px] left-[60px] text-[#BB2C26]">{buttonTxtClose}</div>
           </button>
           <button
             onClick={onConfirm}
-            className=" py-3 flex-1 bg-[#BB2C26] rounded-full text-white font-[500] text-base"
-            style={{ boxShadow: '0px 1px 4px 0px rgba(0, 0, 0, 0.25)' }}
+            className="text-white font-[500] text-base relative"
           >
-            {buttonTxtConfirm}
+            <img src={IcButtonRight} />
+            <div className="absolute w-full flex items-center justify-center top-[10px]">{buttonTxtConfirm}</div>
           </button>
         </div>
       }

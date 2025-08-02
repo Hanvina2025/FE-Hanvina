@@ -116,7 +116,7 @@ const Login = () => {
 
             <div className="flex items-center justify-between">
               <label className="flex items-center text-sm">
-                <input type="checkbox" className="mr-2" />
+                <input type="checkbox" className="mr-2 h-[13px]" />
                 Lưu thông tin đăng nhập
               </label>
               <a href="#" className="text-sm text-[#36383A]">Quên mật khẩu?</a>
