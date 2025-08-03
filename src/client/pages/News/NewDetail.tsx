@@ -36,6 +36,8 @@ const NewDetail = () => {
     const query: any = new URLSearchParams({
       page: "0",
       size: "3",
+      title: "",
+      type: "",
       active: "true"
     });
     try {

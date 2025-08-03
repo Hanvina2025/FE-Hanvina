@@ -226,7 +226,7 @@ const PaymentStepDone = () => {
                     {preOrder?.status == 118 &&
                       <div className="flex items-center gap-x-2">
                         <span className="text-[#BB2C26] text-base font-semibold">
-                          01
+                          {preOrder?.tourInformation?.orderNo || "01"}
                         </span>
                         <Link
                           to="/chi-tiet-tour"

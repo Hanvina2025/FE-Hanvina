@@ -10,11 +10,12 @@ import IcPosition from "/assets/images/ic-position.svg";
 import IcLocation from "/assets/images/ic-location.svg";
 import IcLine from "/assets/images/ic-line-tour.svg";
 import { getTourStartDate } from "@/client/apis/tour";
-import { Modal } from "antd"
+import { Modal, message } from "antd"
 import { useNavigate } from "react-router-dom";
 import DropDownSelectDepartureDate from "./DropDownSelectDepartureDate";
 import { PATH } from "@/libs/constants/path";
 import ReservationList from "@/client/components/ReservationList"
+import { getExportFile } from "@/client/apis/tour"
 
 const TourCard = ({ tourData }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -57,6 +58,33 @@ const TourCard = ({ tourData }) => {
     setShowDatePicker(false);
   };
 
+  const handleExportFile = async () => {
+    try {
+      const file = await getExportFile(departure?.id);
+
+      const blobUrl = URL.createObjectURL(file); // tạo URL tạm
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = file.name; // => "Chương trình Tour"
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl); // giải phóng URL
+
+      message.success("Tải chương trình Tour thành công");
+    } catch (error) {
+      const errorMsg =
+        error?.response?.data?.errorMsg ||
+        error?.errorMsg ||
+        "Lỗi không xác định";
+
+      message.error(errorMsg);
+      console.error("Lỗi:", error);
+
+    }
+  }
+
   return (
     <div className="container bg-white mx-auto p-8 py-[20px] rounded-[20px] shadow-all">
       <div className="flex justify-between items-center">
@@ -66,7 +94,7 @@ const TourCard = ({ tourData }) => {
           </h1>
         </div>
         <div>
-          <button className="border border-[#867FFE] h-10 rounded-[40px] text-[#6961FF] text-base font-medium flex items-center gap-x-2 px-3 py-2">
+          <button onClick={() => handleExportFile()} className="border border-[#867FFE] h-10 rounded-[40px] text-[#6961FF] text-base font-medium flex items-center gap-x-2 px-3 py-2">
             <img src={iconDownload} alt="" />
             Tải chương trình tour
           </button>

@@ -179,7 +179,7 @@ const Reserve = () => {
       customerPhone,
       status: 118,
       totalPrice: totalData?.finalTotal,
-      totalSeatsCheck: adultCount + childrenCount + babyCount,
+      totalSeatsCheck: adultCount + childrenCount,
     };
 
     let preOrderId = null;
@@ -366,7 +366,7 @@ const Reserve = () => {
                   </span>
                   <div className="flex items-center gap-x-2">
                     <span className="text-[#BB2C26] text-base font-semibold">
-                      01
+                      {departure?.orderNo || "01"}
                     </span>
                     <div
                       className="text-[#6961FF] underline text-base font-semibold cursor-pointer"

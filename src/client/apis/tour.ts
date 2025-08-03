@@ -107,6 +107,18 @@ export const putOrderCustomer = async (
   }
 };
 
+
+export const getListOrderCustomer = async (params: string) => {
+  try {
+    const url = `/order-customer-information/list-by-pre-order?${params.toString()}`;
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};
+
 export const getDetailOrderCustomer = async (id: number | string) => {
   try {
     const url = `/order-customer/list-by-pre-order?preOrderId=${id}`;
@@ -114,6 +126,27 @@ export const getDetailOrderCustomer = async (id: number | string) => {
     return response.data;
   } catch (error) {
     console.error("Error", error);
+    throw error;
+  }
+};
+
+export const putOrderCustomerInfomation = async (
+  data: FormData
+) => {
+  try {
+    const url = `/order-customer-information`;
+    const response = await axiosInstance.put(
+      url,
+      data,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
     throw error;
   }
 };
@@ -208,6 +241,26 @@ export const getTourPriceServices = async (id: number | string) => {
     return response.data;
   } catch (error) {
     console.error("Error", error);
+    throw error;
+  }
+};
+
+// download file
+export const getExportFile = async (tourId: any) => {
+  try {
+    const url = `/tour/export-file?tourId=${tourId}`;
+    const response = await axiosInstance.get(url, {
+      responseType: "blob", // để xử lý PDF
+    });
+
+    const filename = `Chương trình Tour`;
+    const file = new File([response.data], filename, {
+      type: "application/pdf",
+    });
+
+    return file;
+  } catch (error) {
+    console.error("Lỗi khi lấy file từ HIS:", error);
     throw error;
   }
 };

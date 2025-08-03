@@ -28,7 +28,7 @@ const ConfirmDeleteModal = ({
             className="font-[500] text-base relative"
           >
             <img src={IcButtonLeft} />
-            <div className="absolute top-[10px] left-[60px] text-[#BB2C26]">{buttonTxtClose}</div>
+            <div className="absolute top-[10px] left-[50px] text-[#BB2C26]">{buttonTxtClose}</div>
           </button>
           <button
             onClick={onConfirm}

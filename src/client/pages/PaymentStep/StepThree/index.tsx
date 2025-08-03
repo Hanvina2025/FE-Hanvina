@@ -16,7 +16,7 @@ import countUser from "/assets/images/countUser.svg";
 import CustomerList from "@/client/components/CustomerList";
 import ButtonShort from "/assets/images/button-short.svg";
 
-import ConfirmModal from "@/client/components/ConfirmModal"
+import ConfirmModal from "@/client/components/ConfirmTour"
 
 const PaymentStepThree = () => {
   const navigate = useNavigate();

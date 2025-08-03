@@ -112,5 +112,7 @@ input {
   .container {
     padding-left: 15px;
     padding-right: 15px;
+    width: 1280px !important;
+    max-width: 1280px !important;
   }
 }

@@ -1,38 +1,102 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Upload } from "antd";
 import uploadImage from "/assets/images/upload.svg";
-
-const initialCustomers = Array.from({ length: 14 }, (_, i) => ({
-  name: `Khách hàng ${i + 1}`,
-  files: [],
-}));
+import { useParams } from "react-router-dom";
+import {
+  getListOrderCustomer,
+  putOrderCustomerInfomation
+} from "@/client/apis/tour";
 
 export default function CustomerList() {
-  const [customers, setCustomers] = useState(initialCustomers);
+  const { id } = useParams();
+  const [listCustomerPreOrder, setListCustomerPreOrder] = useState<any>([]);
 
-  const handleUpload = (file, customerIndex) => {
-    setCustomers((prev) => {
-      const newCustomers = [...prev];
-      const exists = newCustomers[customerIndex].files.some(
-        (f) => f.name === file.name && f.size === file.size
-      );
-      if (!exists) {
-        newCustomers[customerIndex].files = [
-          ...newCustomers[customerIndex].files,
-          file,
-        ];
-      }
-      return newCustomers;
+  useEffect(() => {
+    if (id) {
+      fetchListPreOrder(id)
+    }
+  }, [id])
+
+  const fetchListPreOrder = async (id: number | string) => {
+    const query: any = new URLSearchParams({
+      preOrderId: String(id)
     });
+    try {
+      const fetchedData = await getListOrderCustomer(query);
+      setListCustomerPreOrder(fetchedData.data)
+    } catch (error) {
+      console.error("Error fetching home:", error);
+    }
+  };
+
+  const handleUpload = async (file, customerIndex) => {
+    try {
+      // Tạo FormData để gửi lên API
+      const formData = new FormData();
+
+      // Thêm file mới
+      formData.append('newFiles', file);
+
+      // Tạo dto object
+      const customer = listCustomerPreOrder[customerIndex];
+      const dto = {
+        id: customer.id,
+        preOrderId: parseInt(id as string),
+        orderId: customer.orderId,
+        name: customer.name,
+        filesKeysDelete: [] // Không có file nào bị xóa khi upload mới
+      };
+
+      // Thêm dto vào FormData
+      formData.append('dtoString', JSON.stringify(dto));
+
+      // Gọi API
+      await putOrderCustomerInfomation(formData);
+
+      // Refresh lại danh sách từ server
+      await fetchListPreOrder(id);
+
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+
     return false; // prevent auto upload
   };
 
-  const handleRemoveFile = (customerIndex, fileIndex) => {
-    setCustomers((prev) => {
-      const newCustomers = [...prev];
-      newCustomers[customerIndex].files.splice(fileIndex, 1);
-      return [...newCustomers];
-    });
+  const handleRemoveFile = async (customerIndex, fileIndex) => {
+    try {
+      const customer = listCustomerPreOrder[customerIndex];
+      const fileToDelete = customer.files[fileIndex];
+      console.log('customer', customer);
+      console.log('customerIndex', customerIndex);
+      console.log('fileIndex', fileIndex);
+      console.log('fileToDelete', fileToDelete);
+
+
+      // Tạo FormData để gửi lên API
+      const formData = new FormData();
+
+      // Tạo dto object với filesKeysDelete chứa tên file bị xóa
+      const dto = {
+        id: customer.id,
+        preOrderId: parseInt(id as string),
+        orderId: customer.orderId,
+        name: customer.name,
+        filesKeysDelete: [fileToDelete.fileKey] // Tên file bị xóa
+      };
+
+      // Thêm dto vào FormData
+      formData.append('dtoString', JSON.stringify(dto));
+
+      // Gọi API
+      await putOrderCustomerInfomation(formData);
+
+      // Refresh lại danh sách từ server
+      await fetchListPreOrder(id);
+
+    } catch (error) {
+      console.error("Error removing file:", error);
+    }
   };
 
   return (
@@ -50,7 +114,7 @@ export default function CustomerList() {
           </div>
         </div>
         <div className="py-4">
-          {customers.map((customer, index) => (
+          {listCustomerPreOrder.map((customer, index) => (
             <div key={index} className="grid grid-cols-12 items-start text-sm">
               <div className="col-span-1 px-3 py-2 text-base font-semibold text-[#141415] m-auto">
                 {index + 1}
@@ -67,7 +131,7 @@ export default function CustomerList() {
                         className="flex items-center gap-1  px-2 py-1 rounded-md "
                       >
                         <span className="text-sm text-[#006AF5]">
-                          {file.name}
+                          {file.fileName}
                         </span>
                         <button
                           onClick={() => handleRemoveFile(index, fileIndex)}

@@ -14,36 +14,6 @@ const News = () => {
   const [loading, setLoading] = useState(false);
   const [dataLst, setDataLst] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
-  const data = [
-    {
-      id: 1,
-      date: 'Thứ sáu, 20/09/2024',
-      image: 'https://hanvinatravel.vn//uploads/images/nh%C6%B0ng-diem-tam-linh-tai-tay-tang.jpg',
-      title: 'HANVINA TRAVEL CHÍNH THỨC CÓ MẶT TẠI TP.HCM – SẴN SÀNG PHỤC VỤ QUÝ KHÁCH!',
-      description: 'Sau nhiều mong đợi, Hanvina Travel chính thức khai trương văn phòng giao dịch tại TP.HCM! Từ ngày 17/02/2025, chúng tôi sẵn sàng mang đến cho Quý khách hàng những trải nghiệm dịch vụ tốt nhất ngay tại trung tâm thành phố!'
-    },
-    {
-      id: 2,
-      date: 'Thứ sáu, 20/09/2024',
-      image: 'https://hanvinatravel.vn//uploads/images/nguoi-tuyet-khong-lo-cap-nhi-tan_1.jpg',
-      title: 'HANVINA TRAVEL CHÍNH THỨC CÓ MẶT TẠI TP.HCM – SẴN SÀNG PHỤC VỤ QUÝ KHÁCH!',
-      description: 'Sau nhiều mong đợi, Hanvina Travel chính thức khai trương văn phòng giao dịch tại TP.HCM! Từ ngày 17/02/2025, chúng tôi sẵn sàng mang đến cho Quý khách hàng những trải nghiệm dịch vụ tốt nhất ngay tại trung tâm thành phố!'
-    },
-    {
-      id: 3,
-      date: 'Thứ sáu, 20/09/2024',
-      image: 'https://hanvinatravel.vn//uploads/images/san-van-dong-to-chim-bac-kinh-7.jpg',
-      title: 'HANVINA TRAVEL CHÍNH THỨC CÓ MẶT TẠI TP.HCM – SẴN SÀNG PHỤC VỤ QUÝ KHÁCH!',
-      description: 'Sau nhiều mong đợi, Hanvina Travel chính thức khai trương văn phòng giao dịch tại TP.HCM! Từ ngày 17/02/2025, chúng tôi sẵn sàng mang đến cho Quý khách hàng những trải nghiệm dịch vụ tốt nhất ngay tại trung tâm thành phố!'
-    },
-    {
-      id: 4,
-      date: 'Thứ sáu, 20/09/2024',
-      image: 'https://hanvinatravel.vn//uploads/images/Tour-Cap-nhi-tan-thang-12_1.jpg',
-      title: 'HANVINA TRAVEL CHÍNH THỨC CÓ MẶT TẠI TP.HCM – SẴN SÀNG PHỤC VỤ QUÝ KHÁCH!',
-      description: 'Sau nhiều mong đợi, Hanvina Travel chính thức khai trương văn phòng giao dịch tại TP.HCM! Từ ngày 17/02/2025, chúng tôi sẵn sàng mang đến cho Quý khách hàng những trải nghiệm dịch vụ tốt nhất ngay tại trung tâm thành phố!'
-    },
-  ]
 
   useEffect(() => {
     fetchList();
@@ -54,6 +24,8 @@ const News = () => {
     const query: any = new URLSearchParams({
       page: (pageIndex - 1).toString(),
       size: pageSize.toString(),
+      title: "",
+      type: "",
       active: "true"
     });
     try {

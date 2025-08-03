@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Breadcrumb, Upload, message } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import ConfirmModal from "@/client/components/ConfirmModal"
+import ConfirmModal from "@/client/components/ConfirmTour"
 import type { UploadProps } from "antd";
 import { CloseOutlined } from "@ant-design/icons"
 import dayjs from "dayjs";
@@ -15,7 +15,6 @@ import buttonMedium from "/assets/images/button-short.svg";
 import buttonMediumDisable from "/assets/images/button-short-disable.svg";
 import upload from "/assets/images/upload.svg";
 import qrCode from "/assets/images/qrcode.svg";
-import successimage from "/assets/images/success.svg";
 
 import {
   getDetailPreOrder,
@@ -296,7 +295,7 @@ const PaymentStepFour = () => {
                     {preOrder?.status == 118 &&
                       <div className="flex items-center gap-x-2">
                         <span className="text-[#BB2C26] text-base font-semibold">
-                          01
+                          {preOrder?.tourInformation?.orderNo || "01"}
                         </span>
                         <Link
                           to="/chi-tiet-tour"

@@ -96,7 +96,7 @@ const TourCardListActive = ({ tourActiveData }) => {
         <div className="flex justify-between items-center">
           <h2 className="font-bold text-[24px] mb-6">{tourActiveData?.tourName}</h2>
           <div className="flex items-center gap-2 rounded">
-            {["incomplete", "pendingTransactions", "statusPendingApproval"].includes(statusKey) && (
+            {["incomplete", "pendingTransactions"].includes(statusKey) && (
               <span
                 className={`px-2 py-1 rounded-md text-base`}
                 style={{

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Breadcrumb, Modal, Upload, message, Image, Button } from "antd";
 import "./index.scss";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { PATH } from "@/libs/constants/path";
 import {
   getDetailPreOrder,
@@ -12,7 +12,6 @@ import {
   putOrderCustomer,
   putOrderDiscountPlus
 } from "@/client/apis/tour";
-import ConfirmModal from "@/client/components/ConfirmModal"
 import type { UploadProps } from "antd";
 import { CloseOutlined } from "@ant-design/icons"
 import dayjs from "dayjs";
@@ -228,6 +227,7 @@ const PaymentStepTwo = () => {
       customerPhone: preOrder?.customerPhone,
       status: 119,
       totalPrice: totalData?.finalTotal,
+      totalSeatsCheck: adultCount + childrenCount,
     };
 
 
@@ -421,7 +421,7 @@ const PaymentStepTwo = () => {
                     {preOrder?.status == 118 &&
                       <div className="flex items-center gap-x-2">
                         <span className="text-[#BB2C26] text-base font-semibold">
-                          01
+                          {preOrder?.tourInformation?.orderNo || "01"}
                         </span>
                         <div
                           className="text-sm text-[#006AF5]"
@@ -901,7 +901,7 @@ const PaymentStepTwo = () => {
           </div>
         </div>
       </Modal>
-      <ConfirmModal
+      <ConfirmTour
         visible={isModalConfirm}
         onCancel={handleConfirmCancel}
         onConfirm={handleConfirmApply}
@@ -909,6 +909,7 @@ const PaymentStepTwo = () => {
         description="Chúng tôi sẽ xác nhận thanh toán của bạn
         trong vòng 30 phút. Vui lòng theo dõi
         trạng thái đơn hàng. Xin cảm ơn!"
+        imgCheck={true}
       />
       <ConfirmTour
         visible={isModalHuy}
