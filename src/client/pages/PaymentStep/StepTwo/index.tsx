@@ -757,7 +757,7 @@ const PaymentStepTwo = () => {
                 </div>
                 <div>
                   <p className="text-[#252627] font-medium">
-                    {preOrder?.depositPrice?.toLocaleString()} ₫
+                    {totalData?.finalTotal ? (totalData?.finalTotal / 2).toLocaleString() : preOrder?.depositPrice?.toLocaleString()} ₫
                   </p>
                 </div>
               </div>
@@ -777,7 +777,7 @@ const PaymentStepTwo = () => {
                 </div>
                 <div>
                   <p className="text-[#252627] font-medium">
-                    {preOrder?.settlementPrice?.toLocaleString()} ₫
+                    {totalData?.finalTotal ? (totalData?.finalTotal / 2).toLocaleString() : preOrder?.settlementPrice?.toLocaleString()} ₫
                   </p>
                 </div>
               </div>
