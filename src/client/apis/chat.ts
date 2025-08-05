@@ -44,9 +44,9 @@ export const getdetailUserChat = async (id: string | number) => {
   }
 };
 
-export const createRoomSenderReceiver = async (senderId: string | number, receiverId: string | number) => {
+export const createRoomSenderReceiver = async (params: any) => {
   try {
-    const url = `/chat/room/create-with-sender?senderId=${senderId}&receiverId=${receiverId}`;
+    const url = `/chat/room/create-with-sender?${params}`;
     const response = await axiosInstance.post(url);
     return response.data;
   } catch (error) {

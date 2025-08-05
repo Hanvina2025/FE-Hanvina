@@ -194,6 +194,35 @@ export const ListTour = () => {
   }
 
   useEffect(() => {
+    // Lấy params từ URL khi component mount
+    const tourFromId = searchParams.get("tourFromId");
+    const tourToId = searchParams.get("tourToId");
+    const startDateFrom = searchParams.get("startDateFrom");
+    const startDateTo = searchParams.get("startDateTo");
+
+    // Chỉ set state khi danh sách đã load xong
+    if (tourFromLst.length > 0 || tourToLst.length > 0) {
+      if (tourFromId && tourFromId !== "") {
+        console.log('tourFromId', tourFromId);
+
+        setDeparture(tourFromId);
+      }
+      if (tourToId && tourToId !== "") {
+        setDestination(tourToId);
+      }
+      if (startDateFrom && startDateTo && !selectedDate) {
+        // Convert back to DD/MM/YYYY format for display
+        const formatDateForDisplay = (dateStr: string) => {
+          const [year, month, day] = dateStr.split("-");
+          return `${day}/${month}/${year}`;
+        };
+        const displayDate = `${formatDateForDisplay(startDateFrom)} - ${formatDateForDisplay(startDateTo)}`;
+        setSelectedDate(displayDate);
+      }
+    }
+  }, [searchParams, tourFromLst, tourToLst]);
+
+  useEffect(() => {
     fetchList();
   }, [
     pageIndex,
@@ -206,6 +235,8 @@ export const ListTour = () => {
     tourType,
     debouncedName,
     debouncedPriceRange,
+    tourFromLst.length,
+    tourToLst.length,
   ]);
 
   const fetchList = async () => {
@@ -292,7 +323,7 @@ export const ListTour = () => {
                         </div>
                       </div>
                       <div className="text-[#767A7F] text-sm whitespace-nowrap">
-                        {departure ? tourFromLst.find((item) => item.id === departure)?.name : "Chọn điểm khởi hành"}
+                        {departure ? tourFromLst.find((item) => item.id == departure)?.name : "Chọn điểm khởi hành"}
                       </div>
                     </div>
                   </div>
@@ -331,7 +362,7 @@ export const ListTour = () => {
                         </div>
                       </div>
                       <div className="text-[#767A7F] text-sm whitespace-nowrap">
-                        {destination ? tourToLst.find((item) => item.id === destination)?.name : "Chọn điểm đến"}
+                        {destination ? tourToLst.find((item) => item.id == destination)?.name : "Chọn điểm đến"}
                       </div>
                     </div>
                   </div>
@@ -593,7 +624,7 @@ export const ListTour = () => {
               <>
                 <div className="mt-8 z-20">
                   {dataLst.map((tourData, index) => (
-                    <div key={index} className="mb-5">
+                    <div key={index} className="mb-5 relative">
                       <TourCard tourData={tourData} />
                     </div>
                   ))}

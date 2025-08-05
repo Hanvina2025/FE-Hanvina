@@ -16,6 +16,7 @@ import DropDownSelectDepartureDate from "./DropDownSelectDepartureDate";
 import { PATH } from "@/libs/constants/path";
 import ReservationList from "@/client/components/ReservationList"
 import { getExportFile } from "@/client/apis/tour"
+import IcFire from "/assets/images/Ic-fire.svg";
 
 const TourCard = ({ tourData }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -86,7 +87,9 @@ const TourCard = ({ tourData }) => {
   }
 
   return (
-    <div className="container bg-white mx-auto p-8 py-[20px] rounded-[20px] shadow-all">
+    <div className={`container relative bg-white mx-auto p-8 py-[20px] rounded-[20px] shadow-all ${tourData?.special ? 'tour-special' : ''}`}>
+
+      {tourData?.special && <img src={IcFire} alt="" className="absolute top-[13px] left-[-50px] z-100" />}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-medium text-[#141415] ">
@@ -196,9 +199,9 @@ const TourCard = ({ tourData }) => {
                   </h1>
                 </div>
                 <div className="w-full text-ce">
-                  <span className="text-base text-[#767A7F]">
+                  <div className="text-base text-[#767A7F] line-clamp-4">
                     {tourData?.noteExternal || ""}
-                  </span>
+                  </div>
                 </div>
               </div>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Breadcrumb, Modal, Upload, message, Image, Button } from "antd";
+import { Breadcrumb, Modal, Upload, message, Popover } from "antd";
 import "./index.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { PATH } from "@/libs/constants/path";
@@ -16,6 +16,8 @@ import type { UploadProps } from "antd";
 import { CloseOutlined } from "@ant-design/icons"
 import dayjs from "dayjs";
 import ReservationList from "@/client/components/ReservationList"
+
+import Chatbot from "../ChatMessage";
 
 import arrRight from "/assets/images/arrow-right.svg";
 import StepPayment from "@/client/components/StepPayment";
@@ -59,6 +61,7 @@ const PaymentStepTwo = () => {
   const [uploading, setUploading] = useState(false);
   const [isModalOpenTB, setIsModalOpenTB] = useState(false);
   const [isModalHuy, setIsModalHuy] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -933,7 +936,8 @@ const PaymentStepTwo = () => {
       >
         <ReservationList id={preOrder?.tourId} />
       </Modal>
-    </div >
+      <Chatbot preOrder={preOrder} />
+    </div>
   );
 };
 

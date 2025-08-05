@@ -85,7 +85,7 @@ const Home = () => {
                       </div>
                     </div>
                     <div className="text-[#767A7F] text-sm whitespace-nowrap">
-                      {departure || "Chọn điểm khởi hành"}
+                      {departure ? tourFromLst.find((item) => item.id === departure)?.name : "Chọn điểm khởi hành"}
                     </div>
                   </div>
                 </div>
@@ -123,7 +123,7 @@ const Home = () => {
                       </div>
                     </div>
                     <div className="text-[#767A7F] text-sm whitespace-nowrap">
-                      {destination || "Chọn điểm đến"}
+                      {destination ? tourToLst.find((item) => item.id === destination)?.name : "Chọn điểm đến"}
                     </div>
                   </div>
                 </div>
@@ -176,7 +176,21 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="mt-[28px] h-[48px] cursor-pointer relative z-[10]" onClick={() => navigate(PATH.LIST_TOUR)}>
+            <div className="mt-[28px] h-[48px] cursor-pointer relative z-[10]" onClick={() => {
+              const params = new URLSearchParams();
+              if (departure && departure !== "") params.append('tourFromId', departure);
+              if (destination && destination !== "") params.append('tourToId', destination);
+              if (selectedDate) {
+                const [start, end] = selectedDate.split(" - ");
+                const formatDate = (dateStr: string) => {
+                  const [day, month, year] = dateStr.split("/");
+                  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+                };
+                params.append('startDateFrom', formatDate(start));
+                params.append('startDateTo', formatDate(end));
+              }
+              navigate(`${PATH.LIST_TOUR}?${params.toString()}`);
+            }}>
               <img src={ButtonLong} className="w-full h-[48px] mx-auto" />
               <div className="absolute w-full top-[11px] text-center font-[500] text-[16px] text-white">
                 Tìm kiếm

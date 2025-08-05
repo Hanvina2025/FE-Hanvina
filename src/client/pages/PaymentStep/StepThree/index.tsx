@@ -7,6 +7,7 @@ import {
   getDetailPreOrder,
   getDetailOrderCustomer
 } from "@/client/apis/tour";
+import Chatbot from "../ChatMessage";
 
 import arrRight from "/assets/images/arrow-right.svg";
 import StepPayment from "@/client/components/StepPayment";
@@ -159,6 +160,7 @@ const PaymentStepThree = () => {
         title="Nộp hồ sơ khách hàng thành công!"
         description="Hồ sơ khách hàng của bạn đã được gửi lên hệ thống thành công"
       />
+      <Chatbot preOrder={preOrder} />
     </div>
   );
 };

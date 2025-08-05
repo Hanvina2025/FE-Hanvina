@@ -23,6 +23,7 @@ interface ChatUser {
   username: string;
   roomId: string;
   withUserFullName: string;
+  withUsername?: string;
   lastMessage: string;
   image?: string;
   isRead: boolean;
@@ -30,8 +31,15 @@ interface ChatUser {
 }
 
 interface Message {
-  senderId: string;
+  id: number;
+  roomId: number;
+  senderId: number;
+  senderName: string;
   message: string;
+  sentTime: string;
+  isRead: boolean;
+  tourId: number | null;
+  type: number;
 }
 
 const ChatList: React.FC = () => {
@@ -47,12 +55,10 @@ const ChatList: React.FC = () => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
-  const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all');
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
   const pageIndex = parseInt(searchParams.get("page") || "1", 10);
   const pageSize = parseInt(searchParams.get("size") || "20", 10);
 
-  const adminId = userData?.info?.id || '';
+  const adminId = userData?.info?.id || userData?.id || '';
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
   const wsUrl = `${baseUrl.replace(/\/$/, '')}/ws/chat`;
 
@@ -60,11 +66,13 @@ const ChatList: React.FC = () => {
   const stompClientRef = useRef<Client | null>(null);
   const currentSubscriptionRef = useRef<any>(null);
   const searchDropdownRef = useRef<HTMLDivElement>(null);
-  const [previewMap, setPreviewMap] = useState<Record<string, string>>({});
+  // Xóa previewMap vì không cần thiết nữa
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!adminId) return;
+    if (!adminId) {
+      return;
+    }
     setLoading(true)
     const socket = new SockJS(wsUrl);
     const stompClient = Stomp.over(socket);
@@ -72,6 +80,7 @@ const ChatList: React.FC = () => {
 
     stompClient.connect({}, async () => {
       await fetchUsers();
+      await loadFirstUser();
     }, (error) => {
       console.error('WebSocket error:', error);
     });
@@ -99,31 +108,13 @@ const ChatList: React.FC = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const loadImagePreviews = async () => {
-      const newMap: Record<string, string> = {};
-
-      for (const m of messages) {
-        if (
-          m.message.includes(`${baseUrl}/file/download-file?fileKey`) &&
-          !previewMap[m.message]
-        ) {
-          const url = await fetchImagePreview(m.message);
-          newMap[m.message] = url;
-        }
-      }
-
-      if (Object.keys(newMap).length > 0) {
-        setPreviewMap(prev => ({ ...prev, ...newMap }));
-      }
-    };
-
-    loadImagePreviews();
-  }, [messages]);
+  // Xóa useEffect loadImagePreviews vì không cần thiết nữa - ảnh sẽ hiển thị trực tiếp từ URL
 
 
   const subscribeToUserQueue = (roomId: string) => {
-    if (!stompClientRef.current || !stompClientRef.current.connected) return;
+    if (!stompClientRef.current || !stompClientRef.current.connected) {
+      return;
+    }
 
     if (currentSubscriptionRef.current) {
       currentSubscriptionRef.current.unsubscribe();
@@ -131,36 +122,51 @@ const ChatList: React.FC = () => {
 
     const sub = stompClientRef.current.subscribe(`/topic/room/${roomId}`, (msg: StompMessage) => {
       const body = JSON.parse(msg.body);
-      setMessages(prev => [...prev, { senderId: body.senderId, message: body.message }]);
-      fetchUsers();
+      const newMessage: Message = {
+        id: body.id || Date.now(),
+        roomId: parseInt(roomId),
+        senderId: parseInt(body.senderId),
+        senderName: body.senderName || 'ADMIN',
+        message: body.message,
+        sentTime: body.sentTime || new Date().toISOString(),
+        isRead: false,
+        tourId: body.tourId || null,
+        type: body.type || 0
+      };
+      setMessages(prev => [...prev, newMessage]);
+      // Không gọi fetchUsers() ở đây để tránh vòng lặp vô hạn
       scrollToBottom();
     });
-
 
     currentSubscriptionRef.current = sub;
   };
 
   const fetchUsers = async () => {
-    const query: any = new URLSearchParams({
-      page: (pageIndex - 1).toString(),
-      size: pageSize.toString(),
-      role: "ROLE_EMPLOYEE"
-    });
     try {
-      const data = await getUserChat(query);
-      setUsers(data.data);
-      if (data.data.length && isFirstLoad) {
-        handleSelectUser(data.data[0]);
-        setIsFirstLoad(false);
-      }
+      const data = await getSummaryUser(adminId);
+      setUsers(data);
     } catch (e) {
-      console.error(e);
+      console.error('Error fetching users:', e);
     } finally {
       setLoading(false)
     }
   };
 
-  const handleSearch = async (value: string) => {
+  const loadFirstUser = async () => {
+    try {
+      const data = await getSummaryUser(adminId);
+      setUsers(data);
+      if (data.length > 0) {
+        handleSelectUser(data[0]);
+      }
+    } catch (e) {
+      console.error('Error fetching users:', e);
+    } finally {
+      setLoading(false)
+    }
+  };
+
+  const loadUsersWithSearch = async (value: string) => {
     setSearchTerm(value);
 
     if (!value.trim()) {
@@ -173,6 +179,8 @@ const ChatList: React.FC = () => {
     try {
       const query = new URLSearchParams({
         search: value.trim(),
+        page: "0",
+        size: "100",
         role: "ROLE_EMPLOYEE"
       });
 
@@ -203,10 +211,12 @@ const ChatList: React.FC = () => {
   const handleSelectSearchUser = async (user: any) => {
     try {
       // Tạo room mới với user được chọn
-      const roomData = await createRoomSenderReceiver(adminId, user.id);
-      console.log('Room created:', roomData);
-
-      // Cập nhật danh sách users và chọn user mới
+      const query = new URLSearchParams({
+        senderId: adminId,
+        receiverId: user.id,
+        preOrder: "1"
+      });
+      const roomData = await createRoomSenderReceiver(query.toString());
       await fetchUsers();
 
       // Tạo user object để select
@@ -246,7 +256,7 @@ const ChatList: React.FC = () => {
       setMessages(resp.content.reverse());
       scrollToBottom();
     } catch (e) {
-      console.error(e);
+      console.error('Error loading messages:', e);
     }
   };
 
@@ -255,31 +265,56 @@ const ChatList: React.FC = () => {
       await putMarkRead(roomId);
       fetchUsers();
     } catch (e) {
-      console.error(e);
+      console.error('Error marking read:', e);
     }
   };
 
   const handleSelectUser = async (user: any) => {
     setSelectedUser(user);
-    setSelectedUserId(user.id.toString());
-    if (!user.isRead) await handleMarkRead(user.id);
-    await loadMessages(user.id);
-    subscribeToUserQueue(user.id);
+    setSelectedUserId(user.roomId);
+    await handleMarkRead(user.roomId);
+    await loadMessages(user.roomId);
+    subscribeToUserQueue(user.roomId);
   };
 
   const sendMessage = () => {
     const trimmed = messageContent.trim();
-    if (!trimmed || !selectedUserId || !selectedUser || !stompClientRef.current?.connected) return;
+
+    if (!trimmed || !selectedUserId || !selectedUser || !adminId || !stompClientRef.current?.connected) {
+      return;
+    }
 
     const payload = {
-      roomId: selectedUser.roomId,
+      roomId: selectedUser.roomId.toString(),
       message: trimmed,
-      senderId: adminId,
+      senderId: adminId.toString(),
       type: 0 // 0 = message, 1 = file
     };
 
+    try {
+      stompClientRef.current.send("/app/chat.sendMessage", {}, JSON.stringify(payload));
+      setMessageContent('');
+      scrollToBottom();
+    } catch (error) {
+      console.error('Lỗi khi gửi tin nhắn:', error);
+    }
+  };
+
+  const sendMessageWithType = (type: number) => {
+    const trimmed = messageContent.trim();
+
+    if (!trimmed || !selectedUserId || !selectedUser || !adminId || !stompClientRef.current?.connected) {
+      return;
+    }
+
+    const payload = {
+      roomId: selectedUser.roomId.toString(),
+      message: trimmed,
+      senderId: adminId.toString(),
+      type: type // 0 = message, 1 = file
+    };
+
     stompClientRef.current.send("/app/chat.sendMessage", {}, JSON.stringify(payload));
-    // setMessages(prev => [...prev, { senderId: adminId, message: trimmed }]);
     setMessageContent('');
     scrollToBottom();
   };
@@ -287,7 +322,9 @@ const ChatList: React.FC = () => {
   const scrollToBottom = () => {
     setTimeout(() => {
       const c = document.querySelector('.messages');
-      if (c) c.scrollTop = c.scrollHeight;
+      if (c) {
+        c.scrollTop = c.scrollHeight;
+      }
     }, 0);
   };
 
@@ -296,10 +333,10 @@ const ChatList: React.FC = () => {
     if (!file) return;
 
     const fd = new FormData();
-    fd.append('file', file);
+    fd.append('files', file);
 
     try {
-      const res = await fetch(`${baseUrl}/file/push-file`, {
+      const res = await fetch(`${baseUrl}/file/push`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -308,35 +345,32 @@ const ChatList: React.FC = () => {
       });
       const text = await res.text();
       const json = JSON.parse(text);
-      console.log('json', json);
-      if (json) {
-        setMessageContent(json?.fileUrl);
-        sendMessage();
+      if (json[0]) {
+        const imageUrl = `${baseUrl}/file/download-file?fileKey=${json[0]}`;
+        // Gửi tin nhắn với type = 1 cho ảnh ngay lập tức
+        const payload = {
+          roomId: selectedUser?.roomId.toString(),
+          message: imageUrl,
+          senderId: adminId.toString(),
+          type: 1 // 1 = file
+        };
+
+        if (stompClientRef.current?.connected && selectedUser) {
+          stompClientRef.current.send("/app/chat.sendMessage", {}, JSON.stringify(payload));
+          scrollToBottom();
+        }
       }
     } catch (err) {
-      console.error(err);
+      console.error('Error uploading file:', err);
+    }
+
+    // Reset file input để có thể upload cùng file nhiều lần
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
-  const fetchImagePreview = async (messageUrl: string) => {
-    try {
-      const urlObj = new URL(messageUrl);
-      const rawKey = urlObj.searchParams.get('fileKey') || '';
-
-      // Nếu rawKey lại là 1 URL → tiếp tục tách lần 2
-      const actualKey: any = rawKey.startsWith('http')
-        ? new URL(rawKey).searchParams.get('fileKey') || ''
-        : rawKey;
-
-      if (!actualKey) throw new Error('Không tìm thấy fileKey hợp lệ');
-
-      // const blob = await getFileImage(actualKey);
-      return URL.createObjectURL(actualKey);
-    } catch (error) {
-      console.error("Lỗi khi xử lý ảnh xem trước:", error);
-      return ''; // fallback ảnh trống
-    }
-  };
+  // Xóa fetchImagePreview vì không cần thiết nữa
 
   return (
     <div className="chat-container container mx-auto">
@@ -346,7 +380,7 @@ const ChatList: React.FC = () => {
             size="large"
             placeholder="Tìm kiếm tin nhắn"
             value={searchTerm}
-            onChange={e => handleSearch(e.target.value)}
+            onChange={e => loadUsersWithSearch(e.target.value)}
             prefix={<SearchNormal color='#8F9499' />}
             className='!rounded-full'
           />
@@ -395,15 +429,15 @@ const ChatList: React.FC = () => {
                 // .filter(u => activeTab === 'all' || !u.isRead)
                 .map(u => (
                   <li
-                    key={u.id}
+                    key={u.roomId}
                     onClick={() => handleSelectUser(u)}
-                    className={selectedUserId === u.id ? 'selected' : ''}
+                    className={selectedUserId === u.roomId ? 'selected' : ''}
                   >
                     <div className="user-item">
                       <img src={u.avatar || IcNotAvatar} alt="" className="user-image" />
                       <div>
                         <div className={!u.isRead ? 'user-name' : 'user-name-read'}>
-                          {u.username || 'Khách hàng ẩn danh'}
+                          {u.withUserFullName || u.withUsername || 'Khách hàng ẩn danh'}
                         </div>
                         {/* <div className={!u.isRead ? 'user-message' : 'user-message-read'}>
                       {u.lastMessage && (u.lastSenderId == adminId) ? `Bạn: ${u.lastMessage}` : u.lastMessage}
@@ -421,22 +455,25 @@ const ChatList: React.FC = () => {
           <div className="user-info">
             <img src={selectedUser?.image || IcNotAvatar} alt="" className="user-image" />
             <div className="user-name">
-              {selectedUser?.withUserFullName || 'Không có người chọn'}
+              {selectedUser?.withUserFullName || selectedUser?.withUsername || 'Không có người chọn'}
             </div>
           </div>
         </div>
 
         <div className="messages">
           {messages.map((m, i) => (
-            <div key={i} className={m.senderId === adminId ? 'admin-msg' : 'user-msg'}>
-              {m.message.includes(`${baseUrl}/file/download-file?fileKey`) ? (
-                previewMap[m.message] ? (
-                  <Image width={200} src={previewMap[m.message]} />
-                ) : (
-                  <span>Đang tải ảnh...</span>
-                )
+            <div key={m.id || i} className={m.senderId.toString() === adminId.toString() ? 'admin-msg' : 'user-msg'}>
+              {m.type === 1 || m.message.includes(`${baseUrl}/file/download-file?fileKey`) ? (
+                <div>
+                  <Image
+                    width={200}
+                    src={m.message}
+                    alt="Chat image"
+                    style={{ maxWidth: '200px', borderRadius: '8px' }}
+                  />
+                </div>
               ) : (
-                <div className={m.senderId === adminId ? 'admin-msg-content' : 'user-msg-content'}>
+                <div className={m.senderId.toString() === adminId.toString() ? 'admin-msg-content' : 'user-msg-content'}>
                   <span>{m.message}</span>
                 </div>
               )}

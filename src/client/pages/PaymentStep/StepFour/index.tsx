@@ -15,6 +15,7 @@ import buttonMedium from "/assets/images/button-short.svg";
 import buttonMediumDisable from "/assets/images/button-short-disable.svg";
 import upload from "/assets/images/upload.svg";
 import qrCode from "/assets/images/qrcode.svg";
+import Chatbot from "../ChatMessage";
 
 import {
   getDetailPreOrder,
@@ -655,6 +656,7 @@ const PaymentStepFour = () => {
         trong vòng 30 phút. Vui lòng theo dõi
         trạng thái đơn hàng. Xin cảm ơn!"
       />
+      <Chatbot preOrder={preOrder} />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import arrRight from "/assets/images/arrow-right.svg";
 import StepPayment from "@/client/components/StepPayment";
 import TourPriceTable from "@/client/components/TourPriceTable";
 import dayjs from "dayjs";
+import Chatbot from "../ChatMessage";
 
 import {
   getDetailPreOrder,
@@ -499,6 +500,7 @@ const PaymentStepDone = () => {
         trong vòng 30 phút. Vui lòng theo dõi
         trạng thái đơn hàng. Xin cảm ơn!"
       />
+      <Chatbot preOrder={preOrder} />
     </div>
   );
 };
