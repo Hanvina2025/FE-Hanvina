@@ -127,18 +127,18 @@ export const ListTour = () => {
     }];
   const sortLst: any = [
     {
-      id: 0,
+      id: "",
       name: "Tất cả",
     }, {
-      id: 1,
+      id: "bestSeller",
       name: "Bán chạy",
     },
     {
-      id: 2,
+      id: "priceUp",
       name: "Giá tăng dần",
     },
     {
-      id: 3,
+      id: "priceDown",
       name: "Giá giảm dần",
     }
   ];
@@ -233,6 +233,7 @@ export const ListTour = () => {
     dateNumber,
     airlineSelected,
     tourType,
+    sort,
     debouncedName,
     debouncedPriceRange,
     tourFromLst.length,
@@ -256,6 +257,7 @@ export const ListTour = () => {
     if (tourType === 2) queryParams.domesticTour = false;
     if (priceRange[0] !== MIN) queryParams.minPrice = priceRange[0].toString();
     if (priceRange[1] > 0) queryParams.maxPrice = priceRange[1].toString();
+    if (sort) queryParams.sortBy = sort;
 
     // Xử lý ngày bắt đầu (startDateFrom, startDateTo)
     if (selectedDate) {
@@ -569,7 +571,7 @@ export const ListTour = () => {
           </div>
         </div>
         <div className="mt-[157px] z-10">
-          <div className="w-full flex justify-center">
+          <div className="w-full flex justify-center relative z-[200]">
             <div className="relative">
               <img src={listTourImage} alt="" />
               <img src={patternListTour} alt="" className="absolute top-0" />
@@ -599,7 +601,7 @@ export const ListTour = () => {
                   </div>
 
                   {isSort && (
-                    <div className="absolute top-full right-0 mt-2 z-50">
+                    <div className="absolute top-full right-0 mt-2 z-100">
                       <Dropdown
                         locations={sortLst}
                         selected={sort}

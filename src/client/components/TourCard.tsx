@@ -89,7 +89,7 @@ const TourCard = ({ tourData }) => {
   return (
     <div className={`container relative bg-white mx-auto p-8 py-[20px] rounded-[20px] shadow-all ${tourData?.special ? 'tour-special' : ''}`}>
 
-      {tourData?.special && <img src={IcFire} alt="" className="absolute top-[13px] left-[-50px] z-100" />}
+      {tourData?.special && <img src={IcFire} alt="" className="absolute top-[13px] left-[-50px] z-10" />}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-medium text-[#141415] ">
