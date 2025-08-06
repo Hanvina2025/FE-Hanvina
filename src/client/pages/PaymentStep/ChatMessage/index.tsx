@@ -146,7 +146,7 @@ const Chatbot = ({ preOrder }) => {
 			const query = new URLSearchParams({
 				senderId: memoizedAdminId,
 				receiverId: preOrder?.tourInformation?.saleId,
-				preOrder: preOrderId
+				preOrderId: preOrderId
 			});
 			const roomData = await createRoomSenderReceiver(query.toString());
 			await fetchUsers();
