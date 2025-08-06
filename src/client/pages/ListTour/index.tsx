@@ -293,7 +293,7 @@ export const ListTour = () => {
             className="w-full object-cover h-[588px]"
           />
         </div>
-        <div className="absolute left-1/2 transform -translate-x-1/2 top-96 z-10 ">
+        <div className="absolute left-1/2 transform -translate-x-1/2 top-96 z-[300]">
           <div className="bg-white shadow-[0px_10px_24px_rgba(20,20,21,0.09)] rounded-[20px] p-8 w-[1280px] mx-auto ">
             <div>
               <h1 className="text-xl font-bold text-[#141415]">
@@ -347,7 +347,7 @@ export const ListTour = () => {
               </div>
               <div>
                 {/* Điểm đến */}
-                <div className="relative cursor-pointer ">
+                <div className="relative cursor-pointer">
                   <div
                     className="flex items-center gap-4 py-2 rounded-full "
                     onClick={() => {
@@ -369,7 +369,7 @@ export const ListTour = () => {
                     </div>
                   </div>
                   {isDestinationOpen && (
-                    <div className="absolute top-full left-0 mt-2 z-50">
+                    <div className="absolute top-full left-0 mt-2 z-[200]">
                       <Dropdown
                         locations={tourToLst}
                         selected={destination}
