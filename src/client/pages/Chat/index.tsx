@@ -17,6 +17,8 @@ import {
   getChatRoomHistory,
   createRoomSenderReceiver
 } from '@/client/apis/chat';
+import IcPdf from '/assets/images/IcPdf.svg';
+import IcDoc from '/assets/images/IcDoc.svg';
 
 interface ChatUser {
   id: number;
@@ -40,11 +42,14 @@ interface Message {
   isRead: boolean;
   tourId: number | null;
   type: number;
+  fileName?: string; // Thêm fileName để lưu tên file
 }
 
 const ChatList: React.FC = () => {
   const token = localStorage.getItem("authToken");
   const { userData } = useAuth();
+  console.log('userData', userData);
+
   const [searchParams] = useSearchParams();
   const [users, setUsers] = useState<any>([]);
   const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);
@@ -131,7 +136,8 @@ const ChatList: React.FC = () => {
         sentTime: body.sentTime || new Date().toISOString(),
         isRead: false,
         tourId: body.tourId || null,
-        type: body.type || 0
+        type: body.type || 0,
+        fileName: body.fileName || undefined // Lưu fileName từ WebSocket
       };
       setMessages(prev => [...prev, newMessage]);
       // Không gọi fetchUsers() ở đây để tránh vòng lặp vô hạn
@@ -181,7 +187,7 @@ const ChatList: React.FC = () => {
         search: value.trim(),
         page: "0",
         size: "100",
-        role: "ROLE_EMPLOYEE"
+        role: userData?.info?.role
       });
 
       const data = await getUserChatSearch(query.toString());
@@ -194,7 +200,7 @@ const ChatList: React.FC = () => {
         const query = new URLSearchParams({
           page: "0",
           size: "20",
-          role: "ROLE_EMPLOYEE"
+          role: userData?.info?.role
         });
         const data = await getUserChat(query.toString());
         setSearchResults(data.data || []);
@@ -346,12 +352,13 @@ const ChatList: React.FC = () => {
       const text = await res.text();
       const json = JSON.parse(text);
       if (json[0]) {
-        const imageUrl = `${baseUrl}/file/download-file?fileKey=${json[0]}`;
-        // Gửi tin nhắn với type = 1 cho ảnh ngay lập tức
+        const imageUrl = `${baseUrl}/file/download-file-all-type?fileKey=${json[0]}`;
+        // Gửi tin nhắn với type = 1 cho file và truyền fileName
         const payload = {
           roomId: selectedUser?.roomId.toString(),
           message: imageUrl,
           senderId: adminId.toString(),
+          fileName: file.name, // Truyền tên file khi upload
           type: 1 // 1 = file
         };
 
@@ -373,7 +380,7 @@ const ChatList: React.FC = () => {
   // Xóa fetchImagePreview vì không cần thiết nữa
 
   return (
-    <div className="chat-container container mx-auto">
+    <div className="chat-container mx-auto">
       <div className="sidebar">
         <div className="relative">
           <Input
@@ -382,7 +389,7 @@ const ChatList: React.FC = () => {
             value={searchTerm}
             onChange={e => loadUsersWithSearch(e.target.value)}
             prefix={<SearchNormal color='#8F9499' />}
-            className='!rounded-full'
+            className='!rounded-full mb-4'
           />
           {showSearchDropdown && (
             <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto" ref={searchDropdownRef}>
@@ -463,14 +470,34 @@ const ChatList: React.FC = () => {
         <div className="messages">
           {messages.map((m, i) => (
             <div key={m.id || i} className={m.senderId.toString() === adminId.toString() ? 'admin-msg' : 'user-msg'}>
-              {m.type === 1 || m.message.includes(`${baseUrl}/file/download-file?fileKey`) ? (
+              {m.type === 1 || m.message.includes(`${baseUrl}/file/download-file-all-type?fileKey`) ? (
                 <div>
-                  <Image
-                    width={200}
-                    src={m.message}
-                    alt="Chat image"
-                    style={{ maxWidth: '200px', borderRadius: '8px' }}
-                  />
+                  {/* Kiểm tra nếu là file PDF */}
+                  {m.fileName && (m.fileName.toLowerCase().endsWith('.pdf') || m.fileName.toLowerCase().endsWith('.pptx')) ? (
+                    <div className="file-message">
+                      <div className="file-content">
+                        <img src={IcPdf} alt="PDF" className="file-icon" />
+                        <span className="file-name">{m.fileName}</span>
+                      </div>
+                    </div>
+                  ) :
+                    /* Kiểm tra nếu là file DOC/DOCX */
+                    m.fileName && (m.fileName.toLowerCase().endsWith('.doc') || m.fileName.toLowerCase().endsWith('.docx')) ? (
+                      <div className="file-message">
+                        <div className="file-content">
+                          <img src={IcDoc} alt="DOC" className="file-icon" />
+                          <span className="file-name">{m.fileName}</span>
+                        </div>
+                      </div>
+                    ) :
+                      /* Nếu là ảnh hoặc file khác */
+                      <Image
+                        width={200}
+                        src={m.message}
+                        alt="Chat image"
+                        style={{ maxWidth: '200px', borderRadius: '8px' }}
+                      />
+                  }
                 </div>
               ) : (
                 <div className={m.senderId.toString() === adminId.toString() ? 'admin-msg-content' : 'user-msg-content'}>
