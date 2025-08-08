@@ -1,6 +1,6 @@
 .chat-container {
   display: flex;
-  height: 80vh;
+  height: 70vh;
   gap: 28px;
   position: relative;
 
@@ -285,5 +285,34 @@
     .ant-input-affix-wrapper {
       border-radius: 100px;
     }
+  }
+
+  .user-tour-name {
+    font-size: 14px;
+    color: #141415;
+    font-weight: 500;
+  }
+
+  .user-tour-name {
+    white-space: nowrap;
+    /* Không xuống dòng */
+    overflow: hidden;
+    /* Ẩn phần tràn */
+    text-overflow: ellipsis;
+    /* Hiển thị ... */
+    max-width: 280px;
+    font-weight: 400;
+  }
+
+  .user-message,
+  .user-message-read {
+    white-space: nowrap;
+    /* Không xuống dòng */
+    overflow: hidden;
+    /* Ẩn phần tràn */
+    text-overflow: ellipsis;
+    /* Hiển thị ... */
+    max-width: 280px;
+    /* Giới hạn chiều rộng, có thể chỉnh */
   }
 }

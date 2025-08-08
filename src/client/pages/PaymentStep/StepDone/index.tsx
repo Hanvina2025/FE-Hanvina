@@ -20,6 +20,7 @@ import paymentDone from "/assets/images/paymentDone.svg";
 import paymentDoneCheck from "/assets/images/step-done-check.svg";
 import DepartSmall from "/assets/images/DepartSmall.svg";
 import CustomerList from "@/client/components/CustomerList";
+import { formatDateNotTime } from "@/utils/common";
 
 const PaymentStepDone = () => {
   const navigate = useNavigate();
@@ -219,10 +220,10 @@ const PaymentStepDone = () => {
                   </div>
                   <div className="space-y-4 flex flex-col">
                     <span className="text-[#BB2C26] text-base font-semibold">
-                      {preOrder?.tourInformation?.startDate || ""}
+                      {preOrder?.tourInformation?.startDate ? formatDateNotTime(preOrder?.tourInformation?.startDate) : ''}
                     </span>
                     <span className="text-[#BB2C26] text-base font-semibold">
-                      {preOrder?.tourInformation?.endDate || ""}
+                      {preOrder?.tourInformation?.endDate ? formatDateNotTime(preOrder?.tourInformation?.endDate) : ''}
                     </span>
                     {preOrder?.status == 118 &&
                       <div className="flex items-center gap-x-2">

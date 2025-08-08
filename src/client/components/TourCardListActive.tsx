@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import ReservationList from "@/client/components/ReservationList"
 import { Modal } from "antd"
 import dayjs from "dayjs"
+import { formatDateNotTime } from "@/utils/common";
 
 const TourCardListActive = ({ tourActiveData }) => {
   const navigate = useNavigate();
@@ -140,7 +141,7 @@ const TourCardListActive = ({ tourActiveData }) => {
                     Ngày khởi hành:
                   </p>
                   <span className="text-[#8F9499] text-base font-[500]">
-                    {tourActiveData?.startDate}
+                    {tourActiveData?.startDate ? formatDateNotTime(tourActiveData?.startDate) : ''}
                   </span>
                 </div>
               </div>
@@ -167,7 +168,7 @@ const TourCardListActive = ({ tourActiveData }) => {
                     Ngày đặt:
                   </p>
                   <span className="text-[#8F9499] text-base font-[500]">
-                    {tourActiveData?.createdTime?.slice(0, 10)}
+                    {tourActiveData?.createdTime ? formatDateNotTime(tourActiveData?.createdTime) : ''}
                   </span>
                 </div>
               </div>
@@ -223,20 +224,27 @@ const TourCardListActive = ({ tourActiveData }) => {
                   </p>
                   <div className="flex items-center gap-x-2">
                     <span className="text-[#8F9499] text-base font-[500]">
-                      {tourActiveData?.depositDateTime
-                        ? (() => {
+                      {
+                        [118, 119].includes(tourActiveData?.status) && tourActiveData?.depositDateTime
+                        && (() => {
                           const now = dayjs();
                           const end = dayjs(tourActiveData.depositDateTime);
                           const diff = end.diff(now);
-                          if (diff <= 0) return "Hết hạn";
+
+                          if (diff <= 0) return "Hết hạn"; // Nếu đã hết hạn
 
                           const duration = dayjs.duration(diff);
-                          const hours = String(duration.hours()).padStart(2, "0");
-                          const minutes = String(duration.minutes()).padStart(2, "0");
+                          const hours = String(duration.hours()).padStart(2, "0"); // Đảm bảo có 2 chữ số
+                          const minutes = String(duration.minutes()).padStart(2, "0"); // Đảm bảo có 2 chữ số
 
                           return `${hours}:${minutes}`;
                         })()
-                        : "--"}
+                      }
+                      {
+                        [120, 121, 122, 123].includes(tourActiveData?.status) && tourActiveData?.settlementDate
+                          &&
+                          tourActiveData?.settlementDate ? formatDateNotTime(tourActiveData?.settlementDate) : ''
+                      }
                     </span>
                   </div>
                 </div>

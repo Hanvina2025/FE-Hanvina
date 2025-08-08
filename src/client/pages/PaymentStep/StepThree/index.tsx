@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { PATH } from "@/libs/constants/path";
 import {
   getDetailPreOrder,
+  putPreOrder,
   getDetailOrderCustomer
 } from "@/client/apis/tour";
 import Chatbot from "../ChatMessage";
@@ -58,8 +59,24 @@ const PaymentStepThree = () => {
   };
 
   const handleConfirmApply = async () => {
-    navigate(`/reserve/step4/${preOrder?.id}`)
+    try {
+      const preOrderPayload = {
+        id: preOrder?.id,
+        tourId: preOrder?.tourId,
+        customerName: preOrder?.customerName,
+        customerPhone: preOrder?.customerPhone,
+        status: 122,
+        totalPrice: preOrder?.totalPrice
+      };
+
+      await putPreOrder(preOrderPayload);
+      navigate(`/reserve/step4/${preOrder?.id}`);
+    } catch (error) {
+      console.error("Error while confirming apply:", error);
+      alert("Đã xảy ra lỗi khi xác nhận. Vui lòng thử lại.");
+    }
   };
+
 
   return (
     <div className="container mx-auto mb-10">

@@ -17,6 +17,7 @@ import { PATH } from "@/libs/constants/path";
 import ReservationList from "@/client/components/ReservationList"
 import { getExportFile } from "@/client/apis/tour"
 import IcFire from "/assets/images/Ic-fire.svg";
+import { formatDate, formatDateNotTime } from "@/utils/common";
 
 const TourCard = ({ tourData }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -170,12 +171,12 @@ const TourCard = ({ tourData }) => {
                   onClick={() => { setShowDatePicker(!showDatePicker) }}
                 >
                   <span className="px-2 text-base font-medium opacity-80">
-                    {departure?.startDate || ""}
+                    {departure?.startDate ? formatDateNotTime(departure?.startDate) : ''}
                   </span>
                   <img src={down} alt="" className="size-[16px] mr-2" />
 
                   {showDatePicker && (
-                    <div className="absolute top-full left-0 mt-2 z-100">
+                    <div className="absolute top-full left-0 mt-2 z-[300]">
                       <DropDownSelectDepartureDate
                         locations={dataStartDate}
                         selected={departure}

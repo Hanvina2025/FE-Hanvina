@@ -27,6 +27,7 @@ import {
 import paymentDealine from "/assets/images/paymentDealine.svg";
 import DepartSmall from "/assets/images/DepartSmall.svg";
 import CustomerList from "@/client/components/CustomerList";
+import { formatDateNotTime } from "@/utils/common";
 
 const { Dragger } = Upload;
 
@@ -288,10 +289,10 @@ const PaymentStepFour = () => {
                   </div>
                   <div className="space-y-4 flex flex-col">
                     <span className="text-[#BB2C26] text-base font-semibold">
-                      {preOrder?.tourInformation?.startDate || ""}
+                      {preOrder?.tourInformation?.startDate ? formatDateNotTime(preOrder?.tourInformation?.startDate) : ''}
                     </span>
                     <span className="text-[#BB2C26] text-base font-semibold">
-                      {preOrder?.tourInformation?.endDate || ""}
+                      {preOrder?.tourInformation?.endDate ? formatDateNotTime(preOrder?.tourInformation?.endDate) : ''}
                     </span>
                     {preOrder?.status == 118 &&
                       <div className="flex items-center gap-x-2">

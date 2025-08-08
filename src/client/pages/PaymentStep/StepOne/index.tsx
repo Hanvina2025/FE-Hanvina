@@ -23,6 +23,7 @@ import {
 import { PATH } from "@/libs/constants/path";
 import ReservationList from "@/client/components/ReservationList"
 import ConfirmTour from "@/client/components/ConfirmTour";
+import { formatDateNotTime } from "@/utils/common";
 
 const Reserve = () => {
   const location = useLocation();
@@ -359,10 +360,10 @@ const Reserve = () => {
                 </div>
                 <div className="space-y-4 flex flex-col">
                   <span className="text-[#BB2C26] text-base font-semibold">
-                    {departure?.startDate || ""}
+                    {departure?.startDate ? formatDateNotTime(departure?.startDate) : ''}
                   </span>
                   <span className="text-[#BB2C26] text-base font-semibold">
-                    {departure?.endDate || ""}
+                    {departure?.endDate ? formatDateNotTime(departure?.endDate) : ''}
                   </span>
                   <div className="flex items-center gap-x-2">
                     <span className="text-[#BB2C26] text-base font-semibold">

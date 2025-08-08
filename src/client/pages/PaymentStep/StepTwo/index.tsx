@@ -16,6 +16,7 @@ import type { UploadProps } from "antd";
 import { CloseOutlined } from "@ant-design/icons"
 import dayjs from "dayjs";
 import ReservationList from "@/client/components/ReservationList"
+import { formatDateNotTime } from "@/utils/common";
 
 import Chatbot from "../ChatMessage";
 
@@ -366,8 +367,8 @@ const PaymentStepTwo = () => {
                     Hạn thanh toán cọc:
                   </p>
                   <p className="text-[#DC1F18] text-xl font-medium">
-                    {preOrder?.depositDateTime
-                      ? (() => {
+                    {[118, 119].includes(preOrder?.status) && preOrder?.depositDateTime
+                      && (() => {
                         const now = dayjs();
                         const end = dayjs(preOrder.depositDateTime);
                         const diff = end.diff(now);
@@ -378,8 +379,11 @@ const PaymentStepTwo = () => {
                         const minutes = String(duration.minutes()).padStart(2, "0");
 
                         return `${hours}:${minutes}`;
-                      })()
-                      : "--"}
+                      })()}
+                    {[120, 121, 122, 123].includes(preOrder?.status) && preOrder?.settlementDate
+                      &&
+                      preOrder?.settlementDate ? formatDateNotTime(preOrder?.settlementDate) : ''
+                    }
                   </p>
                 </>
               }
@@ -416,10 +420,10 @@ const PaymentStepTwo = () => {
                   </div>
                   <div className="space-y-4 flex flex-col">
                     <span className="text-[#BB2C26] text-base font-semibold">
-                      {preOrder?.tourInformation?.startDate || ""}
+                      {preOrder?.tourInformation?.startDate ? formatDateNotTime(preOrder?.tourInformation?.startDate) : ''}
                     </span>
                     <span className="text-[#BB2C26] text-base font-semibold">
-                      {preOrder?.tourInformation?.endDate || ""}
+                      {preOrder?.tourInformation?.endDate ? formatDateNotTime(preOrder?.tourInformation?.endDate) : ''}
                     </span>
                     {preOrder?.status == 118 &&
                       <div className="flex items-center gap-x-2">
