@@ -32,14 +32,18 @@ const Login = () => {
       const response = await postLogin(data.username, data.password);
       const { token, role, id } = response;
       if (token) {
-        login(token, role, id);
-        const dataDetail = await getAccountDetail(id.toString());
-        const decodedToken: { roles: string[]; sub: string } = jwtDecode(token);
-        setUserData({
-          sub: decodedToken.sub,
-          info: dataDetail,
-        });
-        navigate('/');
+        if (role === "ROLE_CUSTOMER") {
+          login(token, role, id);
+          const dataDetail = await getAccountDetail(id.toString());
+          const decodedToken: { roles: string[]; sub: string } = jwtDecode(token);
+          setUserData({
+            sub: decodedToken.sub,
+            info: dataDetail,
+          });
+          navigate('/');
+        } else {
+          setError("Bạn cần đăng nhập bằng tài khoản Đại lý");
+        }
       } else {
         setError("Tài khoản hoặc mật khẩu không chính xác");
       }
