@@ -62,19 +62,23 @@ const TourCard = ({ tourData }) => {
 
   const handleExportFile = async () => {
     try {
-      const file = await getExportFile(departure?.id);
+      if (tourData?.fileKey) {
+        const file = await getExportFile(tourData?.fileKey);
 
-      const blobUrl = URL.createObjectURL(file); // tạo URL tạm
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = file.name; // => "Chương trình Tour"
-      a.style.display = "none";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(blobUrl); // giải phóng URL
+        const blobUrl = URL.createObjectURL(file); // tạo URL tạm
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = file.name; // => "Chương trình Tour"
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl); // giải phóng URL
 
-      message.success("Tải chương trình Tour thành công");
+        message.success("Tải chương trình Tour thành công");
+      } else {
+        message.error("Chưa có chương trình Tour")
+      }
     } catch (error) {
       const errorMsg =
         error?.response?.data?.errorMsg ||

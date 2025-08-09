@@ -246,9 +246,9 @@ export const getTourPriceServices = async (id: number | string) => {
 };
 
 // download file
-export const getExportFile = async (tourId: any) => {
+export const getExportFile = async (fileKey: any) => {
   try {
-    const url = `/file/download-file-all-type?fileKey=${tourId}`;
+    const url = `/file/download-file-all-type?fileKey=${fileKey}`;
     const response = await axiosInstance.get(url, {
       responseType: "blob", // để xử lý PDF
     });
