@@ -95,11 +95,11 @@ export default function ReportChart() {
       setSummaryLst(fetchedData);
 
       // Map dữ liệu từ summaryLst vào summaryData
-      if (fetchedData && fetchedData.length > 0) {
+      if (fetchedData) {
         const mappedData = {
-          totalRevenue: fetchedData.find(item => item.type === 'revenue')?.value || 0,
-          totalTours: fetchedData.find(item => item.type === 'tours')?.value || 0,
-          totalCommission: fetchedData.find(item => item.type === 'commission')?.value || 0
+          totalRevenue: fetchedData?.totalRevenue || 0,
+          totalTours: fetchedData?.totalTours || 0,
+          totalCommission: fetchedData?.totalCommission || 0
         };
         setSummaryData(mappedData);
       }
