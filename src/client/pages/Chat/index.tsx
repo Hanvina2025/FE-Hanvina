@@ -269,7 +269,7 @@ const ChatList: React.FC = () => {
         roomId: roomId.toString()
       });
       const resp = await getChatRoomHistory(query);
-      setMessages(resp.content.reverse());
+      setMessages(resp.data.reverse());
       scrollToBottom();
     } catch (e) {
       console.error('Error loading messages:', e);
@@ -559,7 +559,7 @@ const ChatList: React.FC = () => {
                         <img src={u.avatar || IcNotAvatar} alt="" className="user-image" />
                         <div>
                           <div className={`{!u.isRead ? 'user-name' : 'user-name-read'} font-[500]`}>
-                            {u.withUserFullName || u.withUsername || 'Khách hàng ẩn danh'}
+                            {u.roomType === "GROUP" ? (u.roomName || 'Nhóm chat') : (u.withUserFullName || u.withUsername || 'Ẩn danh')}
                           </div>
                           <div className='user-tour-name'>
                             {u.tourName ? u.tourName : ''}
@@ -581,7 +581,7 @@ const ChatList: React.FC = () => {
               <img src={selectedUser?.image || IcNotAvatar} alt="" className="user-image" />
               <div>
                 <div className="user-name">
-                  {selectedUser?.withUserFullName || selectedUser?.withUsername || 'Không có người chọn'}
+                  {selectedUser?.roomType === "GROUP" ? (selectedUser?.roomName || 'Nhóm chat') : (selectedUser?.withUserFullName || selectedUser?.withUsername || 'Không có người chọn')}
                 </div>
                 <div className='user-tour-name !max-w-[44vw] !text-[#767A7F]'>{selectedUser?.tourName || selectedUser?.tourName || ''}</div>
               </div>

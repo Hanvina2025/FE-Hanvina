@@ -5,14 +5,19 @@ import "./index.scss";
 import IcImage from "/assets/images/image.svg";
 import { Send2, ArrowUp2, Message, ArrowDown2 } from 'iconsax-react';
 import { useAuth } from "@/admin/components/AuthProvider";
-import { Image } from "antd";
+import { Image, message } from "antd";
 import { useSearchParams } from 'react-router-dom';
 import {
 	getSummaryUser,
 	putMarkRead,
 	getChatRoomHistory,
-	createRoomSenderReceiver
+	createRoomSenderReceiver,
+	createRoomGroup
 } from '@/client/apis/chat';
+import IcPdf from '/assets/images/IcPdf.svg';
+import IcDoc from '/assets/images/IcDoc.svg';
+import IcTxt from '/assets/images/iconPdf.svg'; // Sử dụng icon PDF cho txt tạm thời
+import IcXlsx from '/assets/images/iconPdf.svg'; // Sử dụng icon PDF cho xlsx tạm thời
 
 interface ChatUser {
 	id: number;
@@ -36,6 +41,7 @@ interface Message {
 	isRead: boolean;
 	tourId: number | null;
 	type: number;
+	fileName?: string; // Thêm fileName để lưu tên file
 }
 
 const Chatbot = ({ preOrder }) => {
@@ -143,33 +149,58 @@ const Chatbot = ({ preOrder }) => {
 
 	const handleSelectSearchUser = useCallback(async (preOrderId: any, preOrder: any) => {
 		try {
-			const query = new URLSearchParams({
-				senderId: memoizedAdminId,
-				receiverId: preOrder?.tourInformation?.saleId,
-				preOrderId: preOrderId
-			});
-			const roomData = await createRoomSenderReceiver(query.toString());
-			await fetchUsers();
+			// Kiểm tra nếu customerSaleDtos có length > 2 thì tạo room group
+			if (preOrder?.customerSaleDtos && preOrder.customerSaleDtos.length > 2) {
+				const currentUserId = userData?.info?.id;
+				const selectedUsers = preOrder.customerSaleDtos;
+				const memberIds = [currentUserId, ...selectedUsers.map(user => user.accountId)].join(',');
 
-			const newUser = {
-				id: preOrder?.id || Date.now(),
-				username: preOrder?.tourInformation?.saleName || 'Sale',
-				roomId: roomData.id,
-				withUserFullName: preOrder?.tourInformation?.saleName || 'Sale',
-				lastMessage: "",
-				image: null,
-				isRead: true,
-				lastSenderId: ""
-			};
+				const groupParams = new URLSearchParams({
+					roomName: `Tour-${preOrder?.id}`,
+					groupImage: "",
+					createdBy: currentUserId,
+					memberIds: memberIds,
+					preOrderId: preOrderId
+				});
 
-			setSelectedUser(newUser);
-			setSelectedUserId(newUser.roomId);
-			await loadMessages(newUser.roomId);
-			subscribeToUserQueue(newUser.roomId);
+				const response = await createRoomGroup(groupParams.toString());
+
+				// Cập nhật UI sau khi tạo nhóm
+				await fetchUsers();
+				setSelectedUserId(response.id);
+				await loadMessages(response.id);
+				subscribeToUserQueue(response.id);
+			} else {
+
+				// Logic tạo room 1-1 như cũ
+				const query = new URLSearchParams({
+					senderId: memoizedAdminId,
+					receiverId: preOrder?.tourInformation?.saleId,
+					preOrderId: preOrderId
+				});
+				const roomData = await createRoomSenderReceiver(query.toString());
+				await fetchUsers();
+
+				const newUser = {
+					id: preOrder?.id || Date.now(),
+					username: preOrder?.tourInformation?.saleName || 'Sale',
+					roomId: roomData.id,
+					withUserFullName: preOrder?.tourInformation?.saleName || 'Sale',
+					lastMessage: "",
+					image: null,
+					isRead: true,
+					lastSenderId: ""
+				};
+
+				setSelectedUser(newUser);
+				setSelectedUserId(newUser.roomId);
+				await loadMessages(newUser.roomId);
+				subscribeToUserQueue(newUser.roomId);
+			}
 		} catch (error) {
 			console.error('Lỗi khi tạo room:', error);
 		}
-	}, [memoizedAdminId, fetchUsers, subscribeToUserQueue]);
+	}, [memoizedAdminId, fetchUsers, subscribeToUserQueue, userData]);
 
 	const loadMessages = useCallback(async (roomId: string) => {
 		try {
@@ -179,7 +210,7 @@ const Chatbot = ({ preOrder }) => {
 				roomId: roomId.toString()
 			});
 			const resp = await getChatRoomHistory(query);
-			setMessages(resp.content.reverse());
+			setMessages(resp.data.reverse());
 			scrollToBottom();
 		} catch (e) {
 			console.error('Error loading messages:', e);
@@ -298,6 +329,57 @@ const Chatbot = ({ preOrder }) => {
 		fileInputRef.current?.click();
 	}, []);
 
+	const getFileIcon = (fileName: string) => {
+		const extension = fileName.toLowerCase().split('.').pop();
+		switch (extension) {
+			case 'pdf':
+			case 'pptx':
+				return IcPdf;
+			case 'doc':
+			case 'docx':
+				return IcDoc;
+			case 'txt':
+				return IcTxt;
+			case 'xlsx':
+			case 'xls':
+				return IcXlsx;
+			default:
+				return IcDoc; // Default icon
+		}
+	};
+
+	const handleFileDownload = async (fileUrl: string, fileName: string) => {
+		try {
+			const response = await fetch(fileUrl, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			if (!response.ok) {
+				throw new Error('Không thể tải file');
+			}
+
+			const blob = await response.blob();
+			const url = window.URL.createObjectURL(blob);
+
+			const link = document.createElement('a');
+			link.href = url;
+			link.download = fileName;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+
+			// Cleanup
+			setTimeout(() => {
+				window.URL.revokeObjectURL(url);
+			}, 100);
+		} catch (error) {
+			console.error('Lỗi khi tải file:', error);
+			alert('Không thể tải file. Vui lòng thử lại.');
+		}
+	};
+
 	// Memoize các component để tránh re-render
 	const ChatButton = useMemo(() => (
 		<div className="chat-button-container">
@@ -341,20 +423,35 @@ const Chatbot = ({ preOrder }) => {
 							<span>Đang tải tin nhắn...</span>
 						</div>
 					)}
+
 					<div className="messages">
 						{messages.map((m, i) => (
-							<div key={m.id || i} className={m.senderId.toString() === memoizedAdminId.toString() ? 'admin-msg' : 'user-msg'}>
-								{m.type === 1 || m.message.includes(`${memoizedBaseUrl}/file/download-file?fileKey`) ? (
+							<div key={m.id || i} className={m.senderId.toString() === adminId.toString() ? 'admin-msg' : 'user-msg'}>
+								{m.type === 1 || m.message.includes(`${baseUrl}/file/download-file-all-type?fileKey`) ? (
 									<div>
-										<Image
-											width={200}
-											src={m.message}
-											alt="Chat image"
-											style={{ maxWidth: '200px', borderRadius: '8px' }}
-										/>
+										{/* Kiểm tra nếu là file (không phải ảnh) */}
+										{m.fileName && !m.fileName.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i) ? (
+											<div className="file-message">
+												<div
+													className="file-content cursor-pointer"
+													onClick={() => handleFileDownload(m.message, m.fileName)}
+												>
+													<img src={getFileIcon(m.fileName)} alt="File" className="file-icon" />
+													<span className="file-name">{m.fileName}</span>
+												</div>
+											</div>
+										) : (
+											/* Nếu là ảnh */
+											<Image
+												width={200}
+												src={m.message}
+												alt="Chat image"
+												style={{ maxWidth: '200px', borderRadius: '8px' }}
+											/>
+										)}
 									</div>
 								) : (
-									<div className={m.senderId.toString() === memoizedAdminId.toString() ? 'admin-msg-content' : 'user-msg-content'}>
+									<div className={m.senderId.toString() === adminId.toString() ? 'admin-msg-content' : 'user-msg-content'}>
 										<span>{m.message}</span>
 									</div>
 								)}

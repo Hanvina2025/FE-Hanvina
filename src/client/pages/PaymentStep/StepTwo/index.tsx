@@ -428,10 +428,10 @@ const PaymentStepTwo = () => {
                     {preOrder?.status == 118 &&
                       <div className="flex items-center gap-x-2">
                         <span className="text-[#BB2C26] text-base font-semibold">
-                          {preOrder?.tourInformation?.orderNo || "01"}
+                          {preOrder?.orderNo || "01"}
                         </span>
                         <div
-                          className="text-sm text-[#006AF5]"
+                          className="text-sm text-[#006AF5] cursor-pointer"
                           onClick={() => setIsModalOpenTB(true)}
                         >
                           Chi tiết
