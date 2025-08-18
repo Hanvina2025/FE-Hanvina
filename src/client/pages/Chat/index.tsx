@@ -79,40 +79,29 @@ const ChatList: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!adminId) return;
+    if (!adminId) {
+      return;
+    }
+    setLoading(true)
+    const socket = new SockJS(wsUrl);
+    const stompClient = Stomp.over(socket);
+    stompClientRef.current = stompClient;
 
-    const init = () => {
-      loadInitialData()
-      const socket = new SockJS(wsUrl);
-      const stompClient = Stomp.over(socket);
-      stompClientRef.current = stompClient;
-
-      stompClient.connect(
-        {},
-        () => {
-          console.log("WebSocket connected successfully");
-        },
-        (error) => {
-          console.error("WebSocket error:", error);
-        }
-      );
-    };
-
-    init();
+    stompClient.connect({}, async () => {
+      await fetchUsers();
+      await loadFirstUser();
+    }, (error) => {
+      console.error('WebSocket error:', error);
+    });
 
     return () => {
-      if (stompClientRef.current && stompClientRef.current.connected) {
-        stompClientRef.current.disconnect(() => {
-          console.log("WebSocket disconnected");
+      if (stompClient.connected) {
+        stompClient.disconnect(() => {
+          console.log('WebSocket disconnected');
         });
       }
     };
   }, [adminId]);
-
-  const loadInitialData = async () => {
-    await fetchUsers();
-    await loadFirstUser();
-  };
 
 
   // Xử lý đóng dropdown khi click ra ngoài
