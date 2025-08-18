@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import locationList from "/assets/images/locationList.svg";
 import IcCalendar1 from "/assets/images/ic-calendar.svg";
 import IcCalendar2 from "/assets/images/ic-calendar2.svg";
@@ -15,6 +15,7 @@ import { formatDateNotTime } from "@/utils/common";
 const TourCardListActive = ({ tourActiveData }) => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(dayjs());
   const statusColors = {
     unpaid: {
       label: "Chưa thanh toán cọc",
@@ -74,6 +75,15 @@ const TourCardListActive = ({ tourActiveData }) => {
   };
 
   const statusKey = getStatusKey(tourActiveData?.statusName);
+
+  // Tự động cập nhật thời gian mỗi giây
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(dayjs());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const handleNavigate = () => {
     const { status, id } = tourActiveData || {};
@@ -227,15 +237,15 @@ const TourCardListActive = ({ tourActiveData }) => {
                       {
                         [118, 119].includes(tourActiveData?.status) && tourActiveData?.depositDateTime
                         && (() => {
-                          const now = dayjs();
                           const end = dayjs(tourActiveData.depositDateTime);
-                          const diff = end.diff(now);
+                          const diff = end.diff(currentTime);
 
                           if (diff <= 0) return "Hết hạn"; // Nếu đã hết hạn
 
                           const duration = dayjs.duration(diff);
                           const hours = String(duration.hours()).padStart(2, "0"); // Đảm bảo có 2 chữ số
                           const minutes = String(duration.minutes()).padStart(2, "0"); // Đảm bảo có 2 chữ số
+                          const seconds = String(duration.seconds()).padStart(2, "0");
 
                           return `${hours}:${minutes}`;
                         })()

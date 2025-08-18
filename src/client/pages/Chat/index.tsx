@@ -53,8 +53,6 @@ interface Message {
 const ChatList: React.FC = () => {
   const token = localStorage.getItem("authToken");
   const { userData } = useAuth();
-  console.log('userData', userData);
-
   const [searchParams] = useSearchParams();
   const [users, setUsers] = useState<any>([]);
   const [selectedUser, setSelectedUser] = useState<any>(null);
@@ -81,29 +79,41 @@ const ChatList: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!adminId) {
-      return;
-    }
-    setLoading(true)
-    const socket = new SockJS(wsUrl);
-    const stompClient = Stomp.over(socket);
-    stompClientRef.current = stompClient;
+    if (!adminId) return;
 
-    stompClient.connect({}, async () => {
-      await fetchUsers();
-      await loadFirstUser();
-    }, (error) => {
-      console.error('WebSocket error:', error);
-    });
+    const init = () => {
+      loadInitialData()
+      const socket = new SockJS(wsUrl);
+      const stompClient = Stomp.over(socket);
+      stompClientRef.current = stompClient;
+
+      stompClient.connect(
+        {},
+        () => {
+          console.log("WebSocket connected successfully");
+        },
+        (error) => {
+          console.error("WebSocket error:", error);
+        }
+      );
+    };
+
+    init();
 
     return () => {
-      if (stompClient.connected) {
-        stompClient.disconnect(() => {
-          console.log('WebSocket disconnected');
+      if (stompClientRef.current && stompClientRef.current.connected) {
+        stompClientRef.current.disconnect(() => {
+          console.log("WebSocket disconnected");
         });
       }
     };
   }, [adminId]);
+
+  const loadInitialData = async () => {
+    await fetchUsers();
+    await loadFirstUser();
+  };
+
 
   // Xử lý đóng dropdown khi click ra ngoài
   useEffect(() => {
@@ -564,8 +574,21 @@ const ChatList: React.FC = () => {
                           <div className='user-tour-name'>
                             {u.tourName ? u.tourName : ''}
                           </div>
-                          <div className={`${!u.isRead ? 'user-message' : 'user-message-read'} text-[14px]`}>
-                            {u.lastMessage && (u.lastSenderId == adminId) ? `Bạn: ${u.lastMessage}` : u.lastMessage}
+                          <div
+                            className={`${!u.isRead ? "user-message" : "user-message-read"} text-[14px]`}
+                          >
+                            {u.type === 1 || u.lastMessage?.includes(`${baseUrl}/file/download-file-all-type?fileKey`)
+                              ? (
+                                u.lastSenderId == adminId
+                                  ? "Bạn đã gửi một file"
+                                  : `${u.withUserFullName || ""} đã gửi một file`
+                              )
+                              : (
+                                u.lastSenderId == adminId
+                                  ? `Bạn: ${u.lastMessage}`
+                                  : u.lastMessage
+                              )
+                            }
                           </div>
                         </div>
                       </div>

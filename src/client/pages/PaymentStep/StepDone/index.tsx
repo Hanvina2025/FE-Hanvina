@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Breadcrumb } from "antd";
+import { Breadcrumb, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ConfirmModal from "@/client/components/ConfirmModal"
 import { PATH } from "@/libs/constants/path";
@@ -36,6 +37,7 @@ const PaymentStepDone = () => {
   const [isModalConfirm, setIsModalConfirm] = useState(false);
   const [fileBill, setFileBill] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -99,11 +101,14 @@ const PaymentStepDone = () => {
   };
 
   const fetchDetailPreOrder = async (id: number | string) => {
+    setLoading(true);
     try {
       const fetchedData = await getDetailPreOrder(id);
       setPreOrder(fetchedData)
     } catch (error) {
       console.error("Error fetching home:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -158,6 +163,14 @@ const PaymentStepDone = () => {
   const handleConfirmCancel = () => {
     navigate(PATH.LIST_TOUR_ACTIVE)
   };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center mt-8">
+        <Spin indicator={<LoadingOutlined style={{ fontSize: 50, color: "#BB2C26" }} spin />} size="large" />
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto mb-10">
       <div className="flex items-center justify-between mt-8">

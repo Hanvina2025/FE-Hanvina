@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Breadcrumb, Modal, Upload, message, Popover } from "antd";
+import { Breadcrumb, Modal, Upload, message, Popover, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import "./index.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { PATH } from "@/libs/constants/path";
@@ -63,6 +64,8 @@ const PaymentStepTwo = () => {
   const [isModalOpenTB, setIsModalOpenTB] = useState(false);
   const [isModalHuy, setIsModalHuy] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [currentTime, setCurrentTime] = useState(dayjs());
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -72,6 +75,15 @@ const PaymentStepTwo = () => {
       fetchDetailServicesPlus(id)
     }
   }, [id])
+
+  // Tự động cập nhật thời gian mỗi giây
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(dayjs());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     setTotalData(calcTotal());
@@ -126,11 +138,14 @@ const PaymentStepTwo = () => {
   };
 
   const fetchDetailPreOrder = async (id: number | string) => {
+    setLoading(true);
     try {
       const fetchedData = await getDetailPreOrder(id);
       setPreOrder(fetchedData)
     } catch (error) {
       console.error("Error fetching home:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -325,6 +340,14 @@ const PaymentStepTwo = () => {
       return false;
     },
   };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center mt-8">
+        <Spin indicator={<LoadingOutlined style={{ fontSize: 50, color: "#BB2C26" }} spin />} size="large" />
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto mb-10">
       <div className="flex items-center justify-between">
@@ -369,14 +392,14 @@ const PaymentStepTwo = () => {
                   <p className="text-[#DC1F18] text-xl font-medium">
                     {[118, 119].includes(preOrder?.status) && preOrder?.depositDateTime
                       && (() => {
-                        const now = dayjs();
                         const end = dayjs(preOrder.depositDateTime);
-                        const diff = end.diff(now);
+                        const diff = end.diff(currentTime);
                         if (diff <= 0) return "Hết hạn";
 
                         const duration = dayjs.duration(diff);
                         const hours = String(duration.hours()).padStart(2, "0");
                         const minutes = String(duration.minutes()).padStart(2, "0");
+                        const seconds = String(duration.seconds()).padStart(2, "0");
 
                         return `${hours}:${minutes}`;
                       })()}

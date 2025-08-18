@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Breadcrumb } from "antd";
+import { Breadcrumb, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { PATH } from "@/libs/constants/path";
@@ -26,6 +27,7 @@ const PaymentStepThree = () => {
   const [preOrder, setPreOrder] = useState<any>({});
   const [preOrderCustomer, setPreOrderCustomer] = useState<any>({});
   const [isModalConfirm, setIsModalConfirm] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -35,11 +37,14 @@ const PaymentStepThree = () => {
   }, [id])
 
   const fetchDetailPreOrder = async (id: number | string) => {
+    setLoading(true);
     try {
       const fetchedData = await getDetailPreOrder(id);
       setPreOrder(fetchedData)
     } catch (error) {
       console.error("Error fetching home:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,6 +82,14 @@ const PaymentStepThree = () => {
     }
   };
 
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center mt-8">
+        <Spin indicator={<LoadingOutlined style={{ fontSize: 50, color: "#BB2C26" }} spin />} size="large" />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto mb-10">

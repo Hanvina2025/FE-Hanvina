@@ -78,8 +78,8 @@ const StepPayment = () => {
       <div className="flex items-center step-item">
         <img src={phase1Img} alt="" className="" />
         <div className="ml-3">
-          <div className="text-sm" style={{ color: getLabelColor(phase1Active) }}>Giai đoạn 1</div>
-          <div className="text-sm font-[500]" style={{ color: getTextColor(phase1Active) }}>Giữ chỗ</div>
+          <div className="text-sm" style={{ color: "#252627" }}>Giai đoạn 1</div>
+          <div className="text-sm font-[500]" style={{ color: "#BB2C26" }}>Giữ chỗ</div>
         </div>
         <div className="ml-4">
           <StepConnector active={phase1Active} />

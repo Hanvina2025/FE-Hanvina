@@ -1,6 +1,7 @@
 import "./index.scss";
 import React, { useState, useEffect, useCallback } from "react";
-import { Breadcrumb, Modal } from "antd";
+import { Breadcrumb, Modal, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import arrRight from "/assets/images/arrow-right.svg";
 import { CalendarEdit } from "iconsax-react"
 import patternTitle from "/assets/images/patternTitle.svg";
@@ -49,6 +50,7 @@ const Reserve = () => {
   const [customerPhone, setCustomerPhone] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTourVisible, setIsTourVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const calcTotal = () => {
     if (!departure) return null;
@@ -138,6 +140,7 @@ const Reserve = () => {
   };
 
   const fetchTourService = async (id: number) => {
+    setLoading(true);
     try {
       const fetchedData = await getTourPriceServices(id);
       setServicesTour(fetchedData)
@@ -159,6 +162,8 @@ const Reserve = () => {
       setCustomServicesPlus(fetchedData?.servicesPlus)
     } catch (error) {
       console.error("Error fetching home:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -287,6 +292,14 @@ const Reserve = () => {
     setCustomInput(prev => ({ ...prev, [field]: value }));
   };
 
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center mt-8">
+        <Spin indicator={<LoadingOutlined style={{ fontSize: 50, color: "#BB2C26" }} spin />} size="large" />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto mb-10">
