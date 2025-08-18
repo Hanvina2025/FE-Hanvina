@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { PATH } from "./libs/constants/path";
-import { MobileDetector, MobileWrapper } from "./common";
+import { MobileDetector, MobileWrapper, LoadingScreen } from "./common";
 
 // CLIENT
 import ProtectedRoute from "./client/components/ProtectedRoute";
@@ -31,6 +31,7 @@ function App() {
   return (
     <>
       <MobileDetector />
+      <LoadingScreen />
       <MobileWrapper>
         <AuthProvider>
           <Router basename="/hanvinaweb">

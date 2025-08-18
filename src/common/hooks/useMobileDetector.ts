@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 export const useMobileDetector = (breakpoint: number = 992) => {
-    const [isMobile, setIsMobile] = useState(false);
+    const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
     useEffect(() => {
         const checkScreenSize = () => {

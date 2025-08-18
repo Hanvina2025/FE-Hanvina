@@ -8,6 +8,11 @@ import IcLogo from "/assets/images/logo.svg"
 const MobileDetector: React.FC = () => {
     const isMobile = useMobileDetector(992);
 
+    // Hiển thị loading hoặc null khi chưa xác định được kích thước màn hình
+    if (isMobile === null) {
+        return null;
+    }
+
     if (!isMobile) {
         return null; // Không hiển thị gì nếu màn hình >= 992px
     }
