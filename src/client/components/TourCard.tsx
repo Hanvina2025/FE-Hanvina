@@ -96,7 +96,7 @@ const TourCard = ({ tourData }) => {
 
       {tourData?.special && <img src={IcFire} alt="" className="absolute top-[13px] left-[-50px] z-10" />}
       <div className="flex justify-between items-center">
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl font-medium text-[#141415] ">
             {tourData?.name || "[TOUR NOSHOPP] Default Tour"}
           </h1>
@@ -144,11 +144,11 @@ const TourCard = ({ tourData }) => {
           <div>
             <div className="flex items-center gap-x-2">
               <img src={airPlane} alt="" className="size-8" />
-              <div className="flex items-center ">
-                <p className="text-[#141415] font-medium text-base pr-1">
+              <div className="flex items-center gap-1">
+                <p className="text-[#141415] font-medium text-base">
                   Hãng bay:
                 </p>
-                <span className="text-[#767A7F] text-base font-medium">
+                <span className="text-[#767A7F] text-base font-medium flex-1">
                   {tourData?.tourAirlineName || ""}
                 </span>
               </div>

@@ -5,6 +5,9 @@ import { ArrowRight } from "iconsax-react";
 import CustomPagination from "@/client/components/Pagination";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getNewsList } from "@/client/apis/news";
+import { Spin } from "antd";
+import { LoadingOutlined } from '@ant-design/icons';
+
 
 const News = () => {
   const navigate = useNavigate();
@@ -49,37 +52,48 @@ const News = () => {
         </div>
 
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[40px] mt-[40px]">
-          {dataLst.map((item) => (
-            <div key={item.id} className="news-item overflow-hidden">
-              {item?.file?.fileKey ? (
-                <img
-                  src={`${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${item.file.fileKey}`}
-                  alt={item?.title}
-                  className="w-full h-[300px] object-cover rounded-[16px]"
-                />
-              ) : (
-                <div className="w-full h-[300px] bg-gray-200 rounded-[16px]"></div>
-              )}
-              <div className="pt-[24px]">
-                <div className="text-[16px] text-[#53575A] mb-[16px]">{item.date}</div>
-                <div className="text-[20px] font-[700] text-[#252627] truncate-lines">{item.title}</div>
-                <div className="text-[14px] text-[#8F9499] mt-[8px] line-clamp-3">{item.content}</div>
-              </div>
-              <div onClick={() => navigate(`/news/${item.id}`)} className="text-[16px] text-[#BB2C26] flex items-center gap-[4px] mt-[16px] font-[500] cursor-pointer">Xem thêm <ArrowRight /></div>
+        {
+
+          loading ?
+            <div className="flex items-center justify-center mt-8">
+              <Spin indicator={<LoadingOutlined style={{ fontSize: 50, color: "#BB2C26" }} spin />} size="large" />
             </div>
-          ))}
-        </div>
-        <div className="flex items-center justify-center mt-10">
-          <CustomPagination
-            currentPage={pageIndex}
-            totalPages={totalRecords}
-            pageSize={pageSize}
-            onChange={(page) => {
-              setSearchParams({ page: page.toString(), size: pageSize.toString() });
-            }}
-          />
-        </div>
+            :
+            <>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[40px] mt-[40px]">
+                {dataLst.map((item) => (
+                  <div key={item.id} className="news-item overflow-hidden">
+                    {item?.file?.fileKey ? (
+                      <img
+                        src={`${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${item.file.fileKey}`}
+                        alt={item?.title}
+                        className="w-full h-[300px] object-cover rounded-[16px]"
+                      />
+                    ) : (
+                      <div className="w-full h-[300px] bg-gray-200 rounded-[16px]"></div>
+                    )}
+                    <div className="pt-[24px]">
+                      <div className="text-[16px] text-[#53575A] mb-[16px]">{item.date}</div>
+                      <div className="text-[20px] font-[700] text-[#252627] truncate-lines">{item.title}</div>
+                      <div className="text-[14px] text-[#8F9499] mt-[8px] line-clamp-3">{item.content}</div>
+                    </div>
+                    <div onClick={() => navigate(`/news/${item.id}`)} className="text-[16px] text-[#BB2C26] flex items-center gap-[4px] mt-[16px] font-[500] cursor-pointer">Xem thêm <ArrowRight /></div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center justify-center mt-10">
+                <CustomPagination
+                  currentPage={pageIndex}
+                  totalPages={totalRecords}
+                  pageSize={pageSize}
+                  onChange={(page) => {
+                    setSearchParams({ page: page.toString(), size: pageSize.toString() });
+                  }}
+                />
+              </div>
+            </>
+        }
       </div>
 
       <div className="w-full absolute bottom-[-20px] z-[-1]">

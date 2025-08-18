@@ -53,6 +53,7 @@ const ActivityList = () => {
   const [dataLst, setDataLst] = useState([]);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
+  const [debouncedName, setDebouncedName] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [sort, setSort] = useState("");
@@ -63,10 +64,19 @@ const ActivityList = () => {
   }, [
     pageIndex,
     pageSize,
-    name,
+    debouncedName,
     selectedDate,
     sort
   ]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedName(name);
+    }, 500);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [name]);
 
   const fetchList = async () => {
     setLoading(true);
@@ -76,7 +86,7 @@ const ActivityList = () => {
       size: pageSize.toString(),
     };
 
-    if (name) queryParams.name = name;
+    if (debouncedName) queryParams.name = debouncedName;
     if (sort) queryParams.status = sort;
 
     if (selectedDate) {
