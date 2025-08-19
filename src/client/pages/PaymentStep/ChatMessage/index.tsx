@@ -175,7 +175,7 @@ const Chatbot = ({ preOrder }) => {
 				// Logic tạo room 1-1 như cũ
 				const query = new URLSearchParams({
 					senderId: memoizedAdminId,
-					receiverId: preOrder?.tourInformation?.saleId,
+					receiverId: preOrder?.customerSaleDtos[0]?.saleId,
 					preOrderId: preOrderId
 				});
 				const roomData = await createRoomSenderReceiver(query.toString());
