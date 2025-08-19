@@ -72,7 +72,7 @@ const Contact = () => {
                   >
                     <img src={ButtonShort} className="w-full h-[48px]" />
                     <div className="absolute w-full top-[11px] text-center font-[500] text-[16px] text-white">
-                      Giữ chỗ
+                      Gửi ngay
                     </div>
                   </div>
                 </div>
