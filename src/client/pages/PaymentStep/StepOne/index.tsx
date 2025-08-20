@@ -26,6 +26,17 @@ import ReservationList from "@/client/components/ReservationList"
 import ConfirmTour from "@/client/components/ConfirmTour";
 import { formatDateNotTime } from "@/utils/common";
 
+// Hàm tính ngày về từ startDate và numberOfDays
+const calculateEndDate = (startDate: string, numberOfDays: number): string => {
+  if (!startDate || !numberOfDays) return '';
+
+  const start = new Date(startDate);
+  const end = new Date(start);
+  end.setDate(start.getDate() + numberOfDays - 1); // Trừ 1 vì ngày đầu tiên cũng tính là 1 ngày
+
+  return end.toISOString().split('T')[0]; // Trả về format YYYY-MM-DD
+};
+
 const Reserve = () => {
   const location = useLocation();
   const { tourData } = location.state || {};
@@ -370,7 +381,11 @@ const Reserve = () => {
                     {departure?.startDate ? formatDateNotTime(departure?.startDate) : ''}
                   </span>
                   <span className="text-[#BB2C26] text-base font-semibold">
-                    {departure?.endDate ? formatDateNotTime(departure?.endDate) : ''}
+                    {departure?.startDate && tourData?.numberOfDays
+                      ? formatDateNotTime(calculateEndDate(departure.startDate, tourData.numberOfDays))
+                      : departure?.endDate
+                        ? formatDateNotTime(departure?.endDate)
+                        : ''}
                   </span>
                   <div className="flex items-center gap-x-2">
                     <span className="text-[#BB2C26] text-base font-semibold">
