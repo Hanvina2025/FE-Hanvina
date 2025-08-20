@@ -56,7 +56,7 @@ const Profile = () => {
   // Hàm refresh user data
   const refreshUserData = async () => {
     try {
-      const userId = localStorage.getItem("authId");
+      const userId = localStorage.getItem("authIdClient");
       if (userId) {
         const updatedUserInfo = await getAccountDetail(userId);
         setUserData({

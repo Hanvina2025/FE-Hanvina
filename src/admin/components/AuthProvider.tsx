@@ -37,8 +37,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   // Initialize state from localStorage
   useEffect(() => {
-    const storedToken = localStorage.getItem("authToken");
-    const storeId = localStorage.getItem("authId");
+    const storedToken = localStorage.getItem("authTokenClient");
+    const storeId = localStorage.getItem("authIdClient");
 
     if (storedToken) {
       const isValid = validateToken(storedToken);
@@ -93,15 +93,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   //   }
   // };
 
-  const login = (authToken: string, userRole: string, userId: number) => {
-    setToken(authToken);
+  const login = (authTokenClient: string, userRole: string, userId: number) => {
+    setToken(authTokenClient);
     setRole(userRole);
     setIsAuthenticated(true);
 
     // Save to localStorage
-    localStorage.setItem("authToken", authToken);
-    localStorage.setItem("authId", userId.toString());
-    localStorage.setItem("authRole", userRole);
+    localStorage.setItem("authTokenClient", authTokenClient);
+    localStorage.setItem("authIdClient", userId.toString());
+    localStorage.setItem("authRoleClient", userRole);
   };
 
   const logout = () => {
@@ -110,16 +110,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     setIsAuthenticated(false);
 
     // Clear localStorage
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("authId");
-    localStorage.removeItem("authRole");
+    localStorage.removeItem("authTokenClient");
+    localStorage.removeItem("authIdClient");
+    localStorage.removeItem("authRoleClient");
   };
 
-  const validateToken = (authToken: string) => {
+  const validateToken = (authTokenClient: string) => {
     try {
       // Decode the token to get its payload
       const decodedToken: { exp: number; roles: string[] } =
-        jwtDecode(authToken);
+        jwtDecode(authTokenClient);
 
       // Check if the token is expired
       const isExpired = decodedToken.exp * 1000 < Date.now();

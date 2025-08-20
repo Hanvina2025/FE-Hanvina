@@ -45,7 +45,7 @@ interface Message {
 }
 
 const Chatbot = ({ preOrder }) => {
-	const token = localStorage.getItem("authToken");
+	const token = localStorage.getItem("authTokenClient");
 	const { userData } = useAuth();
 	const [searchParams] = useSearchParams();
 	const [users, setUsers] = useState<any>([]);

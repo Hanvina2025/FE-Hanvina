@@ -18,7 +18,7 @@ const axiosInstance: AxiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config: AxiosRequestConfig): InternalAxiosRequestConfig => {
     // Add an Authorization token if it exists
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("authTokenClient");
     if (token) {
       config.headers = {
         ...config.headers,
@@ -45,7 +45,7 @@ axiosInstance.interceptors.response.use(
             refreshToken,
           });
           const newToken = refreshResponse.data.accessToken;
-          localStorage.setItem("authToken", newToken); // Update the token
+          localStorage.setItem("authTokenClient", newToken); // Update the token
 
           // Retry the original request with the new token
           error.config.headers["Authorization"] = `Bearer ${newToken}`;
