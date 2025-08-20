@@ -448,7 +448,7 @@ const PaymentStepTwo = () => {
                       {preOrder?.tourInformation?.startDate ? formatDateNotTime(preOrder?.tourInformation?.startDate) : ''}
                     </span>
                     <span className="text-[#BB2C26] text-base font-semibold">
-                      {preOrder?.tourInformation?.endDate ? formatDateNotTime(preOrder?.tourInformation?.endDate) : ''}
+                      {preOrder?.tourInformation?.backDate ? formatDateNotTime(preOrder?.tourInformation?.backDate) : ''}
                     </span>
                     {preOrder?.status == 118 &&
                       <div className="flex items-center gap-x-2">

@@ -236,7 +236,7 @@ const PaymentStepDone = () => {
                       {preOrder?.tourInformation?.startDate ? formatDateNotTime(preOrder?.tourInformation?.startDate) : ''}
                     </span>
                     <span className="text-[#BB2C26] text-base font-semibold">
-                      {preOrder?.tourInformation?.endDate ? formatDateNotTime(preOrder?.tourInformation?.endDate) : ''}
+                      {preOrder?.tourInformation?.backDate ? formatDateNotTime(preOrder?.tourInformation?.backDate) : ''}
                     </span>
                     {preOrder?.status == 118 &&
                       <div className="flex items-center gap-x-2">
@@ -475,13 +475,11 @@ const PaymentStepDone = () => {
                 </div>
               </div>
               {preOrder?.fileDeposit && (
-                <a
+                <div
                   className="text-blue-600 text-sm mt-2"
-                  href={preOrder?.fileDeposit ? `${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${preOrder.fileDeposit.fileKey}` : "#"}
-                  target="_blank"
                 >
                   {preOrder.fileDeposit.fileName}
-                </a>
+                </div>
               )}
               <div className="flex items-center justify-between mt-3">
                 <div className="flex items-center gap-x-3">
@@ -497,13 +495,11 @@ const PaymentStepDone = () => {
                 </div>
               </div>
               {preOrder?.fileSettlement && (
-                <a
+                <div
                   className="text-blue-600 text-sm mt-2"
-                  href={preOrder?.fileSettlement ? `${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${preOrder.fileSettlement.fileKey}` : "#"}
-                  target="_blank"
                 >
                   {preOrder.fileSettlement.fileName}
-                </a>
+                </div>
               )}
             </div>
           </div>

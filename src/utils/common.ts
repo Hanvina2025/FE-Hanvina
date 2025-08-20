@@ -46,7 +46,7 @@ export function formatDateDay(date?: string | null): string {
     hour12: false,
     timeZone: "Asia/Ho_Chi_Minh",
   });
-  
+
   return `${weekday}, ${datePart} ${timePart}`;
 }
 
@@ -68,3 +68,15 @@ export function formatDateNotTime(date?: string | null): string {
 
   return finalFormat;
 }
+
+
+// Hàm tính ngày về từ startDate và numberOfDays
+export const calculateEndDate = (startDate: string, numberOfDays: number): string => {
+  if (!startDate || !numberOfDays) return '';
+
+  const start = new Date(startDate);
+  const end = new Date(start);
+  end.setDate(start.getDate() + numberOfDays - 1); // Trừ 1 vì ngày đầu tiên cũng tính là 1 ngày
+
+  return end.toISOString().split('T')[0]; // Trả về format YYYY-MM-DD
+};
