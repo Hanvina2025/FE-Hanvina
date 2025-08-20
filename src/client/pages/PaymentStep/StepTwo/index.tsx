@@ -141,6 +141,8 @@ const PaymentStepTwo = () => {
     setLoading(true);
     try {
       const fetchedData = await getDetailPreOrder(id);
+      console.log('fetchDetailPreOrder', fetchedData);
+
       setPreOrder(fetchedData)
     } catch (error) {
       console.error("Error fetching home:", error);
@@ -792,11 +794,13 @@ const PaymentStepTwo = () => {
                 </div>
               </div>
               {preOrder?.fileDeposit && (
-                <div
+                <a
                   className="text-blue-600 text-sm mt-2"
+                  href={preOrder?.fileDeposit ? `${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${preOrder.fileDeposit.fileKey}` : "#"}
+                  target="_blank"
                 >
                   {preOrder.fileDeposit.fileName}
-                </div>
+                </a>
               )}
               <div className="flex items-center justify-between mt-3">
                 <div className="flex items-center gap-x-3">

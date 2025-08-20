@@ -1,5 +1,5 @@
 import './index.scss'
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import BgLeft from '/assets/images/image-user-profile-left.png';
 import Filled from '/assets/images/Filled.svg';
 import Avatar from '/assets/images/ava.png';
@@ -7,14 +7,17 @@ import ButtonShort from "/assets/images/button-short.svg";
 import { ArrowRight2 } from "iconsax-react";
 import { Modal, Input, message } from "antd";
 import { useAuth } from "@/admin/components/AuthProvider";
-import { updatePassWord, updateAccount } from "@/admin/apis/auth";
+import { updatePassWord, updateAccount, updateAvatar } from "@/admin/apis/auth";
+import { getAccountDetail } from "@/admin/apis/accountService";
 
 const Profile = () => {
-  const { userData } = useAuth();
+  const { userData, setUserData } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   console.log('userData', userData);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [avatarLoading, setAvatarLoading] = useState(false);
 
   // State cho form thông tin cá nhân
   const [profileForm, setProfileForm] = useState({
@@ -40,6 +43,83 @@ const Profile = () => {
       });
     }
   }, [userData]);
+
+  // Hàm để lấy URL avatar
+  const getAvatarUrl = () => {
+    if (userData?.info?.avatar?.fileKey) {
+      // Giả sử API trả về fileKey, bạn cần thay thế bằng URL thực tế của server
+      return `${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${userData.info.avatar.fileKey}`;
+    }
+    return Avatar; // Fallback về ảnh mặc định
+  };
+
+  // Hàm refresh user data
+  const refreshUserData = async () => {
+    try {
+      const userId = localStorage.getItem("authId");
+      if (userId) {
+        const updatedUserInfo = await getAccountDetail(userId);
+        setUserData({
+          ...userData,
+          info: updatedUserInfo,
+        });
+      }
+    } catch (error) {
+      console.error('Error refreshing user data:', error);
+    }
+  };
+
+  // Xử lý đổi ảnh đại diện
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      message.error('Chỉ chấp nhận file ảnh (JPG, PNG, GIF)!');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      message.error('Kích thước file không được vượt quá 5MB!');
+      return;
+    }
+
+    setAvatarLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      await updateAvatar(userData?.info?.id, formData);
+      message.success('Cập nhật ảnh đại diện thành công!');
+
+      // Refresh user data để lấy ảnh mới
+      await refreshUserData();
+    } catch (error: any) {
+      const errorMsg =
+        error?.response?.data?.errorMsg ||
+        error?.errorMsg ||
+        "Lỗi không xác định";
+
+      message.error(errorMsg);
+      console.error("Lỗi:", error);
+
+    } finally {
+      setAvatarLoading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  // Xử lý click vào nút đổi ảnh
+  const handleChangeAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
 
   const showModal = () => setIsModalOpen(true);
   const handleCancel = () => {
@@ -76,6 +156,7 @@ const Profile = () => {
       formData.append('name', profileForm.name);
       formData.append('phone', profileForm.phone);
       formData.append('email', profileForm.email);
+      formData.append('role', "ROLE_CUSTOMER");
       // TODO: Implement API update profile
       await updateAccount(formData);
       message.success('Cập nhật thông tin thành công!');
@@ -132,8 +213,32 @@ const Profile = () => {
           <div className='profile-right-info'>
             <div className='grid lg:grid-cols-[125px_1fr] gap-[60px]'>
               <div>
-                <img src={Avatar} className='w-[125px] h-[125px] rounded-full object-cover' />
-                <div className='text-[13px] text-[#BB2C26] mt-[18px] text-center'>Đổi ảnh đại diện</div>
+                <div className='relative'>
+                  <img
+                    src={getAvatarUrl()}
+                    className='w-[125px] h-[125px] rounded-full object-cover'
+                    alt="Avatar"
+                  />
+                  {avatarLoading && (
+                    <div className='absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center'>
+                      <div className='text-white text-sm'>Đang tải...</div>
+                    </div>
+                  )}
+                </div>
+                <div
+                  className='text-[13px] text-[#BB2C26] mt-[18px] text-center cursor-pointer hover:opacity-80'
+                  onClick={handleChangeAvatarClick}
+                >
+                  Đổi ảnh đại diện
+                </div>
+                {/* Hidden file input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  style={{ display: 'none' }}
+                />
               </div>
               <div className='profile-right-info-content'>
                 <div className='item'>

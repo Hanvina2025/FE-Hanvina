@@ -99,12 +99,6 @@ const Reserve = () => {
   }, [tourData?.key]);
 
   useEffect(() => {
-    if (tourData?.key) {
-      fetchStartDate(tourData?.key);
-    }
-  }, [tourData?.key]);
-
-  useEffect(() => {
     if (dataStartDate.length > 0 && !departure) {
       setDeparture(dataStartDate[0]);
     }
@@ -442,7 +436,7 @@ const Reserve = () => {
             </TitlePattern>
           </div>
           <div className="mt-6">
-            <CustomerInformation onChange={handleCustomerChange} tourData={tourData} statusPreOrder={118} />
+            <CustomerInformation onChange={handleCustomerChange} tourData={tourData} statusPreOrder={118} departure={departure} />
           </div>
           <div className="mt-6 grid grid-cols-2 gap-x-6">
             <div className="col-span-1">

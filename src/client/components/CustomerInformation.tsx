@@ -8,10 +8,12 @@ const CustomerInformation = ({
   onChange,
   tourData,
   statusPreOrder,
+  departure
 }: {
   onChange: any;
   tourData: any;
   statusPreOrder?: number;
+  departure?: any;
 }) => {
   // Nếu có dữ liệu từ tourData thì lấy, không thì mặc định là 0
   const [adultCount, setAdultCount] = React.useState(tourData?.adultCount ?? 0);
@@ -35,6 +37,7 @@ const CustomerInformation = ({
 
   const totalSeats = tourData?.numberOfSeats ?? tourData?.totalSeats ?? 0;
   const totalAdultChildren = adultCount + childrenCount;
+  const availableSeats = (departure?.totalSeat ?? 0) - (departure?.totalSeatBooked ?? 0);
 
   const Counter = ({ label, subLabel, note, count, setCount, plusDisabled, minusDisabled }) => (
     <div className="flex items-center justify-between">
@@ -79,7 +82,7 @@ const CustomerInformation = ({
         <div className="flex flex-col space-y-4">
           <div className="flex items-center gap-x-3">
             <img src={countUser} alt="" />
-            <h1 className="text-[#141415] font-semibold">Số chỗ khả dụng: {tourData?.numberOfSeats ?? tourData?.totalSeats ?? 0}</h1>
+            <h1 className="text-[#141415] font-semibold">Số chỗ khả dụng: {availableSeats}</h1>
           </div>
           <div className="flex flex-col space-y-6 !mt-6">
             <Counter
@@ -88,7 +91,7 @@ const CustomerInformation = ({
               note="ADT - Adult"
               count={adultCount}
               setCount={setAdultCount}
-              plusDisabled={totalAdultChildren >= totalSeats}
+              plusDisabled={totalAdultChildren >= availableSeats}
               minusDisabled={adultCount <= 0}
             />
             <Counter
@@ -97,7 +100,7 @@ const CustomerInformation = ({
               note="CHD - Children"
               count={childrenCount}
               setCount={setChildrenCount}
-              plusDisabled={totalAdultChildren >= totalSeats}
+              plusDisabled={totalAdultChildren >= availableSeats}
               minusDisabled={childrenCount <= 0}
             />
             <Counter

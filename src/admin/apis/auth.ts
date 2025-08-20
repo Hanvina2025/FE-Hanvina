@@ -31,10 +31,32 @@ export const updateAccount = async (
   data: FormData
 ) => {
   try {
-    const url = `/account/change-password`;
+    const url = `/account/update`;
     const response = await axiosInstance.put(
       url,
       data
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+export const updateAvatar = async (
+  id: any,
+  data: FormData
+) => {
+  try {
+    const url = `account/update-avatar/${id}`;
+    const response = await axiosInstance.put(
+      url,
+      data,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      }
     );
     return response.data;
   } catch (error) {

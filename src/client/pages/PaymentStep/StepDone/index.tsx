@@ -475,11 +475,13 @@ const PaymentStepDone = () => {
                 </div>
               </div>
               {preOrder?.fileDeposit && (
-                <div
+                <a
                   className="text-blue-600 text-sm mt-2"
+                  href={preOrder?.fileDeposit ? `${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${preOrder.fileDeposit.fileKey}` : "#"}
+                  target="_blank"
                 >
                   {preOrder.fileDeposit.fileName}
-                </div>
+                </a>
               )}
               <div className="flex items-center justify-between mt-3">
                 <div className="flex items-center gap-x-3">
@@ -495,11 +497,13 @@ const PaymentStepDone = () => {
                 </div>
               </div>
               {preOrder?.fileSettlement && (
-                <div
+                <a
                   className="text-blue-600 text-sm mt-2"
+                  href={preOrder?.fileSettlement ? `${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${preOrder.fileSettlement.fileKey}` : "#"}
+                  target="_blank"
                 >
                   {preOrder.fileSettlement.fileName}
-                </div>
+                </a>
               )}
             </div>
           </div>

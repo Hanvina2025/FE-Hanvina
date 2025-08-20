@@ -273,60 +273,64 @@ export default function ReportChart() {
         </div>
       </div>
       {/* Chart Section */}
-      <div className="bg-white p-4 rounded-2xl  border border-[#E9EBED]">
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart
-            data={chartData.chartData}
-            margin={{ top: 16, right: 24, left: 8, bottom: 8 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis
-              dataKey="date"
-              tick={{
-                fontSize: 14,
-                fill: "#8F9499",
-                fontWeight: 400,
-                dy: 15,
-              }}
-              axisLine={false}
-              tickLine={false}
-              padding={{ left: 0, right: 0 }}
-              interval="preserveStartEnd"
-              tickFormatter={(value) => `Ngày ${value}`}
-            />
-            <YAxis
-              tickFormatter={(value) => formatYAxis(value, selectedIndex)}
-              tick={{ fontSize: 14, fill: "#8F9499" }}
-              width={110}
-              axisLine={false}
-              tickLine={false}
-            />
-            <Tooltip
-              content={
-                <CustomTooltip
-                  active={true}
-                  payload={[]}
-                  label=""
-                  selectedIndex={selectedIndex}
+      <div className="bg-white p-4 rounded-2xl border border-[#E9EBED] overflow-hidden">
+        <div className="overflow-x-auto">
+          <div style={{ minWidth: '1400px', width: '100%' }}>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart
+                data={chartData.chartData}
+                margin={{ top: 16, right: 24, left: 8, bottom: 8 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  tick={{
+                    fontSize: 14,
+                    fill: "#8F9499",
+                    fontWeight: 400,
+                    dy: 15,
+                  }}
+                  axisLine={false}
+                  tickLine={false}
+                  padding={{ left: 0, right: 0 }}
+                  interval="preserveStartEnd"
+                  tickFormatter={(value) => `Ngày ${value}`}
                 />
-              }
-              cursor={{ stroke: "#f59e0b", strokeWidth: 1, opacity: 0.1 }}
-            />
-            <Line
-              type="monotone"
-              dataKey="value"
-              stroke="#f59e0b"
-              strokeWidth={3}
-              dot={false}
-              activeDot={{
-                r: 6,
-                fill: "#f59e0b",
-                stroke: "#fff",
-                strokeWidth: 2,
-              }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+                <YAxis
+                  tickFormatter={(value) => formatYAxis(value, selectedIndex)}
+                  tick={{ fontSize: 14, fill: "#8F9499" }}
+                  width={110}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip
+                  content={
+                    <CustomTooltip
+                      active={true}
+                      payload={[]}
+                      label=""
+                      selectedIndex={selectedIndex}
+                    />
+                  }
+                  cursor={{ stroke: "#f59e0b", strokeWidth: 1, opacity: 0.1 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#f59e0b"
+                  strokeWidth={3}
+                  dot={false}
+                  activeDot={{
+                    r: 6,
+                    fill: "#f59e0b",
+                    stroke: "#fff",
+                    strokeWidth: 2,
+                  }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
     </div>
   );
