@@ -13,7 +13,6 @@ import { getAccountDetail } from "@/admin/apis/accountService";
 const Profile = () => {
   const { userData, setUserData } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  console.log('userData', userData);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);

@@ -64,7 +64,16 @@ const Header = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { logout } = useAuth();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const { logout, userData } = useAuth();
+
+  useEffect(() => {
+    if (userData && userData.info && userData?.info?.avatar?.fileKey) {
+      setAvatarUrl(`${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${userData.info.avatar.fileKey}`);
+    } else {
+      setAvatarUrl(ava);
+    }
+  }, [userData]);
 
   const content = (
     <>
@@ -179,7 +188,7 @@ const Header = () => {
           <Popover content={contentUser} trigger="click" placement="bottomRight" overlayClassName="user-content-wrapper">
             <div className="w-[95px] h-[56px] border border-[#D6D9DC] rounded-[20px] bg-[#F4F5F6] flex  gap-x-[10px] items-center p-2 mr-[30px] cursor-pointer">
               <img
-                src={ava}
+                src={avatarUrl || ava}
                 alt="avatar"
                 className="size-10 rounded-full border border-[#BB2C26]"
               />
