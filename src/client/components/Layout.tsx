@@ -13,13 +13,15 @@ const Layout: React.FC = () => {
 
   return (
     <div
-      className="relative "
+      className="relative"
       style={{
         background: "linear-gradient(#FFD9D9, #fff) 50%, #fff",
         backgroundSize: "100% 50%",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "top",
         height: "110vh",
+        minWidth: "1280px",
+        overflow: "auto"
       }}
     >
       <div className="pt-[30px] fixed z-[100] w-full flex justify-center ">
@@ -28,7 +30,6 @@ const Layout: React.FC = () => {
       <div className="relative min-h-[100vh] pt-52">
         <main>{<Outlet />}</main>
       </div>
-
       <Footer />
     </div>
   );

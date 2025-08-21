@@ -18,6 +18,7 @@ import { CloseOutlined } from "@ant-design/icons"
 import dayjs from "dayjs";
 import ReservationList from "@/client/components/ReservationList"
 import { formatDateNotTime } from "@/utils/common";
+import IcLoading from "/assets/images/step-loading.svg";
 
 import Chatbot from "../ChatMessage";
 
@@ -799,6 +800,7 @@ const PaymentStepTwo = () => {
                   href={preOrder?.fileDeposit ? `${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${preOrder.fileDeposit.fileKey}` : "#"}
                   target="_blank"
                 >
+                  <img src={IcLoading} alt="Loading" className="inline mr-2 w-4 h-4" />
                   {preOrder.fileDeposit.fileName}
                 </a>
               )}
@@ -926,7 +928,7 @@ const PaymentStepTwo = () => {
                       <img src={upload} alt="" className="w-5 h-5" />
                       Tải hóa đơn lên
                     </button>
-                    <div className="ml-2 text-[#006AF5]">{fileBill?.name}</div>
+                    <div className="ml-2 text-[#006AF5] max-w-[222px] truncate">{fileBill?.name}</div>
                     <CloseOutlined onClick={handleRemoveImage} />
                   </div>
                 )}

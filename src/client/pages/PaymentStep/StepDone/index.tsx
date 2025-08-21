@@ -10,6 +10,7 @@ import StepPayment from "@/client/components/StepPayment";
 import TourPriceTable from "@/client/components/TourPriceTable";
 import dayjs from "dayjs";
 import Chatbot from "../ChatMessage";
+import IcDone from "/assets/images/step-done.svg";
 
 import {
   getDetailPreOrder,
@@ -478,6 +479,7 @@ const PaymentStepDone = () => {
                 <div
                   className="text-blue-600 text-sm mt-2"
                 >
+                  <img src={IcDone} alt="Loading" className="inline mr-1 w-4 h-4" />
                   {preOrder.fileDeposit.fileName}
                 </div>
               )}
@@ -498,6 +500,7 @@ const PaymentStepDone = () => {
                 <div
                   className="text-blue-600 text-sm mt-2"
                 >
+                  <img src={IcDone} alt="Loading" className="inline mr-1 w-4 h-4" />
                   {preOrder.fileSettlement.fileName}
                 </div>
               )}

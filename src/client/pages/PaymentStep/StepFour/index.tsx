@@ -17,6 +17,7 @@ import buttonMediumDisable from "/assets/images/button-short-disable.svg";
 import upload from "/assets/images/upload.svg";
 import qrCode from "/assets/images/qrcode.svg";
 import Chatbot from "../ChatMessage";
+import IcDone from "/assets/images/step-done.svg";
 
 import {
   getDetailPreOrder,
@@ -643,6 +644,7 @@ const PaymentStepFour = () => {
                   href={preOrder?.fileDeposit ? `${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${preOrder.fileDeposit.fileKey}` : "#"}
                   target="_blank"
                 >
+                  <img src={IcDone} alt="Loading" className="inline mr-1 w-4 h-4" />
                   {preOrder.fileDeposit.fileName}
                 </a>
               )}

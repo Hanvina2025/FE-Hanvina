@@ -3,6 +3,7 @@ import TitlePattern from "./TitlePattern";
 import countUser from "/assets/images/countUser.svg";
 import minus from "/assets/images/minus.svg";
 import plus from "/assets/images/plus.svg";
+import { useParams } from "react-router-dom";
 
 const CustomerInformation = ({
   onChange,
@@ -15,11 +16,12 @@ const CustomerInformation = ({
   statusPreOrder?: number;
   departure?: any;
 }) => {
-  // Nếu có dữ liệu từ tourData thì lấy, không thì mặc định là 0
+  const { id } = useParams();
   const [adultCount, setAdultCount] = React.useState(tourData?.adultCount ?? 0);
   const [childrenCount, setChildrenCount] = React.useState(tourData?.childrenCount ?? 0);
   const [babyCount, setBabyCount] = React.useState(tourData?.babyCount ?? 0);
   const isDisabled = statusPreOrder != 118;
+  console.log('tourData', tourData);
 
   // Khi tourData thay đổi thì cập nhật lại state
   React.useEffect(() => {
@@ -35,9 +37,8 @@ const CustomerInformation = ({
     onChange({ adultCount, childrenCount, babyCount });
   }, [adultCount, childrenCount, babyCount, onChange]);
 
-  const totalSeats = tourData?.numberOfSeats ?? tourData?.totalSeats ?? 0;
   const totalAdultChildren = adultCount + childrenCount;
-  const availableSeats = (departure?.totalSeat ?? 0) - (departure?.totalSeatBooked ?? 0);
+  const availableSeats = id ? tourData?.totalSeats : (departure?.totalSeat ?? 0) - (departure?.totalSeatBooked ?? 0);
 
   const Counter = ({ label, subLabel, note, count, setCount, plusDisabled, minusDisabled }) => (
     <div className="flex items-center justify-between">
