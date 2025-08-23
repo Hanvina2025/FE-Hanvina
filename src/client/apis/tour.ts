@@ -264,3 +264,14 @@ export const getExportFile = async (fileKey: any) => {
     throw error;
   }
 };
+
+export const getPaymentActive = async () => {
+  try {
+    const url = `/payment-method/active-with-qr`;
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};

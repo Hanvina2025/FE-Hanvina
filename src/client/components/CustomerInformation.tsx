@@ -21,7 +21,6 @@ const CustomerInformation = ({
   const [childrenCount, setChildrenCount] = React.useState(tourData?.childrenCount ?? 0);
   const [babyCount, setBabyCount] = React.useState(tourData?.babyCount ?? 0);
   const isDisabled = statusPreOrder != 118;
-  console.log('tourData', tourData);
 
   // Khi tourData thay đổi thì cập nhật lại state
   React.useEffect(() => {

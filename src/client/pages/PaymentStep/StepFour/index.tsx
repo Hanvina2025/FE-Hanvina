@@ -23,7 +23,8 @@ import {
   getDetailPreOrder,
   getDetailOrderCustomer,
   getDetailOrderDiscountPlus,
-  postOrderPaymentSettlement
+  postOrderPaymentSettlement,
+  getPaymentActive
 } from "@/client/apis/tour";
 
 import paymentDealine from "/assets/images/paymentDealine.svg";
@@ -48,8 +49,10 @@ const PaymentStepFour = () => {
   const [fileBill, setFileBill] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [paymentActive, setPaymentActive] = useState<any>({});
 
   useEffect(() => {
+    fetchPaymentActive()
     if (id) {
       fetchDetailPreOrder(id)
       fetchDetailPreOrderCustomer(id)
@@ -119,6 +122,15 @@ const PaymentStepFour = () => {
       console.error("Error fetching home:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPaymentActive = async () => {
+    try {
+      const fetchedData = await getPaymentActive();
+      setPaymentActive(fetchedData[0])
+    } catch (error) {
+      console.error("Error fetching home:", error);
     }
   };
 
@@ -403,7 +415,7 @@ const PaymentStepFour = () => {
                 </div>
                 <div className="flex gap-6">
                   <img
-                    src={qrCode}
+                    src={paymentActive?.file && paymentActive?.file?.fileKey ? `${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${paymentActive.file.fileKey}` : qrCode}
                     alt="QR"
                     className="object-contain w-[228px]"
                   />
@@ -413,19 +425,19 @@ const PaymentStepFour = () => {
                         <span className="font-medium text-[#000D21]">
                           Tên chủ tài khoản:
                         </span>{" "}
-                        Dương Văn A
+                        {paymentActive?.userName}
                       </div>
                       <div className="text-base">
                         <span className="font-medium text-[#000D21]">
                           Số tài khoản:
                         </span>{" "}
-                        1241234235
+                        {paymentActive?.stk}
                       </div>
                       <div className="text-base">
                         <span className="font-medium text-[#000D21]">
                           Ngân hàng:
                         </span>{" "}
-                        Vietcombank
+                        {paymentActive?.bank}
                       </div>
                       <div className="text-base">
                         <span className="font-medium text-[#000D21]">

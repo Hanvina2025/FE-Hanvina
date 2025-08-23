@@ -11,7 +11,8 @@ import {
   postOrderPaymentDeposit,
   putPreOrder,
   putOrderCustomer,
-  putOrderDiscountPlus
+  putOrderDiscountPlus,
+  getPaymentActive
 } from "@/client/apis/tour";
 import type { UploadProps } from "antd";
 import { CloseOutlined } from "@ant-design/icons"
@@ -51,6 +52,7 @@ const PaymentStepTwo = () => {
     quantity: 1
   });
   const [preOrder, setPreOrder] = useState<any>({});
+  const [paymentActive, setPaymentActive] = useState<any>({});
   const [preOrderCustomer, setPreOrderCustomer] = useState<any>({});
   const [adultCount, setAdultCount] = useState(0);
   const [childrenCount, setChildrenCount] = useState(0);
@@ -69,6 +71,7 @@ const PaymentStepTwo = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    fetchPaymentActive()
     if (id) {
       fetchDetailPreOrder(id)
       fetchDetailPreOrderCustomer(id)
@@ -138,6 +141,15 @@ const PaymentStepTwo = () => {
     };
   };
 
+  const fetchPaymentActive = async () => {
+    try {
+      const fetchedData = await getPaymentActive();
+      setPaymentActive(fetchedData[0])
+    } catch (error) {
+      console.error("Error fetching home:", error);
+    }
+  };
+
   const fetchDetailPreOrder = async (id: number | string) => {
     setLoading(true);
     try {
@@ -194,6 +206,8 @@ const PaymentStepTwo = () => {
   };
 
   const handleCustomerChange = useCallback(({ adultCount, childrenCount, babyCount }) => {
+    console.log('handleCustomerChange', adultCount, childrenCount, babyCount);
+
     setAdultCount(adultCount);
     setChildrenCount(childrenCount);
     setBabyCount(babyCount);
@@ -790,7 +804,7 @@ const PaymentStepTwo = () => {
                 </div>
                 <div>
                   <p className="text-[#252627] font-medium">
-                    {totalData?.finalTotal ? (totalData?.finalTotal / 2).toLocaleString() : preOrder?.depositPrice?.toLocaleString()} ₫
+                    {totalData?.finalTotal ? (totalData.finalTotal / 2).toLocaleString() : "0"} ₫
                   </p>
                 </div>
               </div>
@@ -813,7 +827,7 @@ const PaymentStepTwo = () => {
                 </div>
                 <div>
                   <p className="text-[#252627] font-medium">
-                    {totalData?.finalTotal ? (totalData?.finalTotal / 2).toLocaleString() : preOrder?.settlementPrice?.toLocaleString()} ₫
+                    {totalData?.finalTotal ? (totalData?.finalTotal / 2).toLocaleString() : "0"} ₫
                   </p>
                 </div>
               </div>
@@ -880,7 +894,7 @@ const PaymentStepTwo = () => {
           </div>
           <div className="flex gap-6 border-t border-[#D6D9DC] border-dashed pt-5 mt-4 px-4">
             <img
-              src={qrCode}
+              src={paymentActive?.file && paymentActive?.file?.fileKey ? `${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${paymentActive.file.fileKey}` : qrCode}
               alt="QR"
               className="object-contain w-[180px]"
             />
@@ -890,19 +904,19 @@ const PaymentStepTwo = () => {
                   <span className="font-medium text-[#000D21]">
                     Tên chủ tài khoản:
                   </span>{" "}
-                  Dương Văn A
+                  {paymentActive?.userName}
                 </div>
                 <div className="text-base">
                   <span className="font-medium text-[#000D21]">
                     Số tài khoản:
                   </span>{" "}
-                  1241234235
+                  {paymentActive?.stk}
                 </div>
                 <div className="text-base">
                   <span className="font-medium text-[#000D21]">
                     Ngân hàng:
                   </span>{" "}
-                  Vietcombank
+                  {paymentActive?.bank}
                 </div>
                 <div className="text-base">
                   <span className="font-medium text-[#000D21]">
