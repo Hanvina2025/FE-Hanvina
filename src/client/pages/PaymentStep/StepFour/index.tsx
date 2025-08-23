@@ -49,7 +49,7 @@ const PaymentStepFour = () => {
   const [fileBill, setFileBill] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [paymentActive, setPaymentActive] = useState<any>({});
+  const [paymentActiveList, setPaymentActiveList] = useState<any>([]);
 
   useEffect(() => {
     fetchPaymentActive()
@@ -128,7 +128,7 @@ const PaymentStepFour = () => {
   const fetchPaymentActive = async () => {
     try {
       const fetchedData = await getPaymentActive();
-      setPaymentActive(fetchedData[0])
+      setPaymentActiveList(fetchedData)
     } catch (error) {
       console.error("Error fetching home:", error);
     }
@@ -413,76 +413,80 @@ const PaymentStepFour = () => {
                       : "0 đ"}
                   </span>
                 </div>
-                <div className="flex gap-6">
-                  <img
-                    src={paymentActive?.file && paymentActive?.file?.fileKey ? `${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${paymentActive.file.fileKey}` : qrCode}
-                    alt="QR"
-                    className="object-contain w-[228px]"
-                  />
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div className="text-sm leading-6">
-                      <div className="text-base">
-                        <span className="font-medium text-[#000D21]">
-                          Tên chủ tài khoản:
-                        </span>{" "}
-                        {paymentActive?.userName}
-                      </div>
-                      <div className="text-base">
-                        <span className="font-medium text-[#000D21]">
-                          Số tài khoản:
-                        </span>{" "}
-                        {paymentActive?.stk}
-                      </div>
-                      <div className="text-base">
-                        <span className="font-medium text-[#000D21]">
-                          Ngân hàng:
-                        </span>{" "}
-                        {paymentActive?.bank}
-                      </div>
-                      <div className="text-base">
-                        <span className="font-medium text-[#000D21]">
-                          Nội dung chuyển khoản khuyến nghị:
-                        </span>
-                        <br />
-                        <span>
-                          “Họ và tên - Tất toán Tour [Tên tour]”
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 mt-3">
-                      {!fileBill ? (
-                        <Dragger {...props} className="custom-dragger-supplier">
-                          <button className="text-[#006AF5] text-sm underline hover:text-blue-700 flex gap-2 pt-2">
-                            <img src={upload} alt="" className="w-5 h-5" />
-                            Tải hóa đơn lên
-                          </button>
-                        </Dragger>
-                      ) : (
-                        <div className="flex justify-between items-center gap-2">
-                          <button className="text-[#006AF5] text-sm underline hover:text-blue-700 flex gap-2">
-                            <img src={upload} alt="" className="w-5 h-5" />
-                            Tải hóa đơn lên
-                          </button>
-                          <div className="ml-2 text-[#006AF5] text-sm">{fileBill?.name}</div>
-                          <CloseOutlined onClick={handleRemoveImage} />
+                {paymentActiveList.map((paymentActive) => (
+                  <>
+                    <div className="flex gap-6">
+                      <img
+                        src={paymentActive?.file && paymentActive?.file?.fileKey ? `${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${paymentActive.file.fileKey}` : qrCode}
+                        alt="QR"
+                        className="object-contain w-[228px]"
+                      />
+                      <div className="flex-1 flex flex-col justify-between">
+                        <div className="text-sm leading-6">
+                          <div className="text-base">
+                            <span className="font-medium text-[#000D21]">
+                              Tên chủ tài khoản:
+                            </span>{" "}
+                            {paymentActive?.userName}
+                          </div>
+                          <div className="text-base">
+                            <span className="font-medium text-[#000D21]">
+                              Số tài khoản:
+                            </span>{" "}
+                            {paymentActive?.stk}
+                          </div>
+                          <div className="text-base">
+                            <span className="font-medium text-[#000D21]">
+                              Ngân hàng:
+                            </span>{" "}
+                            {paymentActive?.bank}
+                          </div>
+                          <div className="text-base">
+                            <span className="font-medium text-[#000D21]">
+                              Nội dung chuyển khoản khuyến nghị:
+                            </span>
+                            <br />
+                            <span>
+                              “Họ và tên - Tất toán Tour [Tên tour]”
+                            </span>
+                          </div>
                         </div>
-                      )}
-                    </div>
-                    <button
-                      className="relative h-[48px] cursor-pointer mt-4 w-[192px]"
-                      onClick={() => handleSave()}
-                      disabled={!fileBill}
-                    >
-                      <img src={fileBill ? buttonMedium : buttonMediumDisable} className="w-[192px] h-[48px]" />
-                      <div
-                        className="absolute w-full top-[11px] text-center font-[500] text-[16px] text-white"
-
-                      >
-                        Tôi đã thanh toán
                       </div>
-                    </button>
-                  </div>
+                    </div>
+                  </>
+                ))}
+                <div className="flex items-center gap-2 mt-3">
+                  {!fileBill ? (
+                    <Dragger {...props} className="custom-dragger-supplier">
+                      <button className="text-[#006AF5] text-sm underline hover:text-blue-700 flex gap-2 pt-2">
+                        <img src={upload} alt="" className="w-5 h-5" />
+                        Tải hóa đơn lên
+                      </button>
+                    </Dragger>
+                  ) : (
+                    <div className="flex justify-between items-center gap-2">
+                      <button className="text-[#006AF5] text-sm underline hover:text-blue-700 flex gap-2">
+                        <img src={upload} alt="" className="w-5 h-5" />
+                        Tải hóa đơn lên
+                      </button>
+                      <div className="ml-2 text-[#006AF5] text-sm">{fileBill?.name}</div>
+                      <CloseOutlined onClick={handleRemoveImage} />
+                    </div>
+                  )}
                 </div>
+                <button
+                  className="relative h-[48px] cursor-pointer mt-4 w-[192px]"
+                  onClick={() => handleSave()}
+                  disabled={!fileBill}
+                >
+                  <img src={fileBill ? buttonMedium : buttonMediumDisable} className="w-full h-[48px] mx-auto" />
+                  <div
+                    className="absolute w-full top-[11px] text-center font-[500] text-[16px] text-white"
+
+                  >
+                    Tôi đã thanh toán
+                  </div>
+                </button>
               </div>
             </TitlePattern>
           </div>}
