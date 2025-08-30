@@ -60,12 +60,13 @@ export default function DeductionServiceCard(props: {
       const countKey = s.id ?? `temp-${idx}`;
       const count = updated[countKey] ?? 0;
       return {
-        id: s.id,
         content: s.content,
+        services: s.services || s.content, // Fallback nếu không có services
         price: s.price,
+        sellPrice: s.sellPrice || s.price, // Fallback nếu không có sellPrice
         count,
         isCustom: s.isCustom,
-        totalPrice: (s.price * count),
+        totalPrice: (s.sellPrice * count),
       };
     });
 
@@ -107,7 +108,7 @@ export default function DeductionServiceCard(props: {
               <div key={key} className="flex items-center justify-between">
                 <div>
                   <div className="text-[#141415] font-semibold text-base">
-                    {service.services}
+                    {service.services || service.content}
                     {service.isCustom && onRemove && (
                       <button
                         className="ml-2 text-black"

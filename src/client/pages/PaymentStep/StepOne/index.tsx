@@ -80,11 +80,11 @@ const Reserve = () => {
     const commissionTotal = (commissionAdult * adultCount) + (commissionChildren * childrenCount);
 
     const discountTotal = (servicesDiscount?.items || []).reduce((sum, item) => {
-      return sum + (Number(item.price || 0) * Number(item.count || 0));
+      return sum + (Number(item.sellPrice || item.price || 0) * Number(item.count || 0));
     }, 0);
 
     const additionalTotal = (servicesPlus?.items || []).reduce((sum, item) => {
-      return sum + (Number(item.price || 0) * Number(item.count || 0));
+      return sum + (Number(item.sellPrice || item.price || 0) * Number(item.count || 0));
     }, 0);
 
     const totalBeforeDiscount = adultTotal + childrenTotal + babyTotal;
@@ -217,7 +217,7 @@ const Reserve = () => {
           content: item.content,
           price: item.price,
           count: item.count,
-          totalPrice: Number(item.price) * (item.count || 1),
+          totalPrice: Number(item.sellPrice || item.price) * (item.count || 1),
         }))
         : [],
     };
@@ -230,7 +230,7 @@ const Reserve = () => {
           content: item.content,
           price: item.price,
           count: item.count,
-          totalPrice: Number(item.price) * (item.count || 1),
+          totalPrice: Number(item.sellPrice || item.price) * (item.count || 1),
         }))
         : [],
     };
@@ -633,8 +633,8 @@ const Reserve = () => {
                     .filter(item => (item.count || 0) > 0)
                     .map((item) => (
                       <div key={item.id || item.content} className="flex justify-between">
-                        <p>{item.content}</p>
-                        <p>{item.price ? Number(item.price).toLocaleString() : '0'} đ x {item.count}</p>
+                        <p>{item.services || item.content}</p>
+                        <p>{item.sellPrice ? Number(item.sellPrice).toLocaleString() : (item.price ? Number(item.price).toLocaleString() : '0')} đ x {item.count}</p>
                       </div>
                     ))}
                   <div className="flex justify-between">
@@ -652,8 +652,8 @@ const Reserve = () => {
                     .filter(item => (item.count || 0) > 0)
                     .map((item) => (
                       <div key={item.id || item.content} className="flex justify-between">
-                        <p>{item.content}</p>
-                        <p>{item.price ? Number(item.price).toLocaleString() : '0'} đ x {item.count}</p>
+                        <p>{item.services || item.content}</p>
+                        <p>{item.sellPrice ? Number(item.sellPrice).toLocaleString() : (item.price ? Number(item.price).toLocaleString() : '0')} đ x {item.count}</p>
                       </div>
                     ))}
                   <div className="flex justify-between">
