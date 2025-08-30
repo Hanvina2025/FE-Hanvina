@@ -44,7 +44,6 @@ const TourCard = ({ tourData }) => {
     });
     try {
       const fetchedData = await getTourStartDate(query);
-      console.log('Fetched start dates:', fetchedData.data);
       setDataStartDate(fetchedData.data);
     } catch (error) {
       console.error("Error fetching home:", error);

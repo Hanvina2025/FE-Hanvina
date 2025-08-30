@@ -13,7 +13,9 @@ export default function DeductionServiceCard(props: {
   services?: Array<{
     id?: number;
     content: string;
+    services: string;
     price: number;
+    sellPrice: number;
     count?: number;
     isCustom?: boolean;
   }>;
@@ -21,7 +23,9 @@ export default function DeductionServiceCard(props: {
     type: number;
     items: {
       content: string;
+      services: string;
       price: number;
+      sellPrice: number;
       count: number;
       totalPrice: number;
     }[];
@@ -103,7 +107,7 @@ export default function DeductionServiceCard(props: {
               <div key={key} className="flex items-center justify-between">
                 <div>
                   <div className="text-[#141415] font-semibold text-base">
-                    {service.content}
+                    {service.services}
                     {service.isCustom && onRemove && (
                       <button
                         className="ml-2 text-black"
@@ -114,7 +118,7 @@ export default function DeductionServiceCard(props: {
                     )}
                   </div>
                   <div className="text-base text-[#53575A]">
-                    Giá: {service.price.toLocaleString()}đ
+                    Giá: {service.sellPrice ? service.sellPrice.toLocaleString() : '0'}đ
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

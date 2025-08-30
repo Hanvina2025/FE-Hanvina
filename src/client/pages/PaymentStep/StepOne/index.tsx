@@ -53,7 +53,20 @@ const Reserve = () => {
   const [loading, setLoading] = useState(true);
 
   const calcTotal = () => {
-    if (!departure) return null;
+    if (!departure) return {
+      adultPrice: 0,
+      childrenPrice: 0,
+      commissionAdult: 0,
+      commissionChildren: 0,
+      adultTotal: 0,
+      childrenTotal: 0,
+      babyTotal: 0,
+      commissionTotal: 0,
+      discountTotal: 0,
+      additionalTotal: 0,
+      totalBeforeDiscount: 0,
+      finalTotal: 0
+    };
 
     const adultPrice = departure.adultPrice || 0;
     const childrenPrice = departure.childrenPrice || 0;
@@ -66,12 +79,12 @@ const Reserve = () => {
 
     const commissionTotal = (commissionAdult * adultCount) + (commissionChildren * childrenCount);
 
-    const discountTotal = servicesDiscount.items.reduce((sum, item) => {
-      return sum + (Number(item.price) * Number(item.count || 0));
+    const discountTotal = (servicesDiscount?.items || []).reduce((sum, item) => {
+      return sum + (Number(item.price || 0) * Number(item.count || 0));
     }, 0);
 
-    const additionalTotal = servicesPlus.items.reduce((sum, item) => {
-      return sum + (Number(item.price) * Number(item.count || 0));
+    const additionalTotal = (servicesPlus?.items || []).reduce((sum, item) => {
+      return sum + (Number(item.price || 0) * Number(item.count || 0));
     }, 0);
 
     const totalBeforeDiscount = adultTotal + childrenTotal + babyTotal;
@@ -566,13 +579,13 @@ const Reserve = () => {
                     <p className="text-base text-[#53575A] font-medium">
                       Người lớn
                     </p>
-                    <p>{totalData?.adultPrice.toLocaleString()} đ x {adultCount}</p>
+                    <p>{totalData?.adultPrice ? totalData.adultPrice.toLocaleString() : '0'} đ x {adultCount}</p>
                   </div>
                   <div className="flex justify-between">
                     <p className="text-base text-[#53575A] font-medium">
                       Trẻ em
                     </p>
-                    <p>{totalData?.childrenPrice.toLocaleString()} đ x {childrenCount}</p>
+                    <p>{totalData?.childrenPrice ? totalData.childrenPrice.toLocaleString() : '0'} đ x {childrenCount}</p>
                   </div>
                   <div className="flex justify-between">
                     <p className="text-base text-[#53575A] font-medium">
@@ -584,7 +597,7 @@ const Reserve = () => {
                     <p className="text-base  text-[#141415] font-medium">
                       Tổng
                     </p>
-                    <p>{totalData?.totalBeforeDiscount.toLocaleString()} đ</p>
+                    <p>{totalData?.totalBeforeDiscount ? totalData.totalBeforeDiscount.toLocaleString() : '0'} đ</p>
                   </div>
                 </div>
               </div>
@@ -595,11 +608,11 @@ const Reserve = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <p>Người lớn</p>
-                    <p>{totalData?.commissionAdult.toLocaleString()} đ x {adultCount}</p>
+                    <p>{totalData?.commissionAdult ? totalData.commissionAdult.toLocaleString() : '0'} đ x {adultCount}</p>
                   </div>
                   <div className="flex justify-between">
                     <p>Trẻ em</p>
-                    <p>{totalData?.commissionChildren.toLocaleString()} đ x {childrenCount}</p>
+                    <p>{totalData?.commissionChildren ? totalData.commissionChildren.toLocaleString() : '0'} đ x {childrenCount}</p>
                   </div>
                   <div className="flex justify-between">
                     <p>Em bé</p>
@@ -607,7 +620,7 @@ const Reserve = () => {
                   </div>
                   <div className="flex justify-between ">
                     <p>Tổng</p>
-                    <p className="text-[#141415] font-medium">{totalData?.commissionTotal.toLocaleString()} đ</p>
+                    <p className="text-[#141415] font-medium">{totalData?.commissionTotal ? totalData.commissionTotal.toLocaleString() : '0'} đ</p>
                   </div>
                 </div>
               </div>
@@ -621,12 +634,12 @@ const Reserve = () => {
                     .map((item) => (
                       <div key={item.id || item.content} className="flex justify-between">
                         <p>{item.content}</p>
-                        <p>{Number(item.price).toLocaleString()} đ x {item.count}</p>
+                        <p>{item.price ? Number(item.price).toLocaleString() : '0'} đ x {item.count}</p>
                       </div>
                     ))}
                   <div className="flex justify-between">
                     <p>Tổng</p>
-                    <p className="text-[#141415] font-medium">{totalData?.discountTotal.toLocaleString()} đ</p>
+                    <p className="text-[#141415] font-medium">{totalData?.discountTotal ? totalData.discountTotal.toLocaleString() : '0'} đ</p>
                   </div>
                 </div>
               </div>
@@ -640,12 +653,12 @@ const Reserve = () => {
                     .map((item) => (
                       <div key={item.id || item.content} className="flex justify-between">
                         <p>{item.content}</p>
-                        <p>{Number(item.price).toLocaleString()} đ x {item.count}</p>
+                        <p>{item.price ? Number(item.price).toLocaleString() : '0'} đ x {item.count}</p>
                       </div>
                     ))}
                   <div className="flex justify-between">
                     <p>Tổng</p>
-                    <p className="text-[#141415] font-medium">{totalData?.additionalTotal.toLocaleString()} đ</p>
+                    <p className="text-[#141415] font-medium">{totalData?.additionalTotal ? totalData.additionalTotal.toLocaleString() : '0'} đ</p>
                   </div>
                 </div>
               </div>
@@ -654,7 +667,7 @@ const Reserve = () => {
             {/* Tổng tiền */}
             <div className="pt-6 flex justify-between font-bold text-[#BB2C26] text-xl">
               <p>Tổng tiền</p>
-              <p>{totalData?.finalTotal.toLocaleString()} đ</p>
+              <p>{totalData?.finalTotal ? totalData.finalTotal.toLocaleString() : '0'} đ</p>
             </div>
           </div>
 
