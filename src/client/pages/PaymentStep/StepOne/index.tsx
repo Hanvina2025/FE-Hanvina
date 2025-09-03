@@ -150,6 +150,7 @@ const Reserve = () => {
     setLoading(true);
     try {
       const fetchedData = await getTourPriceServices(id);
+
       setServicesTour(fetchedData)
       setServicesDiscount({
         type: 1,
@@ -214,6 +215,7 @@ const Reserve = () => {
       type: 1,
       items: Array.isArray(servicesDiscount?.items) && servicesDiscount.items.length > 0
         ? servicesDiscount.items.map(item => ({
+          tourDiscountPlusId: item.id?.toString().startsWith('temp-') ? null : item.id,
           content: item.content,
           price: item.price,
           count: item.count,
@@ -227,6 +229,7 @@ const Reserve = () => {
       type: 2,
       items: Array.isArray(servicesPlus.items) && servicesPlus.items.length > 0
         ? servicesPlus.items.map(item => ({
+          tourDiscountPlusId: item.id?.toString().startsWith('temp-') ? null : item.id,
           content: item.content,
           price: item.price,
           count: item.count,
@@ -278,7 +281,7 @@ const Reserve = () => {
     }
 
     const newService = {
-      id: Date.now(), // unique
+      id: `temp-${Date.now()}`, // unique
       content: customInput.content,
       price: Number(customInput.price),
       count: Number(customInput.quantity),

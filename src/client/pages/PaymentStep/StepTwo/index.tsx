@@ -220,7 +220,7 @@ const PaymentStepTwo = () => {
     }
 
     const newService = {
-      id: Date.now(), // unique
+      id: `temp-${Date.now()}`, // unique
       content: customInput.content,
       price: Number(customInput.price),
       count: Number(customInput.quantity),
@@ -290,6 +290,7 @@ const PaymentStepTwo = () => {
           price: item.price,
           count: item.count,
           totalPrice: Number(item.price) * (item.count || 1),
+          tourDiscountPlusId: item.id?.toString().startsWith('temp-') ? null : item.tourDiscountPlusId,
         }))
         : [],
     };
@@ -304,6 +305,7 @@ const PaymentStepTwo = () => {
             price: item.price,
             count: item.count,
             totalPrice: Number(item.price) * (item.count || 1),
+            tourDiscountPlusId: item.id?.toString().startsWith('temp-') ? null : item.tourDiscountPlusId,
           };
 
           if (item.id && !item.isCustom) {

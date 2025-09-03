@@ -18,16 +18,19 @@ export default function DeductionServiceCard(props: {
     sellPrice: number;
     count?: number;
     isCustom?: boolean;
+    tourDiscountPlusId?: number;
   }>;
   onChange: (data: {
     type: number;
     items: {
+      id?: number;
       content: string;
       services: string;
       price: number;
       sellPrice: number;
       count: number;
       totalPrice: number;
+      tourDiscountPlusId?: number;
     }[];
   }) => void;
   onRemove?: (id?: number) => void;
@@ -60,6 +63,7 @@ export default function DeductionServiceCard(props: {
       const countKey = s.id ?? `temp-${idx}`;
       const count = updated[countKey] ?? 0;
       return {
+        id: s.id || null,
         content: s.content,
         services: s.services || s.content, // Fallback nếu không có services
         price: s.price,
@@ -67,6 +71,7 @@ export default function DeductionServiceCard(props: {
         count,
         isCustom: s.isCustom,
         totalPrice: (s.sellPrice * count),
+        tourDiscountPlusId: s.tourDiscountPlusId || null,
       };
     });
 
