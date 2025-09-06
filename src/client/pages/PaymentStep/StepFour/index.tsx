@@ -399,7 +399,7 @@ const PaymentStepFour = () => {
                   <span className="text-[#141415] opacity-80">Đã cọc:</span>
                   <span className="text-[#141415] opacity-80">
                     {totalData
-                      ? `${preOrder?.settlementPrice?.toLocaleString()} đ`
+                      ? `${Math.round(Number(preOrder?.totalPrice) - Number(preOrder?.settlementPrice)).toLocaleString()} đ`
                       : "0 đ"}
                   </span>
                 </div>
@@ -409,7 +409,7 @@ const PaymentStepFour = () => {
                   </p>
                   <span className="text-[#BB2C26] text-[24px] font-[700]">
                     {totalData
-                      ? `${Math.round(Number(preOrder?.totalPrice) - Number(preOrder?.settlementPrice)).toLocaleString()} đ`
+                      ? `${preOrder?.settlementPrice?.toLocaleString()} đ`
                       : "0 đ"}
                   </span>
                 </div>
