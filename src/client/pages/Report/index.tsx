@@ -274,7 +274,7 @@ export default function ReportChart() {
       </div>
       {/* Chart Section */}
       <div className="bg-white p-4 rounded-2xl border border-[#E9EBED] overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto pb-6">
           <div style={{ minWidth: '1400px', width: '100%' }}>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart

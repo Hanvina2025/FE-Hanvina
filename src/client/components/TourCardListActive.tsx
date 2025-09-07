@@ -195,28 +195,31 @@ const TourCardListActive = ({ tourActiveData }) => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <img src={IcUserTag} alt="" />
-                <div className="flex items-center gap-x-2">
-                  <p className="text-[#141415] text-base font-semibold">
-                    Số thứ tự giữ chỗ:
-                  </p>
+              {(![120, 122, 123, 124].includes(tourActiveData?.status))
+                &&
+                <div className="flex items-center gap-2">
+                  <img src={IcUserTag} alt="" />
                   <div className="flex items-center gap-x-2">
-                    <span className="text-[#8F9499] text-base font-[500]">
-                      {tourActiveData?.orderNo ?? "01"}
-                    </span>
-                    <div
-                      className="text-[#6961FF] underline text-sm cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsModalOpen(true);
-                      }}
-                    >
-                      Chi tiết
+                    <p className="text-[#141415] text-base font-semibold">
+                      Số thứ tự giữ chỗ:
+                    </p>
+                    <div className="flex items-center gap-x-2">
+                      <span className="text-[#8F9499] text-base font-[500]">
+                        {tourActiveData?.orderNo ?? "01"}
+                      </span>
+                      <div
+                        className="text-[#6961FF] underline text-sm cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsModalOpen(true);
+                        }}
+                      >
+                        Chi tiết
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              }
             </div>
           </div>
 

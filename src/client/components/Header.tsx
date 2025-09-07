@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Popover } from 'antd';
 import { ReactNode } from "react";
+import { getNotify, markRead, getNotifyCount } from "@/client/apis/notify";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { PATH } from "@/libs/constants/path";
 import "./Header.scss";
@@ -10,6 +11,10 @@ import noti from "/assets/images/noti.svg";
 import message from "/assets/images/message.svg";
 import IcLogout from "/assets/images/logout.svg";
 import IcUser from "/assets/images/user.svg";
+import IcNotify1 from "/assets/images/notify-1.svg";
+import IcNotify2 from "/assets/images/notify-2.svg";
+import IcNotify3 from "/assets/images/notify-3.svg";
+import IcNotify4 from "/assets/images/notify-4.svg";
 import ava from "/assets/images/ava.png";
 import iconDown from "/assets/images/arrow-down.svg";
 import { ArrowRight2 } from "iconsax-react";
@@ -20,44 +25,6 @@ interface IMenu {
 }
 import { useAuth } from "@/admin/components/AuthProvider";
 
-const notifications = [
-  {
-    id: 1,
-    title: "Bạn là người giữ chỗ đầu tiên! Bạn có muốn tiến hành thanh toán cọc?",
-    time: "1 phút trước",
-    highlight: true,
-  },
-  {
-    id: 2,
-    title: "Thông báo giữ chỗ: Hiện tại còn 7 chỗ còn trống tại [TOUR NOSHOP] THƯƠNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU",
-    time: "1 phút trước",
-  },
-  {
-    id: 3,
-    title: "Tất toán thành công! [TOUR NOSHOP] THƯƠNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU",
-    time: "1 phút trước",
-  },
-  {
-    id: 4,
-    title: "Sắp hết thời gian giữ chỗ! [TOUR NOSHOP] THƯƠNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU",
-    time: "1 phút trước",
-  },
-  {
-    id: 4,
-    title: "Sắp hết thời gian giữ chỗ! [TOUR NOSHOP] THƯƠNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU",
-    time: "1 phút trước",
-  },
-  {
-    id: 4,
-    title: "Sắp hết thời gian giữ chỗ! [TOUR NOSHOP] THƯƠNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU",
-    time: "1 phút trước",
-  },
-  {
-    id: 4,
-    title: "Sắp hết thời gian giữ chỗ! [TOUR NOSHOP] THƯƠNG HẢI - TÔ CHÂU - Ô TRẤN - HÀNG CHÂU",
-    time: "1 phút trước",
-  },
-];
 
 const Header = () => {
   const location = useLocation();
@@ -66,6 +33,15 @@ const Header = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const { logout, userData } = useAuth();
+  const [notify, setNotify] = useState<any[]>([]);
+  const [loadingNotify, setLoadingNotify] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [notifyCount, setNotifyCount] = useState(0);
+  const [isNotifyOpen, setIsNotifyOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [hasMoreNotify, setHasMoreNotify] = useState(true);
+  const observerRef = useRef<HTMLDivElement>(null);
+  const loadingStateRef = useRef({ loadingMore: false, loadingNotify: false, hasMore: true, page: 0 });
 
   useEffect(() => {
     if (userData && userData.info && userData?.info?.avatar?.fileKey) {
@@ -75,19 +51,301 @@ const Header = () => {
     }
   }, [userData]);
 
+  useEffect(() => {
+    if (userData && userData.info && userData?.info?.id) {
+      // Load số đếm thông báo khi component mount
+      loadNotifyCount();
+    }
+  }, [userData]);
+
+  const loadNotifyCount = async () => {
+    if (userData && userData.info && userData?.info?.id) {
+      try {
+        const res = await getNotifyCount(userData.info.id);
+        setNotifyCount(res.unreadCount);
+      } catch (error) {
+        console.error('Error loading notify count:', error);
+      }
+    }
+  };
+
+  const loadNotifications = useCallback(async (page: number = 0, isLoadMore: boolean = false) => {
+    if (!userData?.info?.id) return;
+
+    try {
+      if (isLoadMore) {
+        setLoadingMore(true);
+        loadingStateRef.current.loadingMore = true;
+      } else {
+        setLoadingNotify(true);
+        setCurrentPage(0);
+        setHasMoreNotify(true);
+        loadingStateRef.current.loadingNotify = true;
+        loadingStateRef.current.page = 0;
+        loadingStateRef.current.hasMore = true;
+      }
+
+      const params = {
+        params: {
+          notificationTypes: "GIAO_VIEC,DON_HANG,BAO_CAO,TOUR",
+          unreadOnly: false,
+          page: page,
+          size: 20
+        }
+      };
+      const res = await getNotify(userData.info.id, params);
+      console.log('res', res);
+
+      if (isLoadMore) {
+        // Append new notifications for load more
+        setNotify(prev => [...prev, ...(res.data || [])]);
+      } else {
+        // Replace notifications for initial load
+        setNotify(res.data || []);
+      }
+
+      // Check if there are more notifications
+      const hasMore = !res.last;
+      setHasMoreNotify(hasMore);
+      setCurrentPage(page);
+      loadingStateRef.current.hasMore = hasMore;
+      loadingStateRef.current.page = page;
+
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    } finally {
+      setLoadingNotify(false);
+      setLoadingMore(false);
+      loadingStateRef.current.loadingNotify = false;
+      loadingStateRef.current.loadingMore = false;
+    }
+  }, [userData?.info?.id]);
+
+  const loadMoreNotifications = useCallback(() => {
+    if (!loadingMore && !loadingNotify && hasMoreNotify) {
+      loadNotifications(currentPage + 1, true);
+    }
+  }, [loadingMore, loadingNotify, hasMoreNotify, currentPage, loadNotifications]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    // Delay to ensure element is rendered
+    const timer = setTimeout(() => {
+      const currentRef = observerRef.current;
+      if (!currentRef) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const [entry] = entries;
+          if (entry.isIntersecting) {
+            const { loadingMore, loadingNotify, hasMore, page } = loadingStateRef.current;
+
+            // Only load if not currently loading and has more data
+            if (!loadingMore && !loadingNotify && hasMore) {
+              loadNotifications(page + 1, true);
+            }
+          }
+        },
+        {
+          root: null,
+          rootMargin: '20px', // Trigger 20px before reaching the element
+          threshold: 0.1,
+        }
+      );
+
+      observer.observe(currentRef);
+
+      // Cleanup function
+      return () => {
+        observer.unobserve(currentRef);
+      };
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isNotifyOpen]); // Re-setup when modal opens
+
+  const handleMarkRead = async (id: any) => {
+    try {
+      await markRead(id);
+      // Cập nhật state local
+      setNotify(notify.map((item) => item.id === id ? { ...item, read: true } : item));
+      // Gọi lại getNotifyCount để cập nhật số đếm
+      await loadNotifyCount();
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
+
+  const handleNotificationClick = async (item: any) => {
+    try {
+      if (!item.read) {
+        await handleMarkRead(item.id);
+      }
+
+      if (item.notificationType == "DON_HANG" && item.redirectId) {
+        const stepTwoPath = PATH.STEP_TWO_PROCESS.replace(':id', item.redirectId.toString());
+        navigate(stepTwoPath);
+      }
+      else if (item.notificationType == "TOUR") {
+        navigate(PATH.LIST_TOUR);
+      }
+      else if (item.notificationType == "BAO_CAO") {
+        navigate(PATH.REPORT);
+      }
+
+    } catch (error) {
+      console.error('Error handling notification click:', error);
+    }
+  };
+
+  // Memoized skeleton loading component
+  const SkeletonNotification = useMemo(() => ({
+    component: () => (
+      <div className="p-3 border-b border-gray-100 flex items-start gap-3 animate-pulse">
+        {/* Icon skeleton */}
+        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-200"></div>
+
+        {/* Content skeleton */}
+        <div className="flex-1 min-w-0">
+          <div className="h-4 bg-gray-200 rounded mb-2"></div>
+          <div className="h-3 bg-gray-200 rounded mb-2"></div>
+          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+        </div>
+
+        {/* Unread indicator skeleton */}
+        <div className="w-2 h-2 bg-gray-200 rounded-full flex-shrink-0 mt-2"></div>
+      </div>
+    )
+  }), []).component;
+
+  // Function to get icon based on typeIcon
+  const getNotificationIcon = (typeIcon: number) => {
+    switch (typeIcon) {
+      case 1:
+        return IcNotify1;
+      case 2:
+        return IcNotify2;
+      case 3:
+        return IcNotify3;
+      case 4:
+        return IcNotify4;
+      default:
+        return IcNotify1;
+    }
+  };
+
+  // Function to format time
+  const formatNotificationTime = (createdTime: string) => {
+    const now = new Date();
+    const created = new Date(createdTime);
+    const diffInMs = now.getTime() - created.getTime();
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInMinutes < 1) return 'Vừa xong';
+    if (diffInMinutes < 60) return `${diffInMinutes} phút trước`;
+    if (diffInHours < 24) return `${diffInHours} giờ trước`;
+    return `${diffInDays} ngày trước`;
+  };
+
+  // Memoized notification items
+  const notificationItems = useMemo(() => {
+    return notify.map((item) => (
+      <div
+        key={item.id}
+        className={`notify-content-item cursor-pointer transition-colors duration-200 ${!item.read ? 'bg-[#FFFCF0]' : 'bg-white'
+          } py-2 px-4 border-b border-gray-100 flex items-start gap-3 relative`}
+        onClick={() => handleNotificationClick(item)}
+      >
+        {/* Icon */}
+        <div className="flex items-center justify-center">
+          <img
+            src={getNotificationIcon(item.typeIcon)}
+            alt="notification icon"
+            className=" w-[32px] h-[32px]"
+          />
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div
+            className="text-[#000] text-[14px] font-[500] mb-1 overflow-hidden"
+            style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical'
+            }}
+          >
+            {item.title}
+          </div>
+          <div
+            className="text-[#000] text-[13px] mb-2 overflow-hidden"
+            style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical'
+            }}
+          >
+            {item.content}
+          </div>
+          <div className="text-[#B9BDC1] text-[12px]">
+            {formatNotificationTime(item.createdTime)}
+          </div>
+        </div>
+
+        {/* Unread indicator */}
+        {!item.read && (
+          <div className="w-3 h-3 bg-[#FFCB12] rounded-full flex-shrink-0 mt-2"></div>
+        )}
+      </div>
+    ));
+  }, [notify]);
+
   const content = (
     <>
       <h3 className="notify-title">Thông báo</h3>
-      <div className="notify-container-content">
-        {notifications.map((item) => (
-          <div
-            key={item.id}
-            className="notify-content-item"
-          >
-            <div className="text-[#000] text-[14px] font-[500] mb-[6px]">{item.title}</div>
-            <div className="text-[#B9BDC1] text-[12px]">{item.time}</div>
+      <div
+        className="notify-container-content bg-white"
+        style={{ maxHeight: '400px', overflowY: 'auto' }}
+      >
+        {loadingNotify ? (
+          // Skeleton loading for initial load
+          <div>
+            {[...Array(5)].map((_, index) => (
+              <SkeletonNotification key={index} />
+            ))}
           </div>
-        ))}
+        ) : notify.length > 0 ? (
+          <>
+            {notificationItems}
+
+            {/* Intersection Observer trigger element */}
+            {hasMoreNotify && (
+              <div ref={observerRef} className="h-4">
+                {loadingMore && (
+                  <div>
+                    {[...Array(3)].map((_, index) => (
+                      <SkeletonNotification key={`loading-${index}`} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {!hasMoreNotify && notify.length > 0 && (
+              <div className="text-center p-4 border-t border-gray-100">
+                <div className="text-[#999] text-[12px]">Đã hiển thị hết thông báo</div>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="text-center p-4">
+            <div className="text-[#666] text-[14px]">Không có thông báo mới</div>
+          </div>
+        )}
       </div>
     </>
   );
@@ -180,8 +438,27 @@ const Header = () => {
           <div className="flex gap-x-3">
             <img onClick={() => navigate(PATH.LIST_TOUR_ACTIVE)} src={cart} alt="Cart Icon" className="size-12 cursor-pointer" />
             <img onClick={() => navigate(PATH.CHAT)} src={message} alt="Cart Icon" className="size-12 cursor-pointer" />
-            <Popover content={content} trigger="click" placement="bottomRight" overlayClassName="notify-content-wrapper">
-              <img src={noti} alt="Notification Icon" className="size-12 cursor-pointer" />
+            <Popover
+              content={content}
+              trigger="click"
+              placement="bottomRight"
+              overlayClassName="notify-content-wrapper"
+              onOpenChange={(open) => {
+                setIsNotifyOpen(open);
+                if (open) {
+                  loadNotifications(0, false); // Reset to first page when opening
+                  loadNotifyCount();
+                }
+              }}
+            >
+              <div className="relative">
+                <img src={noti} alt="Notification Icon" className="size-12 cursor-pointer" />
+                {notifyCount > 0 && (
+                  <div className="absolute top-[8px] right-[8px] bg-[#DC1F18] text-white text-[10px] rounded-full min-w-4 h-4 flex items-center justify-center font-[500]">
+                    {notifyCount > 99 ? '99+' : notifyCount}
+                  </div>
+                )}
+              </div>
             </Popover>
           </div>
 

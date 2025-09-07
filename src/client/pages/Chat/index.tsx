@@ -518,7 +518,7 @@ const ChatList: React.FC = () => {
                     >
                       <div className="flex items-center">
                         <img
-                          src={user.avatar || IcNotAvatar}
+                          src={user.withUserAvatar ? `${baseUrl}/file/download-file-all-type?fileKey=${user.withUserAvatar}` : IcNotAvatar}
                           alt=""
                           className="w-8 h-8 rounded-full mr-3"
                         />
@@ -555,7 +555,7 @@ const ChatList: React.FC = () => {
                       className={selectedUserId === u.roomId ? 'selected' : ''}
                     >
                       <div className="user-item">
-                        <img src={u.avatar || IcNotAvatar} alt="" className="user-image" />
+                        <img src={u.withUserAvatar ? `${baseUrl}/file/download-file-all-type?fileKey=${u.withUserAvatar}` : IcNotAvatar} alt="" className="user-image" />
                         <div>
                           <div className={`{!u.isRead ? 'user-name' : 'user-name-read'} font-[500]`}>
                             {u.roomType === "GROUP" ? (u.roomName || 'Nhóm chat') : (u.withUserFullName || u.withUsername || 'Ẩn danh')}
@@ -590,7 +590,7 @@ const ChatList: React.FC = () => {
         <div className="chat">
           <div className="chat-header">
             <div className="user-info">
-              <img src={selectedUser?.image || IcNotAvatar} alt="" className="user-image" />
+              <img src={selectedUser?.withUserAvatar ? `${baseUrl}/file/download-file-all-type?fileKey=${selectedUser?.withUserAvatar}` : IcNotAvatar} alt="" className="user-image" />
               <div>
                 <div className="user-name">
                   {selectedUser?.roomType === "GROUP" ? (selectedUser?.roomName || 'Nhóm chat') : (selectedUser?.withUserFullName || selectedUser?.withUsername || 'Không có người chọn')}
