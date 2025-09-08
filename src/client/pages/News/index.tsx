@@ -76,7 +76,10 @@ const News = () => {
                     <div className="pt-[24px]">
                       <div className="text-[16px] text-[#53575A] mb-[16px]">{item.date}</div>
                       <div className="text-[20px] font-[700] text-[#252627] truncate-lines">{item.title}</div>
-                      <div className="text-[14px] text-[#8F9499] mt-[8px] line-clamp-3">{item.content}</div>
+                      <div
+                        className="text-[14px] text-[#8F9499] mt-[8px] line-clamp-3"
+                        dangerouslySetInnerHTML={{ __html: item.content }}
+                      />
                     </div>
                     <div onClick={() => navigate(`/news/${item.id}`)} className="text-[16px] text-[#BB2C26] flex items-center gap-[4px] mt-[16px] font-[500] cursor-pointer">Xem thêm <ArrowRight /></div>
                   </div>

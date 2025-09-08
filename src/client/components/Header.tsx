@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { Popover } from 'antd';
+import { Popover, message } from 'antd';
 import { ReactNode } from "react";
 import { getNotify, markRead, getNotifyCount } from "@/client/apis/notify";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -8,7 +8,7 @@ import "./Header.scss";
 import logo from "/assets/images/logo2.svg";
 import cart from "/assets/images/cart.svg";
 import noti from "/assets/images/noti.svg";
-import message from "/assets/images/message.svg";
+import Icmessage from "/assets/images/message.svg";
 import IcLogout from "/assets/images/logout.svg";
 import IcUser from "/assets/images/user.svg";
 import IcNotify1 from "/assets/images/notify-1.svg";
@@ -18,12 +18,16 @@ import IcNotify4 from "/assets/images/notify-4.svg";
 import ava from "/assets/images/ava.png";
 import iconDown from "/assets/images/arrow-down.svg";
 import { ArrowRight2 } from "iconsax-react";
+import {
+  getDetailPreOrder
+} from "@/client/apis/tour";
 interface IMenu {
   icon: ReactNode;
   link: string;
   title: string;
 }
 import { useAuth } from "@/admin/components/AuthProvider";
+import { log } from "node:console";
 
 
 const Header = () => {
@@ -185,10 +189,32 @@ const Header = () => {
       }
 
       if (item.notificationType == "DON_HANG" && item.redirectId) {
-        const stepTwoPath = PATH.STEP_TWO_PROCESS.replace(':id', item.redirectId.toString());
-        navigate(stepTwoPath);
-      }
-      else if (item.notificationType == "TOUR") {
+        try {
+          const fetchedData = await getDetailPreOrder(item.redirectId);
+          if (fetchedData.status == 118 || fetchedData.status == 119) {
+            const stepTwoPath = PATH.STEP_TWO_PROCESS.replace(':id', item.redirectId.toString());
+            navigate(stepTwoPath);
+          } else if (fetchedData.status == 120) {
+            const stepThreePath = PATH.STEP_THREE_PROCESS.replace(':id', item.redirectId.toString());
+            navigate(stepThreePath);
+          } else if (fetchedData.status == 122 || fetchedData.status == 123) {
+            const stepFourPath = PATH.STEP_FOR_PROCESS.replace(':id', item.redirectId.toString());
+            navigate(stepFourPath);
+          } else if (fetchedData.status == 124) {
+            const stepDonePath = PATH.STEP_DONE.replace(':id', item.redirectId.toString());
+            navigate(stepDonePath);
+          }
+        } catch (error) {
+          const errorMsg =
+            error?.response?.data?.errorMsg ||
+            error?.errorMsg ||
+            "Lỗi không xác định";
+
+          message.error(errorMsg);
+          console.error("Lỗi:", error);
+
+        }
+      } else if (item.notificationType == "TOUR") {
         navigate(PATH.LIST_TOUR);
       }
       else if (item.notificationType == "BAO_CAO") {
@@ -437,7 +463,7 @@ const Header = () => {
           ))}
           <div className="flex gap-x-3">
             <img onClick={() => navigate(PATH.LIST_TOUR_ACTIVE)} src={cart} alt="Cart Icon" className="size-12 cursor-pointer" />
-            <img onClick={() => navigate(PATH.CHAT)} src={message} alt="Cart Icon" className="size-12 cursor-pointer" />
+            <img onClick={() => navigate(PATH.CHAT)} src={Icmessage} alt="Cart Icon" className="size-12 cursor-pointer" />
             <Popover
               content={content}
               trigger="click"
