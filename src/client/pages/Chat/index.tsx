@@ -343,56 +343,6 @@ const ChatList: React.FC = () => {
     }, 0);
   };
 
-  const handleFileView = async (fileUrl: string, fileName: string) => {
-    try {
-      const response = await fetch(fileUrl, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Không thể tải file');
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-
-      // Tạo iframe để xem file (chỉ hoạt động với PDF)
-      if (fileName.toLowerCase().endsWith('.pdf')) {
-        const iframe = document.createElement('iframe');
-        iframe.src = url;
-        iframe.style.width = '100%';
-        iframe.style.height = '600px';
-        iframe.style.border = 'none';
-
-        const newWindow = window.open('', '_blank');
-        if (newWindow) {
-          newWindow.document.write(`
-            <html>
-              <head><title>${fileName}</title></head>
-              <body style="margin:0;padding:0;">
-                <iframe src="${url}" width="100%" height="100%" style="border:none;"></iframe>
-              </body>
-            </html>
-          `);
-          newWindow.document.close();
-        }
-      } else {
-        // Với file khác, tải về luôn
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    } catch (error) {
-      console.error('Lỗi khi xem file:', error);
-      alert('Không thể xem file này. Vui lòng tải về để xem.');
-    }
-  };
-
   const handleFileDownload = async (fileUrl: string, fileName: string) => {
     try {
       const response = await fetch(fileUrl, {
@@ -490,7 +440,93 @@ const ChatList: React.FC = () => {
     }
   };
 
-  // Xóa fetchImagePreview vì không cần thiết nữa
+
+
+  const formatMessageTime = (timestamp: string): string => {
+    if (!timestamp) return '';
+
+    const messageDate = new Date(timestamp);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - messageDate.getTime()) / 1000);
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    // Nếu dưới 1 phút - giống Facebook
+    if (diffInMinutes < 1) {
+      return 'Vừa xong';
+    }
+
+    // Nếu dưới 1 giờ - hiện số phút
+    if (diffInHours < 1) {
+      return `${diffInMinutes}p`;
+    }
+
+    // Nếu trong ngày hôm nay - hiện giờ:phút
+    if (diffInDays === 0) {
+      return messageDate.toLocaleTimeString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+    }
+
+    // Nếu là hôm qua
+    if (diffInDays === 1) {
+      return `Hôm qua ${messageDate.toLocaleTimeString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      })}`;
+    }
+
+    // Nếu trong tuần này (dưới 7 ngày)
+    if (diffInDays < 7) {
+      const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+      return `${messageDate.toLocaleTimeString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      })} ${dayNames[messageDate.getDay()]}`;
+    }
+
+    // Format chung cho ngày tháng
+    const day = messageDate.getDate().toString().padStart(2, '0');
+    const month = (messageDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = messageDate.getFullYear();
+    const currentYear = now.getFullYear();
+    const time = messageDate.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+
+    // Nếu cùng năm - chỉ hiện ngày/tháng
+    if (year === currentYear) {
+      return `${time} ${day}/${month}/${year}`;
+    }
+
+    // Khác năm - hiện đầy đủ
+    return `${time} ${day}/${month}/${year}`;
+  };
+
+  const shouldShowTimestamp = (currentMsg: Message, nextMsg?: Message): boolean => {
+    if (!currentMsg?.sentTime) return false;
+
+    // Luôn hiển thị timestamp cho tin nhắn cuối cùng
+    if (!nextMsg) return true;
+
+    // Nếu tin nhắn tiếp theo từ người khác, hiển thị timestamp
+    if (currentMsg.senderId !== nextMsg.senderId) return true;
+
+    // Kiểm tra khoảng cách thời gian
+    const currentTime = new Date(currentMsg.sentTime);
+    const nextTime = new Date(nextMsg.sentTime);
+    const timeDiff = Math.abs(nextTime.getTime() - currentTime.getTime()) / (1000 * 60); // phút
+
+    // Nếu cách nhau hơn 5 phút, hiển thị timestamp (giống Facebook)
+    return timeDiff > 5;
+  };
 
   return (
     <div className='container mx-auto'>
@@ -603,34 +639,43 @@ const ChatList: React.FC = () => {
           <div className="messages">
             {messages.map((m, i) => (
               <div key={m.id || i} className={m.senderId.toString() === adminId.toString() ? 'admin-msg' : 'user-msg'}>
-                {m.type === 1 || m.message.includes(`${baseUrl}/file/download-file-all-type?fileKey`) ? (
-                  <div>
-                    {/* Kiểm tra nếu là file (không phải ảnh) */}
-                    {m.fileName && !m.fileName.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i) ? (
-                      <div className="file-message">
-                        <div
-                          className="file-content cursor-pointer"
-                          onClick={() => handleFileDownload(m.message, m.fileName)}
-                        >
-                          <img src={getFileIcon(m.fileName)} alt="File" className="file-icon" />
-                          <span className="file-name">{m.fileName}</span>
+                <div>
+                  {m.type === 1 || m.message.includes(`${baseUrl}/file/download-file-all-type?fileKey`) ? (
+                    <div>
+                      {/* Kiểm tra nếu là file (không phải ảnh) */}
+                      {m.fileName && !m.fileName.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i) ? (
+                        <div className="file-message">
+                          <div
+                            className="file-content cursor-pointer"
+                            onClick={() => handleFileDownload(m.message, m.fileName)}
+                          >
+                            <img src={getFileIcon(m.fileName)} alt="File" className="file-icon" />
+                            <span className="file-name">{m.fileName}</span>
+                          </div>
                         </div>
-                      </div>
-                    ) : (
-                      /* Nếu là ảnh */
-                      <Image
-                        width={200}
-                        src={m.message}
-                        alt="Chat image"
-                        style={{ maxWidth: '200px', borderRadius: '8px' }}
-                      />
-                    )}
-                  </div>
-                ) : (
-                  <div className={m.senderId.toString() === adminId.toString() ? 'admin-msg-content' : 'user-msg-content'}>
-                    <span>{m.message}</span>
-                  </div>
-                )}
+                      ) : (
+                        /* Nếu là ảnh */
+                        <Image
+                          width={200}
+                          src={m.message}
+                          alt="Chat image"
+                          style={{ maxWidth: '200px', borderRadius: '8px' }}
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <div className={m.senderId.toString() === adminId.toString() ? 'admin-msg-content' : 'user-msg-content'}>
+                      <span>{m.message}</span>
+                    </div>
+                  )}
+                  {shouldShowTimestamp(m, messages[i + 1]) && (
+                    <div
+                      className={`message-timestamp mt-2 ${m.senderId.toString() === adminId.toString() ? 'admin-timestamp' : 'user-timestamp'}`}
+                    >
+                      {formatMessageTime(m.sentTime)}
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -674,7 +719,7 @@ const ChatList: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
