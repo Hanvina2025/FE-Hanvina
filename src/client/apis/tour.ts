@@ -10,6 +10,16 @@ export const getTour = async (params: string) => {
     throw error;
   }
 };
+export const getTourKey = async (key: string) => {
+  try {
+    const url = `/tour/tours-in-app?key=${key}`;
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};
 
 export const getTourActive = async (params: string) => {
   try {

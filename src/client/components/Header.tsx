@@ -19,7 +19,8 @@ import ava from "/assets/images/ava.png";
 import iconDown from "/assets/images/arrow-down.svg";
 import { ArrowRight2 } from "iconsax-react";
 import {
-  getDetailPreOrder
+  getDetailPreOrder,
+  getTourKey
 } from "@/client/apis/tour";
 interface IMenu {
   icon: ReactNode;
@@ -44,6 +45,7 @@ const Header = () => {
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMoreNotify, setHasMoreNotify] = useState(true);
+  const [isUserPopoverOpen, setIsUserPopoverOpen] = useState(false);
   const observerRef = useRef<HTMLDivElement>(null);
   const loadingStateRef = useRef({ loadingMore: false, loadingNotify: false, hasMore: true, page: 0 });
 
@@ -212,17 +214,47 @@ const Header = () => {
 
           message.error(errorMsg);
           console.error("Lỗi:", error);
-
+          navigate(PATH.LIST_TOUR_ACTIVE);
         }
       } else if (item.notificationType == "TOUR") {
-        navigate(PATH.LIST_TOUR);
+        if (item.deepLink) {
+          try {
+            // Parse deepLink để lấy tourKey: "hanvina://TourDetail/{tourKey}/{tourId}"
+            const deepLinkParts = item.deepLink.split('/');
+            if (deepLinkParts.length >= 4) {
+              const tourKey = deepLinkParts[3];
+              const fetchedData = await getTourKey(tourKey);
+              const tourData = fetchedData.data[0];
+              navigate(PATH.RESERVE, { state: { tourData } });
+            } else {
+              console.error('Invalid deepLink format:', item.deepLink);
+              navigate(PATH.LIST_TOUR);
+            }
+          } catch (error) {
+            const errorMsg =
+              error?.response?.data?.errorMsg ||
+              error?.errorMsg ||
+              "Không thể tải thông tin tour";
+
+            message.error(errorMsg);
+            console.error("Lỗi khi tải tour:", error);
+            navigate(PATH.LIST_TOUR);
+          }
+        } else {
+          navigate(PATH.LIST_TOUR);
+        }
       }
       else if (item.notificationType == "BAO_CAO") {
         navigate(PATH.REPORT);
       }
 
+      // Đóng notification modal sau khi xử lý
+      setIsNotifyOpen(false);
+
     } catch (error) {
       console.error('Error handling notification click:', error);
+      // Đóng modal ngay cả khi có lỗi
+      setIsNotifyOpen(false);
     }
   };
 
@@ -247,7 +279,12 @@ const Header = () => {
   }), []).component;
 
   // Function to get icon based on typeIcon
-  const getNotificationIcon = (typeIcon: number) => {
+  const getNotificationIcon = (metadata: string) => {
+    let typeIcon: number = 1;
+    if (typeof metadata === "string") {
+      const data = JSON.parse(metadata);
+      typeIcon = data.typeIcon;
+    }
     switch (typeIcon) {
       case 1:
         return IcNotify1;
@@ -289,7 +326,7 @@ const Header = () => {
         {/* Icon */}
         <div className="flex items-center justify-center">
           <img
-            src={getNotificationIcon(item.typeIcon)}
+            src={getNotificationIcon(item.metadata)}
             alt="notification icon"
             className=" w-[32px] h-[32px]"
           />
@@ -376,17 +413,27 @@ const Header = () => {
     </>
   );
 
+  const handleProfileClick = () => {
+    setIsUserPopoverOpen(false);
+    navigate(PATH.PROFILE);
+  };
+
+  const handleLogoutClick = () => {
+    setIsUserPopoverOpen(false);
+    logout();
+  };
+
   const contentUser = (
     <>
       <h3 className="user-title">Tài khoản đại lý</h3>
-      <div className="flex justify-between items-center user-container-content" onClick={() => navigate(PATH.PROFILE)}>
+      <div className="flex justify-between items-center user-container-content" onClick={handleProfileClick}>
         <div className="flex gap-[18px] items-center">
           <img src={IcUser} alt="user" className="user-icon" />
           <div className="text-[14px] font-[500] text-[#000]">Thông tin đại lý</div>
         </div>
         <ArrowRight2 size="16px" color="#8F9499" />
       </div>
-      <div className="flex justify-between items-center user-container-content" onClick={logout}>
+      <div className="flex justify-between items-center user-container-content" onClick={handleLogoutClick}>
         <div className="flex gap-[18px] items-center">
           <img src={IcLogout} alt="IcLogout" className="user-icon" />
           <div className="text-[14px] font-[500] text-[#000]">Đăng xuất</div>
@@ -469,6 +516,7 @@ const Header = () => {
               trigger="click"
               placement="bottomRight"
               overlayClassName="notify-content-wrapper"
+              open={isNotifyOpen}
               onOpenChange={(open) => {
                 setIsNotifyOpen(open);
                 if (open) {
@@ -488,7 +536,14 @@ const Header = () => {
             </Popover>
           </div>
 
-          <Popover content={contentUser} trigger="click" placement="bottomRight" overlayClassName="user-content-wrapper">
+          <Popover
+            content={contentUser}
+            trigger="click"
+            placement="bottomRight"
+            overlayClassName="user-content-wrapper"
+            open={isUserPopoverOpen}
+            onOpenChange={setIsUserPopoverOpen}
+          >
             <div className="w-[95px] h-[56px] border border-[#D6D9DC] rounded-[20px] bg-[#F4F5F6] flex  gap-x-[10px] items-center p-2 mr-[30px] cursor-pointer">
               <img
                 src={avatarUrl || ava}
