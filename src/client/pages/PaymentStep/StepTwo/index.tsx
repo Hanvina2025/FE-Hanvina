@@ -48,7 +48,7 @@ const PaymentStepTwo = () => {
   const tourData: any = {}
   const [customInput, setCustomInput] = useState({
     content: "",
-    price: "",
+    sellPrice: "",
     quantity: 1
   });
   const [preOrder, setPreOrder] = useState<any>({});
@@ -214,7 +214,7 @@ const PaymentStepTwo = () => {
   }, []);
 
   const handleAddCustomInput = () => {
-    if (!customInput.content || !customInput.price) {
+    if (!customInput.content || !customInput.sellPrice) {
       alert("Vui lòng nhập đầy đủ nội dung, giá và số lượng");
       return;
     }
@@ -222,7 +222,7 @@ const PaymentStepTwo = () => {
     const newService = {
       id: `temp-${Date.now()}`, // unique
       content: customInput.content,
-      price: Number(customInput.price),
+      sellPrice: Number(customInput.sellPrice),
       count: Number(customInput.quantity),
       tourId: tourData?.id || 0,
       type: 2,
@@ -233,7 +233,7 @@ const PaymentStepTwo = () => {
       ...prev,
       items: [...prev.items, newService],
     }));
-    setCustomInput({ content: "", price: "", quantity: 1 }); // reset form
+    setCustomInput({ content: "", sellPrice: "", quantity: 1 }); // reset form
   };
 
 
@@ -623,9 +623,9 @@ const PaymentStepTwo = () => {
                       <input
                         type="number"
                         placeholder="Nhập số tiền"
-                        value={customInput.price}
+                        value={customInput.sellPrice}
                         onChange={(e) =>
-                          handleCustomInputChange("price", e.target.value)
+                          handleCustomInputChange("sellPrice", e.target.value)
                         }
                         className="border border-[#D6D9DC] w-full p-3 rounded-lg"
                       />

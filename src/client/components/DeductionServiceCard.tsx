@@ -124,7 +124,7 @@ export default function DeductionServiceCard(props: {
                     )}
                   </div>
                   <div className="text-base text-[#53575A]">
-                    Giá: {service.sellPrice ? service.sellPrice.toLocaleString() : '0'}đ
+                    Giá: {service.sellPrice ? service.sellPrice.toLocaleString() : service.price ? service.price.toLocaleString() : '0'}đ
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
