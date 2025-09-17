@@ -352,8 +352,12 @@ const PaymentStepTwo = () => {
     name: "file",
     multiple: false,
     showUploadList: false,
+    accept: "image/*",
     beforeUpload(file) {
-      console.log('file', file);
+      if (!file.type.startsWith('image/')) {
+        message.error('Chỉ được tải lên file ảnh!');
+        return false;
+      }
 
       setFileBill(file);
       return false;

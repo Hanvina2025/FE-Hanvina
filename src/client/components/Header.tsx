@@ -22,6 +22,8 @@ import {
   getDetailPreOrder,
   getTourKey
 } from "@/client/apis/tour";
+import SockJS from 'sockjs-client';
+import * as Stomp from 'stompjs';
 interface IMenu {
   icon: ReactNode;
   link: string;
@@ -48,19 +50,14 @@ const Header = () => {
   const [isUserPopoverOpen, setIsUserPopoverOpen] = useState(false);
   const observerRef = useRef<HTMLDivElement>(null);
   const loadingStateRef = useRef({ loadingMore: false, loadingNotify: false, hasMore: true, page: 0 });
+  const stompClientRef = useRef<any>(null);
+  const notificationSubscriptionRef = useRef<any>(null);
 
   useEffect(() => {
     if (userData && userData.info && userData?.info?.avatar?.fileKey) {
       setAvatarUrl(`${import.meta.env.VITE_API_BASE_URL}/file/download-file?fileKey=${userData.info.avatar.fileKey}`);
     } else {
       setAvatarUrl(ava);
-    }
-  }, [userData]);
-
-  useEffect(() => {
-    if (userData && userData.info && userData?.info?.id) {
-      // Load số đếm thông báo khi component mount
-      loadNotifyCount();
     }
   }, [userData]);
 
@@ -74,6 +71,57 @@ const Header = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (!userData?.info?.id) {
+      return;
+    }
+
+    loadNotifyCount();
+
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const wsUrl = `${baseUrl.replace(/\/$/, '')}/ws/chat`;
+
+    const socket = new SockJS(wsUrl);
+    const stompClient = Stomp.over(socket);
+    stompClientRef.current = stompClient;
+
+    stompClient.connect({}, () => {
+      console.log('WebSocket connected for notifications');
+
+      const subscription = stompClient.subscribe(
+        `/topic/notifications/${userData.info.id}`,
+        (message) => {
+          try {
+            const notification = JSON.parse(message.body);
+            console.log('Received notification:', notification);
+            loadNotifyCount();
+
+            // Có thể thêm logic khác như hiển thị toast notification
+            // message.success(`Thông báo mới: ${notification.title}`);
+          } catch (error) {
+            console.error('Error parsing notification:', error);
+          }
+        }
+      );
+
+      notificationSubscriptionRef.current = subscription;
+    }, (error) => {
+      console.error('WebSocket error:', error);
+    });
+
+    return () => {
+      if (notificationSubscriptionRef.current) {
+        notificationSubscriptionRef.current.unsubscribe();
+      }
+      if (stompClient.connected) {
+        stompClient.disconnect(() => {
+          console.log('WebSocket disconnected');
+        });
+      }
+    };
+  }, [userData?.info?.id]);
+
 
   const loadNotifications = useCallback(async (page: number = 0, isLoadMore: boolean = false) => {
     if (!userData?.info?.id) return;
