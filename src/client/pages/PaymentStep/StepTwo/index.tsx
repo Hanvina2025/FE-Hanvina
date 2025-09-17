@@ -118,8 +118,8 @@ const PaymentStepTwo = () => {
       return sum + (Number(item.price) * Number(item.count || 0));
     }, 0);
 
-    const additionalTotal = servicesPlus.items.reduce((sum, item) => {
-      return sum + (Number(item.price) * Number(item.count || 0));
+    const additionalTotal = (servicesPlus?.items || []).reduce((sum, item) => {
+      return sum + (Number(item.sellPrice || item.price || 0) * Number(item.count || 0));
     }, 0);
 
     const totalBeforeDiscount = adultTotal + childrenTotal + babyTotal;
@@ -287,9 +287,9 @@ const PaymentStepTwo = () => {
         ? servicesDiscount.items.map(item => ({
           id: item.id,
           content: item.content,
-          price: item.price,
+          price: item.sellPrice || item.price,
           count: item.count,
-          totalPrice: Number(item.price) * (item.count || 1),
+          totalPrice: Number(item.sellPrice || item.price) * (item.count || 1),
           tourDiscountPlusId: item.id?.toString().startsWith('temp-') ? null : item.tourDiscountPlusId,
         }))
         : [],
@@ -302,9 +302,9 @@ const PaymentStepTwo = () => {
         ? servicesPlus.items.map(item => {
           const payloadItem: any = {
             content: item.content,
-            price: item.price,
+            price: item.sellPrice || item.price,
             count: item.count,
-            totalPrice: Number(item.price) * (item.count || 1),
+            totalPrice: Number(item.sellPrice || item.price) * (item.count || 1),
             tourDiscountPlusId: item.id?.toString().startsWith('temp-') ? null : item.tourDiscountPlusId,
           };
 
@@ -774,13 +774,13 @@ const PaymentStepTwo = () => {
                     .filter(item => (item.count || 0) > 0)
                     .map((item) => (
                       <div key={item.id || item.content} className="flex justify-between">
-                        <p>{item.content}</p>
-                        <p>{Number(item.price).toLocaleString()} đ x {item.count}</p>
+                        <p>{item.services || item.content}</p>
+                        <p>{item.sellPrice ? Number(item.sellPrice).toLocaleString() : (item.price ? Number(item.price).toLocaleString() : '0')} đ x {item.count}</p>
                       </div>
                     ))}
                   <div className="flex justify-between">
                     <p>Tổng</p>
-                    <p className="text-[#141415] font-medium">{totalData?.additionalTotal.toLocaleString()} đ</p>
+                    <p className="text-[#141415] font-medium">{totalData?.additionalTotal ? totalData.additionalTotal.toLocaleString() : '0'} đ</p>
                   </div>
                 </div>
               </div>
@@ -789,7 +789,7 @@ const PaymentStepTwo = () => {
             {/* Tổng tiền */}
             <div className="pt-6 flex justify-between font-bold text-[#BB2C26] text-xl">
               <p>Tổng tiền</p>
-              <p>{totalData?.finalTotal.toLocaleString()} đ</p>
+              <p>{totalData?.finalTotal ? totalData.finalTotal.toLocaleString() : '0'} đ</p>
             </div>
           </div>
           <div className="bg-white rounded-[20px] shadow-all mt-8 p-5 ">
