@@ -528,7 +528,7 @@ const Header = () => {
               <div className="relative">
                 <img src={noti} alt="Notification Icon" className="size-12 cursor-pointer" />
                 {notifyCount > 0 && (
-                  <div className="absolute top-[8px] right-[8px] bg-[#DC1F18] text-white text-[10px] rounded-full min-w-4 h-4 flex items-center justify-center font-[500]">
+                  <div className="absolute top-[6px] right-[8px] bg-[#DC1F18] text-white text-[10px] rounded-full p-[1px] min-w-[19px] min-h-[19px] flex items-center justify-center font-[500]">
                     {notifyCount > 99 ? '99+' : notifyCount}
                   </div>
                 )}
