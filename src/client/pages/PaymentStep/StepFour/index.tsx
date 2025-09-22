@@ -271,7 +271,7 @@ const PaymentStepFour = () => {
                 Hạn tất toán:
               </p>
               <p className="text-[#DC1F18] text-xl font-medium">
-                {preOrder?.depositDateTime
+                {/* {preOrder?.depositDateTime
                   ? (() => {
                     const now = dayjs();
                     const end = dayjs(preOrder.depositDateTime);
@@ -284,7 +284,8 @@ const PaymentStepFour = () => {
 
                     return `${hours}:${minutes}`;
                   })()
-                  : "--"}
+                  : "--"} */}
+                {preOrder?.settlementDate ? dayjs(preOrder.settlementDate).format("DD/MM/YYYY") : ""}
               </p>
             </div>}
             {preOrder?.status == 123 &&
