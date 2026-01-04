@@ -56,8 +56,10 @@ const Reserve = () => {
     if (!departure) return {
       adultPrice: 0,
       childrenPrice: 0,
+      babyPrice: 0,
       commissionAdult: 0,
       commissionChildren: 0,
+      commissionBaby: 0,
       adultTotal: 0,
       childrenTotal: 0,
       babyTotal: 0,
@@ -70,14 +72,16 @@ const Reserve = () => {
 
     const adultPrice = departure.adultPrice || 0;
     const childrenPrice = departure.childrenPrice || 0;
+    const babyPrice = departure.babyPrice || 0;
     const commissionAdult = departure.commissionAdultPrice || 0;
     const commissionChildren = departure.commissionChildrenPrice || 0;
+    const commissionBaby = departure.commissionBabyPrice || 0;
 
     const adultTotal = adultPrice * adultCount;
     const childrenTotal = childrenPrice * childrenCount;
-    const babyTotal = 0;
+    const babyTotal = babyPrice * babyCount;
 
-    const commissionTotal = (commissionAdult * adultCount) + (commissionChildren * childrenCount);
+    const commissionTotal = (commissionAdult * adultCount) + (commissionChildren * childrenCount) + (commissionBaby * babyCount);
 
     const discountTotal = (servicesDiscount?.items || []).reduce((sum, item) => {
       return sum + (Number(item.sellPrice || item.price || 0) * Number(item.count || 0));
@@ -93,8 +97,10 @@ const Reserve = () => {
     return {
       adultPrice,
       childrenPrice,
+      babyPrice,
       commissionAdult,
       commissionChildren,
+      commissionBaby,
       adultTotal,
       childrenTotal,
       babyTotal,
@@ -206,6 +212,8 @@ const Reserve = () => {
       childrenPrice: totalData?.childrenPrice,
       commissionPriceChildren: totalData?.commissionChildren,
       childrenCount,
+      babyPrice: totalData?.babyPrice,
+      commissionPriceBaby: totalData?.commissionBaby,
       babyCount,
       totalSeats: adultCount + childrenCount,
     };
@@ -594,7 +602,7 @@ const Reserve = () => {
                     <p className="text-base text-[#53575A] font-medium">
                       Em bé
                     </p>
-                    <p>0 đ</p>
+                    <p>{totalData?.babyPrice ? totalData.babyPrice.toLocaleString() : '0'} đ x {babyCount}</p>
                   </div>
                   <div className="flex justify-between font-semibold">
                     <p className="text-base  text-[#141415] font-medium">
@@ -619,7 +627,7 @@ const Reserve = () => {
                   </div>
                   <div className="flex justify-between">
                     <p>Em bé</p>
-                    <p>0 đ x {babyCount}</p>
+                    <p>{totalData?.commissionBaby ? totalData.commissionBaby.toLocaleString() : '0'} đ x {babyCount}</p>
                   </div>
                   <div className="flex justify-between ">
                     <p>Tổng</p>

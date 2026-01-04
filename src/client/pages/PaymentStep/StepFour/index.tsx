@@ -77,14 +77,16 @@ const PaymentStepFour = () => {
 
     const adultPrice = preOrderCustomer.adultPrice || 0;
     const childrenPrice = preOrderCustomer.childrenPrice || 0;
+    const babyPrice = preOrderCustomer.babyPrice || 0;
     const commissionAdult = preOrderCustomer.commissionPriceAdult || 0;
     const commissionChildren = preOrderCustomer.commissionPriceChildren || 0;
+    const commissionBaby = preOrderCustomer.commissionPriceBaby || 0;
 
     const adultTotal = adultPrice * adultCount;
     const childrenTotal = childrenPrice * childrenCount;
-    const babyTotal = 0;
+    const babyTotal = babyPrice * babyCount;
 
-    const commissionTotal = (commissionAdult * adultCount) + (commissionChildren * childrenCount);
+    const commissionTotal = (commissionAdult * adultCount) + (commissionChildren * childrenCount) + (commissionBaby * babyCount);
 
     const discountTotal = servicesDiscount.items.reduce((sum, item) => {
       return sum + (Number(item.price) * Number(item.count || 0));
@@ -100,8 +102,10 @@ const PaymentStepFour = () => {
     return {
       adultPrice,
       childrenPrice,
+      babyPrice,
       commissionAdult,
       commissionChildren,
+      commissionBaby,
       adultTotal,
       childrenTotal,
       babyTotal,
@@ -562,7 +566,7 @@ const PaymentStepFour = () => {
                     <p className="text-base text-[#53575A] font-medium">
                       Em bé
                     </p>
-                    <p>0 đ</p>
+                    <p>{totalData?.babyPrice ? totalData.babyPrice.toLocaleString() : '0'} đ x {babyCount}</p>
                   </div>
                   <div className="flex justify-between font-semibold">
                     <p className="text-base  text-[#141415] font-medium">
@@ -587,7 +591,7 @@ const PaymentStepFour = () => {
                   </div>
                   <div className="flex justify-between">
                     <p>Em bé</p>
-                    <p>0 đ x {babyCount}</p>
+                    <p>{totalData?.commissionBaby ? totalData.commissionBaby.toLocaleString() : '0'} đ x {babyCount}</p>
                   </div>
                   <div className="flex justify-between ">
                     <p>Tổng</p>

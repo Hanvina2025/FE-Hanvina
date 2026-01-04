@@ -3,8 +3,10 @@ import React from "react";
 export default function TourPriceTable({ departure }) {
   const adultPrice = departure?.adultPrice;
   const childrenPrice = departure?.childrenPrice;
+  const babyPrice = departure?.babyPrice;
   const commissionAdultPrice = departure?.commissionAdultPrice | departure?.commissionPriceAdult;
   const commissionChildrenPrice = departure?.commissionChildrenPrice | departure?.commissionPriceChildren;
+  const commissionBabyPrice = departure?.commissionBabyPrice;
 
   return (
     <div className="rounded-2xl shadow-all overflow-hidden w-full max-w-3xl mx-auto">
@@ -39,7 +41,9 @@ export default function TourPriceTable({ departure }) {
             <td className="px-4 py-3 text-[#141415] text-center">
               {commissionChildrenPrice ? `${commissionChildrenPrice.toLocaleString()} đ` : "0 đ"}
             </td>
-            <td className="px-4 py-3 text-[#141415] text-center">0 đ</td>
+            <td className="px-4 py-3 text-[#141415] text-center">
+              {commissionBabyPrice ? `${commissionBabyPrice.toLocaleString()} đ` : "0 đ"}
+            </td>
           </tr>
           <tr>
             <td className="px-4 py-3 font-semibold text-[#141415] text-base">
@@ -51,7 +55,9 @@ export default function TourPriceTable({ departure }) {
             <td className="px-4 py-3 text-[#141415] text-center">
               {childrenPrice ? `${childrenPrice.toLocaleString()} đ` : "0 đ"}
             </td>
-            <td className="px-4 py-3 text-[#141415] text-center">0 đ</td>
+            <td className="px-4 py-3 text-[#141415] text-center">
+              {babyPrice ? `${babyPrice.toLocaleString()} đ` : "0 đ"}
+            </td>
           </tr>
         </tbody>
       </table>
