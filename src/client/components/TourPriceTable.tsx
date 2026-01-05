@@ -6,7 +6,7 @@ export default function TourPriceTable({ departure }) {
   const babyPrice = departure?.babyPrice;
   const commissionAdultPrice = departure?.commissionAdultPrice | departure?.commissionPriceAdult;
   const commissionChildrenPrice = departure?.commissionChildrenPrice | departure?.commissionPriceChildren;
-  const commissionBabyPrice = departure?.commissionBabyPrice;
+  const commissionBabyPrice = departure?.commissionBabyPrice || departure?.commissionPriceBaby;
 
   return (
     <div className="rounded-2xl shadow-all overflow-hidden w-full max-w-3xl mx-auto">

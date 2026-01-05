@@ -66,9 +66,9 @@ const PaymentStepDone = () => {
     const adultPrice = preOrderCustomer.adultPrice || 0;
     const childrenPrice = preOrderCustomer.childrenPrice || 0;
     const babyPrice = preOrderCustomer.babyPrice || 0;
-    const commissionAdult = preOrderCustomer.commissionPriceAdult || 0;
-    const commissionChildren = preOrderCustomer.commissionPriceChildren || 0;
-    const commissionBaby = preOrderCustomer.commissionPriceBaby || 0;
+    const commissionAdult = preOrderCustomer.commissionAdultPrice || preOrderCustomer.commissionPriceAdult || 0;
+    const commissionChildren = preOrderCustomer.commissionChildrenPrice || preOrderCustomer.commissionPriceChildren || 0;
+    const commissionBaby = preOrderCustomer.commissionBabyPrice || preOrderCustomer.commissionPriceBaby || 0;
 
     const adultTotal = adultPrice * adultCount;
     const childrenTotal = childrenPrice * childrenCount;

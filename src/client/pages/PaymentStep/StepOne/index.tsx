@@ -73,9 +73,9 @@ const Reserve = () => {
     const adultPrice = departure.adultPrice || 0;
     const childrenPrice = departure.childrenPrice || 0;
     const babyPrice = departure.babyPrice || 0;
-    const commissionAdult = departure.commissionAdultPrice || 0;
-    const commissionChildren = departure.commissionChildrenPrice || 0;
-    const commissionBaby = departure.commissionBabyPrice || 0;
+    const commissionAdult = departure.commissionAdultPrice || departure.commissionPriceAdult || 0;
+    const commissionChildren = departure.commissionChildrenPrice || departure.commissionPriceChildren || 0;
+    const commissionBaby = departure.commissionBabyPrice || departure.commissionPriceBaby || 0;
 
     const adultTotal = adultPrice * adultCount;
     const childrenTotal = childrenPrice * childrenCount;
