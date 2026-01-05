@@ -199,7 +199,7 @@ const Reserve = () => {
       customerPhone,
       status: 118,
       totalPrice: totalData?.finalTotal,
-      totalSeatsCheck: adultCount + childrenCount,
+      totalSeatsCheck: adultCount + childrenCount + babyCount,
     };
 
     let preOrderId = null;
@@ -215,7 +215,7 @@ const Reserve = () => {
       babyPrice: totalData?.babyPrice,
       commissionPriceBaby: totalData?.commissionBaby,
       babyCount,
-      totalSeats: adultCount + childrenCount,
+      totalSeats: adultCount + childrenCount + babyCount,
     };
 
     const orderDiscountPayload = {
