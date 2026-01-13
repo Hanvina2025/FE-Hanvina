@@ -267,23 +267,23 @@ const PaymentStepTwo = () => {
       customerPhone: preOrder?.customerPhone,
       status: 119,
       totalPrice: totalData?.finalTotal,
-      totalSeatsCheck: adultCount + childrenCount,
+      totalSeatsCheck: adultCount + childrenCount + babyCount,
     };
 
 
     const orderCustomerPayload = {
       id: preOrderCustomer?.id,
       preOrderId: preOrderCustomer?.preOrderId,
-      adultPrice: preOrderCustomer?.adultPrice,
-      childrenPrice: preOrderCustomer?.childrenPrice,
-      babyPrice: preOrderCustomer?.babyPrice || preOrderCustomer?.infantPrice || totalData?.babyPrice,
-      commissionPriceAdult: preOrderCustomer?.commissionPriceAdult,
-      commissionPriceChildren: preOrderCustomer?.commissionPriceChildren,
-      commissionPriceBaby: preOrderCustomer?.commissionPriceBaby || preOrderCustomer?.commissionInfantPrice || totalData?.commissionBaby,
+      adultPrice: totalData?.adultPrice,
+      commissionPriceAdult: totalData?.commissionPriceAdult,
       adultCount,
+      childrenPrice: totalData?.childrenPrice,
+      commissionPriceChildren: totalData?.commissionChildren,
       childrenCount,
+      babyPrice: totalData?.babyPrice,
+      commissionPriceBaby: totalData?.commissionBaby,
       babyCount,
-      totalSeats: adultCount + childrenCount,
+      totalSeats: adultCount + childrenCount + babyCount,
     };
 
     const orderDiscountPayload = {

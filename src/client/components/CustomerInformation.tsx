@@ -36,7 +36,7 @@ const CustomerInformation = ({
     onChange({ adultCount, childrenCount, babyCount });
   }, [adultCount, childrenCount, babyCount, onChange]);
 
-  const totalAdultChildren = adultCount + childrenCount;
+  const totalGuests = adultCount + childrenCount + babyCount;
   const availableSeats = id ? tourData?.totalSeats : (departure?.totalSeat ?? 0) - (departure?.totalSeatBooked ?? 0);
 
   const Counter = ({ label, subLabel, note, count, setCount, plusDisabled, minusDisabled }) => (
@@ -91,7 +91,7 @@ const CustomerInformation = ({
               note="ADT - Adult"
               count={adultCount}
               setCount={setAdultCount}
-              plusDisabled={totalAdultChildren >= availableSeats}
+              plusDisabled={totalGuests >= availableSeats}
               minusDisabled={adultCount <= 0}
             />
             <Counter
@@ -100,7 +100,7 @@ const CustomerInformation = ({
               note="CHD - Children"
               count={childrenCount}
               setCount={setChildrenCount}
-              plusDisabled={totalAdultChildren >= availableSeats}
+              plusDisabled={totalGuests >= availableSeats}
               minusDisabled={childrenCount <= 0}
             />
             <Counter
@@ -109,7 +109,7 @@ const CustomerInformation = ({
               note="INF - Infant"
               count={babyCount}
               setCount={setBabyCount}
-              plusDisabled={false}
+              plusDisabled={totalGuests >= availableSeats}
               minusDisabled={babyCount <= 0}
             />
           </div>
