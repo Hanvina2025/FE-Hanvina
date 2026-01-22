@@ -265,6 +265,7 @@ const PaymentStepTwo = () => {
       tourId: preOrder?.tourId,
       customerName: preOrder?.customerName,
       customerPhone: preOrder?.customerPhone,
+      saleId: preOrder?.saleInformation?.saleId,
       status: 119,
       totalPrice: totalData?.finalTotal,
       totalSeatsCheck: adultCount + childrenCount + babyCount,
@@ -573,6 +574,46 @@ const PaymentStepTwo = () => {
                       placeholder="Nhập số điện thoại"
                       name="phone"
                       value={preOrder?.customerPhone}
+                      className="border border-[#D6D9DC] rounded-lg w-full p-3 mt-2"
+                    />
+                  </div>
+                </div>
+              </div>
+            </TitlePattern>
+          </div>
+          <div className="mt-6">
+            <TitlePattern title="Thông tin khách hàng" color="text-[#BB2C26]">
+              <div className="flex gap-x-4">
+                <div className="w-1/2">
+                  <div className="flex items-center gap-x-2">
+                    <img src={userYellow} alt="" />
+                    <span className="text-[#141415] font-semibold text-base">
+                      Nhân viên chăm sóc
+                    </span>
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      name="userName"
+                      value={preOrder?.saleInformation?.saleName || ''}
+                      placeholder="Nhập tên người đại diện"
+                      className="border border-[#D6D9DC] rounded-lg w-full p-3 mt-2"
+                    />
+                  </div>
+                </div>
+                <div className="w-1/2">
+                  <div className="flex items-center ">
+                    <img src={phoneYellow} alt="" />
+                    <span className="text-[#141415] font-semibold text-base pl-2">
+                      Số điện thoại
+                    </span>
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Nhập số điện thoại"
+                      name="phone"
+                      value={preOrder?.saleInformation?.salePhone || ''}
                       className="border border-[#D6D9DC] rounded-lg w-full p-3 mt-2"
                     />
                   </div>

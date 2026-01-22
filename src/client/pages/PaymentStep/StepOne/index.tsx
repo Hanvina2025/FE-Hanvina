@@ -1,5 +1,5 @@
 import "./index.scss";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Breadcrumb, Modal, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import arrRight from "/assets/images/arrow-right.svg";
@@ -21,6 +21,7 @@ import {
   getTourPriceServices,
   postPreOrder, postOrderCustomer, postOrderDiscountPlus
 } from "@/client/apis/tour";
+import { getSalesByPhone } from "@/client/apis/employee";
 import { PATH } from "@/libs/constants/path";
 import ReservationList from "@/client/components/ReservationList"
 import ConfirmTour from "@/client/components/ConfirmTour";
@@ -48,9 +49,18 @@ const Reserve = () => {
   });
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
+  const [salesPhone, setSalesPhone] = useState("");
+  const [salesName, setSalesName] = useState("");
+  const [salesList, setSalesList] = useState<any[]>([]);
+  const [isSalesDropdownOpen, setIsSalesDropdownOpen] = useState(false);
+  const [selectedSales, setSelectedSales] = useState<any>(null);
+  const [isLoadingSales, setIsLoadingSales] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTourVisible, setIsTourVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const salesDropdownRef = useRef<HTMLDivElement>(null);
 
   const calcTotal = () => {
     if (!departure) return {
@@ -191,16 +201,28 @@ const Reserve = () => {
       alert("Vui lòng nhập số điện thoại liên hệ");
       return;
     }
+    // Validate thông tin chăm sóc khách hàng
+    if (!salesPhone.trim()) {
+      alert("Vui lòng nhập số điện thoại trong phần thông tin chăm sóc khách hàng");
+      return;
+    }
+    if (!salesName.trim()) {
+      alert("Vui lòng chọn nhân viên chăm sóc từ danh sách");
+      return;
+    }
+
+    setIsSubmitting(true);
 
     // Chuẩn bị dữ liệu gửi lên từng API
     const preOrderPayload = {
       tourId: departure?.id,
       customerName,
       customerPhone,
+      saleId: selectedSales?.id,
       status: 118,
       totalPrice: totalData?.finalTotal,
       totalSeatsCheck: adultCount + childrenCount + babyCount,
-    };
+    };  
 
     let preOrderId = null;
 
@@ -263,9 +285,12 @@ const Reserve = () => {
       // 4. Gọi postOrderPlus cho dịch vụ cộng thêm
       const orderPlusData = { ...orderPlusPayload, preOrderId };
       await postOrderDiscountPlus(orderPlusData);
+      setIsSuccess(true);
+      setIsSubmitting(false);
       setIsTourVisible(true);
 
     } catch (error) {
+      setIsSubmitting(false);
       alert("Có lỗi xảy ra, vui lòng thử lại!");
       console.error(error);
     }
@@ -309,6 +334,64 @@ const Reserve = () => {
   const handleCustomInputChange = (field, value) => {
     setCustomInput(prev => ({ ...prev, [field]: value }));
   };
+
+  // Debounce search sales
+  useEffect(() => {
+    if (!salesPhone || salesPhone.length < 3) {
+      setSalesList([]);
+      setIsSalesDropdownOpen(false);
+      setIsLoadingSales(false);
+      // Reset selectedSales và salesName khi xóa số điện thoại
+      if (!salesPhone || salesPhone.length === 0) {
+        setSelectedSales(null);
+        setSalesName("");
+      }
+      return;
+    }
+
+    // Hiển thị loading và mở dropdown ngay lập tức
+    setIsLoadingSales(true);
+    setIsSalesDropdownOpen(true);
+
+    const timeoutId = setTimeout(async () => {
+      try {
+        const response = await getSalesByPhone(salesPhone, 0, 10);
+        setSalesList(response?.data || []);
+      } catch (error) {
+        console.error("Error searching sales:", error);
+        setSalesList([]);
+      } finally {
+        setIsLoadingSales(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [salesPhone]);
+
+  // Handle select sales
+  const handleSelectSales = (sales: any) => {
+    setSelectedSales(sales);
+    setSalesPhone(sales.phone || salesPhone);
+    setSalesName(sales.name || sales.fullName || "");
+    setIsSalesDropdownOpen(false);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (salesDropdownRef.current && !salesDropdownRef.current.contains(event.target as Node)) {
+        setIsSalesDropdownOpen(false);
+      }
+    };
+
+    if (isSalesDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSalesDropdownOpen]);
 
 
   if (loading) {
@@ -457,6 +540,90 @@ const Reserve = () => {
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value)}
                       className="border border-[#D6D9DC] rounded-lg w-full p-3 mt-2"
+                    />
+                  </div>
+                </div>
+              </div>
+            </TitlePattern>
+          </div>
+          <div className="mt-6">
+            <TitlePattern title="Thông tin chăm sóc khách hàng" color="text-[#BB2C26]">
+              <div className="flex gap-x-4">
+                <div className="w-1/2">
+                  <div className="flex items-center ">
+                    <img src={phoneYellow} alt="" />
+                    <span className="text-[#141415] font-semibold text-base pl-2">
+                      Số điện thoại
+                    </span>
+                  </div>
+                  <div className="relative" ref={salesDropdownRef}>
+                    <input
+                      type="number"
+                      placeholder="Nhập số điện thoại"
+                      name="phone"
+                      value={salesPhone}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setSalesPhone(value);
+                        setSelectedSales(null);
+                        // Reset salesName khi xóa số điện thoại
+                        if (!value || value.length === 0) {
+                          setSalesName("");
+                        }
+                      }}
+                      onFocus={() => {
+                        if (salesList.length > 0) {
+                          setIsSalesDropdownOpen(true);
+                        }
+                      }}
+                      className="border border-[#D6D9DC] rounded-lg w-full p-3 mt-2"
+                    />
+                    {isSalesDropdownOpen && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#D6D9DC] rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                        {isLoadingSales ? (
+                          <div className="p-3 text-center text-[#53575A]">
+                            <Spin/> Đang tìm kiếm...
+                          </div>
+                        ) : salesList.length > 0 ? (
+                          salesList.map((sales, index) => (
+                            <div
+                              key={sales.id || index}
+                              onClick={() => handleSelectSales(sales)}
+                              className="p-3 hover:bg-[#F4F5F6] cursor-pointer border-b border-[#D6D9DC] last:border-b-0"
+                            >
+                              <div className="font-medium text-[#141415]">
+                                {sales.name || sales.fullName || "N/A"}
+                              </div>
+                              <div className="text-sm text-[#53575A]">
+                                {sales.phone || salesPhone}
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="p-3 text-center text-[#53575A]">
+                            Không tìm thấy kết quả
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="w-1/2">
+                  <div className="flex items-center gap-x-2">
+                    <img src={userYellow} alt="" />
+                    <span className="text-[#141415] font-semibold text-base">
+                      Nhân viên chăm sóc
+                    </span>
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      name="userName"
+                      placeholder="Nhập tên nhân viên chăm sóc"
+                      value={salesName}
+                      onChange={(e) => setSalesName(e.target.value)}
+                      className="border border-[#D6D9DC] rounded-lg w-full p-3 mt-2"
+                      disabled
                     />
                   </div>
                 </div>
@@ -686,9 +853,11 @@ const Reserve = () => {
             <button
               className=" relative h-[48px] cursor-pointer"
               onClick={handleConfirm}
+              disabled={isSubmitting || isSuccess}
             >
-              <img src={buttonMedium} className="w-full h-[48px] mx-auto" />
-              <div className="absolute w-full top-[11px] text-center font-[500] text-[16px] text-white">
+              <img src={buttonMedium} className={`w-full h-[48px] mx-auto ${(isSubmitting || isSuccess) ? 'opacity-50' : ''}`} />
+              <div className="absolute w-full top-[11px] text-center font-[500] text-[16px] text-white flex items-center justify-center gap-2">
+                {isSubmitting && <Spin size="small" />}
                 Xác nhận giữ chỗ
               </div>
             </button>
