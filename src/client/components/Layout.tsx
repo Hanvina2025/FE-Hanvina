@@ -1,18 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 
 const Layout: React.FC = () => {
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [pathname]);
+    scrollContainerRef.current?.scrollTo(0, 0);
+  }, [location.pathname, location.search]);
 
   return (
     <div
+      ref={scrollContainerRef}
       className="relative"
       style={{
         background: "linear-gradient(#FFD9D9, #fff) 50%, #fff",

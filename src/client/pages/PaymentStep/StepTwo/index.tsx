@@ -595,7 +595,7 @@ const PaymentStepTwo = () => {
                     <input
                       type="text"
                       name="userName"
-                      value={preOrder?.saleInformation?.saleName || ''}
+                      value={preOrder?.salesInformation?.[0]?.saleName || ''}
                       placeholder="Nhập tên người đại diện"
                       className="border border-[#D6D9DC] rounded-lg w-full p-3 mt-2"
                     />
@@ -613,7 +613,7 @@ const PaymentStepTwo = () => {
                       type="text"
                       placeholder="Nhập số điện thoại"
                       name="phone"
-                      value={preOrder?.saleInformation?.salePhone || ''}
+                      value={preOrder?.salesInformation?.[0]?.salePhone || ''}
                       className="border border-[#D6D9DC] rounded-lg w-full p-3 mt-2"
                     />
                   </div>

@@ -154,6 +154,36 @@ const PaymentStepThree = () => {
               className="border border-[#D6D9DC] rounded-lg w-full p-3"
             />
           </div>
+          <div className="col-span-1 border-l border-[#D6D9DC] pl-6 border-dashed">
+            <div className="flex items-center gap-x-2 mb-2">
+              <img src={userYellow} alt="" />
+              <span className="text-[#141415] font-semibold text-base">
+                Nhân viên chăm sóc
+              </span>
+            </div>
+            <input
+              type="text"
+              placeholder="Nhập tên nhân viên chăm sóc"
+              name="phone"
+              value={preOrder?.salesInformation?.[0]?.saleName}
+              className="border border-[#D6D9DC] rounded-lg w-full p-3"
+            />
+          </div>
+          <div className="col-span-1">
+            <div className="flex items-center gap-x-2 mb-2">
+              <img src={phoneYellow} alt="" />
+              <span className="text-[#141415] font-semibold text-base">
+                SĐT nhân viên chăm sóc
+              </span>
+            </div>
+            <input
+              type="text"
+              placeholder="Nhập sđt nhân viên chăm sóc"
+              name="phone"
+              value={preOrder?.salesInformation?.[0]?.salePhone}
+              className="border border-[#D6D9DC] rounded-lg w-full p-3"
+            />
+          </div>
         </div>
         <div className="mt-5">
           <div className="flex items-center gap-x-3 ">
