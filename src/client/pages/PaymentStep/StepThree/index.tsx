@@ -70,7 +70,7 @@ const PaymentStepThree = () => {
         tourId: preOrder?.tourId,
         customerName: preOrder?.customerName,
         customerPhone: preOrder?.customerPhone,
-        saleId: preOrder?.saleInformation?.saleId,
+        saleId: preOrder?.salesInformation?.[0]?.saleId,
         status: 122,
         totalPrice: preOrder?.totalPrice
       };

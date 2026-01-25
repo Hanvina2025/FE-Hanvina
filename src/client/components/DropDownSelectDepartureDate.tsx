@@ -6,6 +6,8 @@ export default function DropDownSelectDepartureDate({
   selected,
   setIsShowDropdown
 }) {
+  console.log(locations);
+
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -40,9 +42,8 @@ export default function DropDownSelectDepartureDate({
         {locations.map((location, index) => (
           <label
             key={index}
-            className={`grid grid-cols-3 mt-[6px] items-center rounded-[6px] py-4 bg-[#F4F5F6] cursor-pointer ${
-              index !== locations.length - 1 ? "border-b border-gray-100" : ""
-            } hover:bg-gray-50`}
+            className={`grid grid-cols-3 mt-[6px] items-center rounded-[6px] py-4 bg-[#F4F5F6] cursor-pointer ${index !== locations.length - 1 ? "border-b border-gray-100" : ""
+              } hover:bg-gray-50`}
             onClick={() => onSelect(location)}
           >
             <div className="flex items-center gap-2 px-2">
@@ -60,7 +61,7 @@ export default function DropDownSelectDepartureDate({
               {location.adultPrice}
             </div>
             <div className="border-l border-gray-200 pl-4 text-gray-900">
-              Còn {location.totalSeat} chỗ
+              Còn {(Number(location.totalSeat) - Number(location.totalSeatBooked ?? 0)) || 0} chỗ
             </div>
           </label>
         ))}

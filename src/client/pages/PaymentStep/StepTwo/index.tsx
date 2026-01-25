@@ -158,8 +158,6 @@ const PaymentStepTwo = () => {
     setLoading(true);
     try {
       const fetchedData = await getDetailPreOrder(id);
-      console.log('fetchDetailPreOrder', fetchedData);
-
       setPreOrder(fetchedData)
     } catch (error) {
       console.error("Error fetching home:", error);
@@ -265,7 +263,7 @@ const PaymentStepTwo = () => {
       tourId: preOrder?.tourId,
       customerName: preOrder?.customerName,
       customerPhone: preOrder?.customerPhone,
-      saleId: preOrder?.saleInformation?.saleId,
+      saleId: preOrder?.salesInformation?.[0]?.saleId,
       status: 119,
       totalPrice: totalData?.finalTotal,
       totalSeatsCheck: adultCount + childrenCount + babyCount,

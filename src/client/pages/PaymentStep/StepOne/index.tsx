@@ -21,7 +21,7 @@ import {
   getTourPriceServices,
   postPreOrder, postOrderCustomer, postOrderDiscountPlus
 } from "@/client/apis/tour";
-import { getSalesByPhone } from "@/client/apis/employee";
+import { getSalesByPhone, getMySales } from "@/client/apis/employee";
 import { PATH } from "@/libs/constants/path";
 import ReservationList from "@/client/components/ReservationList"
 import ConfirmTour from "@/client/components/ConfirmTour";
@@ -127,6 +127,32 @@ const Reserve = () => {
     }
   }, [tourData?.key]);
 
+  // Fetch default sales when component mounts
+  useEffect(() => {
+    const fetchDefaultSales = async () => {
+      try {
+        const response = await getMySales();
+        const salesData = response?.data || response || [];
+        if (Array.isArray(salesData) && salesData.length > 0) {
+          const defaultSales = salesData[0];
+          // Map response format to match existing structure
+          const mappedSales = {
+            id: defaultSales.salesId,
+            name: defaultSales.name,
+            fullName: defaultSales.name,
+            phone: defaultSales.phone
+          };
+          setSelectedSales(mappedSales);
+          setSalesPhone(defaultSales.phone || "");
+          setSalesName(defaultSales.name || "");
+        }
+      } catch (error) {
+        console.error("Error fetching default sales:", error);
+      }
+    };
+    fetchDefaultSales();
+  }, []);
+
   useEffect(() => {
     if (dataStartDate.length > 0 && !departure) {
       setDeparture(dataStartDate[0]);
@@ -222,7 +248,7 @@ const Reserve = () => {
       status: 118,
       totalPrice: totalData?.finalTotal,
       totalSeatsCheck: adultCount + childrenCount + babyCount,
-    };  
+    };
 
     let preOrderId = null;
 
@@ -582,7 +608,7 @@ const Reserve = () => {
                       <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#D6D9DC] rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
                         {isLoadingSales ? (
                           <div className="p-3 text-center text-[#53575A]">
-                            <Spin/> Đang tìm kiếm...
+                            <Spin /> Đang tìm kiếm...
                           </div>
                         ) : salesList.length > 0 ? (
                           salesList.map((sales, index) => (

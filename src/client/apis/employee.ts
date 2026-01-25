@@ -11,3 +11,13 @@ export const getSalesByPhone = async (phone: string, page: number = 0, size: num
   }
 };
 
+export const getMySales = async () => {
+  try {
+    const url = `/customer/my-sales`;
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching my sales:", error);
+    throw error;
+  }
+};
