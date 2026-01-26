@@ -580,7 +580,7 @@ const PaymentStepTwo = () => {
             </TitlePattern>
           </div>
           <div className="mt-6">
-            <TitlePattern title="Thông tin khách hàng" color="text-[#BB2C26]">
+            <TitlePattern title="Thông tin nhân viên chăm sóc" color="text-[#BB2C26]">
               <div className="flex gap-x-4">
                 <div className="w-1/2">
                   <div className="flex items-center gap-x-2">
