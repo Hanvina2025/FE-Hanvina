@@ -150,32 +150,32 @@ const Chatbot = ({ preOrder }) => {
 	const handleSelectSearchUser = useCallback(async (preOrderId: any, preOrder: any) => {
 		try {
 			// Kiểm tra nếu customerSaleDtos có length > 2 thì tạo room group
-			if (preOrder?.customerSaleDtos && preOrder.customerSaleDtos.length > 2) {
-				const currentUserId = userData?.info?.id;
-				const selectedUsers = preOrder.customerSaleDtos;
-				const memberIds = [currentUserId, ...selectedUsers.map(user => user.accountId)].join(',');
+			// if (preOrder?.customerSaleDtos && preOrder.customerSaleDtos.length > 2) {
+			// 	const currentUserId = userData?.info?.id;
+			// 	const selectedUsers = preOrder.customerSaleDtos;
+			// 	const memberIds = [currentUserId, ...selectedUsers.map(user => user.accountId)].join(',');
 
-				const groupParams = new URLSearchParams({
-					roomName: `Tour-${preOrder?.id}`,
-					groupImage: "",
-					createdBy: currentUserId,
-					memberIds: memberIds,
-					preOrderId: preOrderId
-				});
+			// 	const groupParams = new URLSearchParams({
+			// 		roomName: `Tour-${preOrder?.id}`,
+			// 		groupImage: "",
+			// 		createdBy: currentUserId,
+			// 		memberIds: memberIds,
+			// 		preOrderId: preOrderId
+			// 	});
 
-				const response = await createRoomGroup(groupParams.toString());
+			// 	const response = await createRoomGroup(groupParams.toString());
 
-				// Cập nhật UI sau khi tạo nhóm
-				await fetchUsers();
-				setSelectedUserId(response.id);
-				await loadMessages(response.id);
-				subscribeToUserQueue(response.id);
-			} else {
+			// 	// Cập nhật UI sau khi tạo nhóm
+			// 	await fetchUsers();
+			// 	setSelectedUserId(response.id);
+			// 	await loadMessages(response.id);
+			// 	subscribeToUserQueue(response.id);
+			// } else {
 
 				// Logic tạo room 1-1 như cũ
 				const query = new URLSearchParams({
 					senderId: memoizedAdminId,
-					receiverId: preOrder?.customerSaleDtos[0]?.saleId,
+					receiverId: preOrder?.salesInformation?.[0]?.saleId,
 					preOrderId: preOrderId
 				});
 				const roomData = await createRoomSenderReceiver(query.toString());
@@ -196,7 +196,7 @@ const Chatbot = ({ preOrder }) => {
 				setSelectedUserId(newUser.roomId);
 				await loadMessages(newUser.roomId);
 				subscribeToUserQueue(newUser.roomId);
-			}
+			// }
 		} catch (error) {
 			console.error('Lỗi khi tạo room:', error);
 		}
