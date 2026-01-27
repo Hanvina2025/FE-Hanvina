@@ -86,10 +86,10 @@ const CustomerInformation = ({
               <img src={countUser} alt="" />
               <h2 className="text-[#141415] font-semibold">Số chỗ khả dụng: {totalSeatBooked}</h2>
             </div>
-            <div className="flex items-center gap-x-2">
+            {id && <div className="flex items-center gap-x-2">
               <img src={countUser} alt="" />
               <h2 className="text-[#141415] font-semibold">Số chỗ đã đặt: {availableSeats}</h2>
-            </div>
+            </div>}
           </div>
           <div className="flex flex-col space-y-6 !mt-6">
             <Counter
