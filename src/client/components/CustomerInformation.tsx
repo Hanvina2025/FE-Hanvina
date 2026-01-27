@@ -37,7 +37,8 @@ const CustomerInformation = ({
   }, [adultCount, childrenCount, babyCount, onChange]);
 
   const totalGuests = adultCount + childrenCount + babyCount;
-  const availableSeats = (departure?.totalSeat ?? 0) - (departure?.totalSeatBooked ?? 0);
+  const availableSeats = id ? tourData?.totalSeats : (departure?.totalSeat ?? 0) - (departure?.totalSeatBooked ?? 0);
+  const totalSeatBooked = (departure?.totalSeat ?? 0) - (departure?.totalSeatBooked ?? 0);
 
   const Counter = ({ label, subLabel, note, count, setCount, plusDisabled, minusDisabled }) => (
     <div className="flex items-center justify-between">
@@ -80,9 +81,15 @@ const CustomerInformation = ({
     <div>
       <TitlePattern title="Số lượng khách">
         <div className="flex flex-col space-y-4">
-          <div className="flex items-center gap-x-3">
-            <img src={countUser} alt="" />
-            <h1 className="text-[#141415] font-semibold">Số chỗ khả dụng: {availableSeats}</h1>
+          <div className="flex items-center gap-x-3 justify-between">
+            <div className="flex items-center gap-x-2">
+              <img src={countUser} alt="" />
+              <h2 className="text-[#141415] font-semibold">Số chỗ khả dụng: {totalSeatBooked}</h2>
+            </div>
+            <div className="flex items-center gap-x-2">
+              <img src={countUser} alt="" />
+              <h2 className="text-[#141415] font-semibold">Số chỗ đã đặt: {availableSeats}</h2>
+            </div>
           </div>
           <div className="flex flex-col space-y-6 !mt-6">
             <Counter
