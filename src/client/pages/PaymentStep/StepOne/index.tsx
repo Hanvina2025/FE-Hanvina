@@ -61,6 +61,7 @@ const Reserve = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const salesDropdownRef = useRef<HTMLDivElement>(null);
+  const [hasUserEditedSalesPhone, setHasUserEditedSalesPhone] = useState(false);
 
   const calcTotal = () => {
     if (!departure) return {
@@ -363,6 +364,11 @@ const Reserve = () => {
 
   // Debounce search sales
   useEffect(() => {
+    // Không auto mở dropdown khi chỉ set default sales từ API
+    if (!hasUserEditedSalesPhone) {
+      return;
+    }
+
     if (!salesPhone || salesPhone.length < 3) {
       setSalesList([]);
       setIsSalesDropdownOpen(false);
@@ -591,6 +597,7 @@ const Reserve = () => {
                       onChange={(e) => {
                         const value = e.target.value;
                         setSalesPhone(value);
+                        setHasUserEditedSalesPhone(true);
                         setSelectedSales(null);
                         // Reset salesName khi xóa số điện thoại
                         if (!value || value.length === 0) {
