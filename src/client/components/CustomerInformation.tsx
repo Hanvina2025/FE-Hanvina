@@ -37,7 +37,7 @@ const CustomerInformation = ({
   }, [adultCount, childrenCount, babyCount, onChange]);
 
   const totalGuests = adultCount + childrenCount + babyCount;
-  const availableSeats = id ? tourData?.totalSeats : (departure?.totalSeat ?? 0) - (departure?.totalSeatBooked ?? 0);
+  const availableSeats = (departure?.totalSeat ?? 0) - (departure?.totalSeatBooked ?? 0);
 
   const Counter = ({ label, subLabel, note, count, setCount, plusDisabled, minusDisabled }) => (
     <div className="flex items-center justify-between">

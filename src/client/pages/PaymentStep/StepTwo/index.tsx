@@ -9,6 +9,7 @@ import {
   getDetailOrderCustomer,
   getDetailOrderDiscountPlus,
   postOrderPaymentDeposit,
+  getTourStartDate,
   putPreOrder,
   putOrderCustomer,
   putOrderDiscountPlus,
@@ -63,6 +64,7 @@ const PaymentStepTwo = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalConfirm, setIsModalConfirm] = useState(false);
   const [fileBill, setFileBill] = useState<any>(null);
+  const [departure, setDeparture] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
   const [isModalOpenTB, setIsModalOpenTB] = useState(false);
   const [isModalHuy, setIsModalHuy] = useState(false);
@@ -79,6 +81,32 @@ const PaymentStepTwo = () => {
       fetchDetailServicesPlus(id)
     }
   }, [id])
+
+  useEffect(() => {
+    const key = preOrder?.tourInformation?.key;
+    const tourId = preOrder?.tourInformation?.tourId;
+    if (!key) return;
+
+    const fetchTourStartDate = async () => {
+      try {
+        const params = new URLSearchParams({ key: String(key) }).toString();
+        const fetchedData = await getTourStartDate(params);
+        console.log("API /tour/tours-in-app-start-date response:", fetchedData);
+
+        const list = fetchedData?.data || fetchedData || [];
+        if (Array.isArray(list) && tourId) {
+          const matchedItem = list.find((item: any) => item.id === tourId);
+          if (matchedItem) {
+            setDeparture(matchedItem);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching tours-in-app-start-date:", error);
+      }
+    };
+
+    fetchTourStartDate();
+  }, [preOrder?.tourInformation?.key, preOrder?.tourInformation?.tourId]);
 
   // Tự động cập nhật thời gian mỗi giây
   useEffect(() => {
@@ -624,6 +652,7 @@ const PaymentStepTwo = () => {
               onChange={handleCustomerChange}
               tourData={preOrderCustomer}
               statusPreOrder={preOrder?.status}
+              departure={departure}
             />
           </div>
           <div className="mt-6 grid grid-cols-2 gap-x-6">
