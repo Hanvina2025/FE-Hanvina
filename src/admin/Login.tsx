@@ -29,7 +29,9 @@ const Login = () => {
 
   const handleSubmit = async (data: LoginFormInputs) => {
     try {
-      const response = await postLogin(data.username, data.password);
+      const username = data.username.trim();
+      const password = data.password.trim();
+      const response = await postLogin(username, password);
       const { token, role, id } = response;
       if (token) {
         if (role === "ROLE_CUSTOMER") {

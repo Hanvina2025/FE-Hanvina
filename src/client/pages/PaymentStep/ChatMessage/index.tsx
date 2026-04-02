@@ -3,6 +3,7 @@ import SockJS from 'sockjs-client';
 import Stomp, { Client, Message as StompMessage } from 'stompjs';
 import "./index.scss";
 import IcImage from "/assets/images/image.svg";
+import IcAttachment from '/assets/images/attachment.svg';
 import { Send2, ArrowUp2, Message, ArrowDown2 } from 'iconsax-react';
 import { useAuth } from "@/admin/components/AuthProvider";
 import { Image, message } from "antd";
@@ -60,7 +61,8 @@ const Chatbot = ({ preOrder }) => {
 	const baseUrl = import.meta.env.VITE_API_BASE_URL;
 	const wsUrl = `${baseUrl.replace(/\/$/, '')}/ws/chat`;
 
-	const fileInputRef = useRef<HTMLInputElement>(null);
+	const imageInputRef = useRef<HTMLInputElement>(null);
+	const documentInputRef = useRef<HTMLInputElement>(null);
 	const stompClientRef = useRef<Client | null>(null);
 	const currentSubscriptionRef = useRef<any>(null);
 
@@ -113,7 +115,8 @@ const Chatbot = ({ preOrder }) => {
 				sentTime: body.sentTime || new Date().toISOString(),
 				isRead: false,
 				tourId: body.tourId || null,
-				type: body.type || 0
+				type: body.type || 0,
+				fileName: body.fileName || undefined
 			};
 			setMessages(prev => [...prev, newMessage]);
 			scrollToBottom();
@@ -172,30 +175,30 @@ const Chatbot = ({ preOrder }) => {
 			// 	subscribeToUserQueue(response.id);
 			// } else {
 
-				// Logic tạo room 1-1 như cũ
-				const query = new URLSearchParams({
-					senderId: memoizedAdminId,
-					receiverId: preOrder?.salesInformation?.[0]?.saleId,
-					preOrderId: preOrderId
-				});
-				const roomData = await createRoomSenderReceiver(query.toString());
-				await fetchUsers();
+			// Logic tạo room 1-1 như cũ
+			const query = new URLSearchParams({
+				senderId: memoizedAdminId,
+				receiverId: preOrder?.salesInformation?.[0]?.saleId,
+				preOrderId: preOrderId
+			});
+			const roomData = await createRoomSenderReceiver(query.toString());
+			await fetchUsers();
 
-				const newUser = {
-					id: preOrder?.id || Date.now(),
-					username: preOrder?.tourInformation?.saleName || 'Sale',
-					roomId: roomData.id,
-					withUserFullName: preOrder?.tourInformation?.saleName || 'Sale',
-					lastMessage: "",
-					image: null,
-					isRead: true,
-					lastSenderId: ""
-				};
+			const newUser = {
+				id: preOrder?.id || Date.now(),
+				username: preOrder?.tourInformation?.saleName || 'Sale',
+				roomId: roomData.id,
+				withUserFullName: preOrder?.tourInformation?.saleName || 'Sale',
+				lastMessage: "",
+				image: null,
+				isRead: true,
+				lastSenderId: ""
+			};
 
-				setSelectedUser(newUser);
-				setSelectedUserId(newUser.roomId);
-				await loadMessages(newUser.roomId);
-				subscribeToUserQueue(newUser.roomId);
+			setSelectedUser(newUser);
+			setSelectedUserId(newUser.roomId);
+			await loadMessages(newUser.roomId);
+			subscribeToUserQueue(newUser.roomId);
 			// }
 		} catch (error) {
 			console.error('Lỗi khi tạo room:', error);
@@ -284,11 +287,12 @@ const Chatbot = ({ preOrder }) => {
 			const text = await res.text();
 			const json = JSON.parse(text);
 			if (json[0]) {
-				const imageUrl = `${memoizedBaseUrl}/file/download-file?fileKey=${json[0]}`;
+				const imageUrl = `${memoizedBaseUrl}/file/download-file-all-type?fileKey=${json[0]}`;
 				const payload = {
 					roomId: selectedUser?.roomId.toString(),
 					message: imageUrl,
 					senderId: memoizedAdminId.toString(),
+					fileName: file.name,
 					type: 1
 				};
 
@@ -301,9 +305,9 @@ const Chatbot = ({ preOrder }) => {
 			console.error('Error uploading file:', err);
 		}
 
-		if (fileInputRef.current) {
-			fileInputRef.current.value = '';
-		}
+		// Reset both inputs so user can re-upload same file
+		if (imageInputRef.current) imageInputRef.current.value = '';
+		if (documentInputRef.current) documentInputRef.current.value = '';
 	}, [memoizedBaseUrl, token, selectedUser, memoizedAdminId, scrollToBottom]);
 
 	const handleOpenChat = useCallback(() => {
@@ -325,8 +329,12 @@ const Chatbot = ({ preOrder }) => {
 		}
 	}, [sendMessage]);
 
-	const handleFileClick = useCallback(() => {
-		fileInputRef.current?.click();
+	const handleImageClick = useCallback(() => {
+		imageInputRef.current?.click();
+	}, []);
+
+	const handleDocumentClick = useCallback(() => {
+		documentInputRef.current?.click();
 	}, []);
 
 	const getFileIcon = (fileName: string) => {
@@ -473,12 +481,23 @@ const Chatbot = ({ preOrder }) => {
 					/>
 					<input
 						type="file"
-						ref={fileInputRef}
+						ref={imageInputRef}
 						onChange={handleImageChange}
+						accept="image/*"
 						style={{ display: 'none' }}
 					/>
-					<div onClick={handleFileClick} className="option-message mr-2">
+					<div onClick={handleImageClick} className="option-message mr-2 cursor-pointer">
 						<img alt="Upload Image" src={IcImage} />
+					</div>
+					<input
+						type="file"
+						ref={documentInputRef}
+						onChange={handleImageChange}
+						accept=".pdf,.doc,.docx,.txt,.xlsx,.xls,.pptx,.ppt"
+						style={{ display: 'none' }}
+					/>
+					<div onClick={handleDocumentClick} className="option-message mr-2 cursor-pointer">
+						<img alt="Upload Document" src={IcAttachment} />
 					</div>
 					<div onClick={sendMessage} className="send-message bg-[#BB2C26] p-2 rounded-full cursor-pointer">
 						<Send2 color='#fff' variant="Bold" />
@@ -486,7 +505,7 @@ const Chatbot = ({ preOrder }) => {
 				</div>
 			</div>
 		</div>
-	), [isLoading, messages, memoizedAdminId, memoizedBaseUrl, messageContent, handleCloseChat, handleInputChange, handleKeyUp, handleFileClick, sendMessage, handleImageChange]);
+	), [isLoading, messages, memoizedAdminId, memoizedBaseUrl, messageContent, handleCloseChat, handleInputChange, handleKeyUp, handleImageClick, handleDocumentClick, sendMessage, handleImageChange]);
 
 	return (
 		<>
